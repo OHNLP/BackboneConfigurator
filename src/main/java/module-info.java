@@ -10,6 +10,9 @@ open module org.ohnlp.backbone.configurator {
     requires spring.core;
     requires java.logging;
     requires java.sql;
+    requires fxgraph;
+    requires org.abego.treelayout.core;
+
 
     exports org.ohnlp.backbone.configurator;
     exports org.ohnlp.backbone.configurator.structs.modules;

@@ -36,6 +36,7 @@
             <artifactId>spring-context</artifactId>
             <version>${spring.version}</version>
         </dependency>
+        <!-- JavaFX Dependencies -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -50,6 +51,12 @@
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
             <version>17.0.2</version>
+        </dependency>
+        <!-- GraphViz -->
+        <dependency>
+            <groupId>com.sirolf2009</groupId>
+            <artifactId>fxgraph</artifactId>
+            <version>0.0.3</version>
         </dependency>
     </dependencies>
 

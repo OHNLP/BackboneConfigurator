@@ -1,6 +1,7 @@
 package org.ohnlp.backbone.configurator.structs.pipeline;
 
 import org.apache.beam.sdk.Pipeline;
+import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.config.BackboneConfiguration;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
 
@@ -82,7 +83,7 @@ public class EditablePipeline {
             UUID lastUID = null;
             for (int i = 0; i < pipelineComponents.size(); i++) {
                 BackbonePipelineComponentConfiguration component = pipelineComponents.get(i);
-                if (i > 0 && (component.getInputs() == null || component.getInputs().isEmpty())) {
+                if (i > 0 && (component.getInputs() == null || component.getInputs().isEmpty()) && HasInputs.class.isAssignableFrom(component.getClazz())) {
                     legacyConfigs.add("Pipeline Definition Index " + i + ": " + component.getClazz().getName());
                     BackbonePipelineComponentConfiguration.InputDefinition generatedDef
                             = new BackbonePipelineComponentConfiguration.InputDefinition();
