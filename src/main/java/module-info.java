@@ -12,6 +12,7 @@ open module org.ohnlp.backbone.configurator {
     requires java.sql;
     requires fxgraph;
     requires org.abego.treelayout.core;
+    requires java.desktop;
 
 
     exports org.ohnlp.backbone.configurator;

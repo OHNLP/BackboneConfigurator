@@ -1,9 +1,7 @@
 package org.ohnlp.backbone.configurator.gui.components.graphs;
 
-import com.fxgraph.cells.CellGestures;
 import com.fxgraph.cells.RectangleCell;
 import com.fxgraph.graph.Graph;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -24,6 +22,8 @@ public class ComponentCell extends RectangleCell {
     private final String id;
     private final List<String> inputs;
     private final List<String> outputs;
+    private int srcOutputIndex = -1;
+    private int inputIdx = -1;
 
     public ComponentCell(String id, String name, String desc, List<String> inputs, List<String> outputs, BackbonePipelineComponent instance) {
         this.id = id;
@@ -72,7 +72,7 @@ public class ComponentCell extends RectangleCell {
             for (int i = 0; i < this.inputs.size(); i++) {
                 String label = this.inputs.get(i);
                 Rectangle bckgnd = new Rectangle(i == this.inputs.size() - 1 ? (250 - width * i) : width, 20);
-                bckgnd.setFill(Color.WHITESMOKE);
+                bckgnd.setFill(Color.LIGHTYELLOW);
                 bckgnd.setStroke(Color.BLACK);
                 Text labelText = new Text(label);
                 labelText.setTextAlignment(TextAlignment.CENTER);
@@ -103,7 +103,7 @@ public class ComponentCell extends RectangleCell {
             for (int i = 0; i < this.outputs.size(); i++) {
                 String label = this.outputs.get(i);
                 Rectangle bckgnd = new Rectangle(i == this.outputs.size() - 1 ? (250 - width * i) : width, 20);
-                bckgnd.setFill(Color.WHITESMOKE);
+                bckgnd.setFill(Color.LIGHTYELLOW);
                 bckgnd.setStroke(Color.BLACK);
                 Text labelText = new Text(label);
                 labelText.setTextAlignment(TextAlignment.CENTER);
@@ -119,10 +119,6 @@ public class ComponentCell extends RectangleCell {
             StackPane labelPane = new StackPane(bckgnd, labelText);
             outputPane.getChildren().add(labelPane);
         }
-        inputPane.setStyle("-fx-background-color: black");
-        componentPane.setStyle("-fx-background-color: gray; -fx-padding: 0; -fx-end-margin: 0");
-        outputPane.setStyle("-fx-background-color: black");
-
 
         // Now build the view
 
@@ -137,4 +133,19 @@ public class ComponentCell extends RectangleCell {
     }
 
 
+    public void setSrcOutputIndex(int idx) {
+        this.srcOutputIndex = Math.max(srcOutputIndex, idx);
+    }
+
+    public void setInputIdx(int idx) {
+        this.inputIdx = Math.max(inputIdx, idx);
+    }
+
+    public int getSrcOutputIndex() {
+        return srcOutputIndex;
+    }
+
+    public int getInputIdx() {
+        return inputIdx;
+    }
 }

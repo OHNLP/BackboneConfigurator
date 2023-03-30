@@ -12,6 +12,7 @@ import javafx.stage.Stage;
 import org.abego.treelayout.Configuration;
 import org.ohnlp.backbone.api.config.BackboneConfiguration;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
+import org.ohnlp.backbone.configurator.gui.components.graphs.LabelPositionAbegoTreeLayout;
 import org.ohnlp.backbone.configurator.gui.utils.DAGUtils;
 import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
@@ -32,7 +33,7 @@ public class ConfiguratorGUI extends Application {
         BackboneConfiguration config = new ObjectMapper().setTypeFactory(TypeFactory.defaultInstance().withClassLoader(ModuleRegistry.getComponentClassLoader())).readValue(new File("configs/fh_nlp_biobank_to_csv.json"), BackboneConfiguration.class);
         EditablePipeline pipeline = EditablePipeline.fromConfig(config);
         Graph g = DAGUtils.generateGraphForPipeline(pipeline);
-        g.layout(new AbegoTreeLayout(150, 500, Configuration.Location.Top));
+        g.layout(new LabelPositionAbegoTreeLayout(150, 500, Configuration.Location.Top));
         primaryStage.setScene(new Scene(new BorderPane(g.getCanvas())));
         primaryStage.setMaximized(true);
         primaryStage.show();
