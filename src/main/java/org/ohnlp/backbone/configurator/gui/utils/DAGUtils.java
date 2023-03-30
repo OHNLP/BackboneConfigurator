@@ -11,6 +11,7 @@ import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.components.HasOutputs;
 import org.ohnlp.backbone.configurator.gui.components.graphs.ComponentCell;
+import org.ohnlp.backbone.configurator.gui.components.graphs.DirectedEdgeFromToLabel;
 import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
@@ -26,7 +27,7 @@ public class DAGUtils {
         Graph outputGraph = new Graph();
         Model model = outputGraph.getModel();
         Map<String, PipelineComponentDeclaration> componentsByID = new HashMap<>();
-        Map<String, ICell> cellsByID = new HashMap<>();
+        Map<String, ComponentCell> cellsByID = new HashMap<>();
         // Draw
         pipelineComponents.forEach(step -> {
             step.forEach(component -> {
@@ -45,14 +46,16 @@ public class DAGUtils {
         });
         // Now make linkages
         componentsByID.forEach((id, comp) -> {
-            ICell tgtCell = cellsByID.get(id);
+            ComponentCell tgtCell = cellsByID.get(id);
             if (comp.getInputs() != null) {
                 comp.getInputs().forEach((tag, src) -> {
                     String sourceID = src.getComponentID();
-                    ICell srcCell = cellsByID.get(sourceID);
+                    ComponentCell srcCell = cellsByID.get(sourceID);
                     if (srcCell != null) {
-                        DoubleCorneredEdge edge = new DoubleCorneredEdge(tgtCell, srcCell, Orientation.VERTICAL);
-                        model.addEdge(edge);
+//                        DoubleCorneredEdge edge = new DoubleCorneredEdge(tgtCell, srcCell, Orientation.VERTICAL);
+//                        model.addEdge(edge);
+//                        model.addEdge(tgtCell, srcCell);
+                        model.addEdge(new DirectedEdgeFromToLabel(tgtCell, srcCell, src.getInputTag(), tag));
                     }
                 });
             }

@@ -32,7 +32,7 @@ public class ConfiguratorGUI extends Application {
         BackboneConfiguration config = new ObjectMapper().setTypeFactory(TypeFactory.defaultInstance().withClassLoader(ModuleRegistry.getComponentClassLoader())).readValue(new File("configs/fh_nlp_biobank_to_csv.json"), BackboneConfiguration.class);
         EditablePipeline pipeline = EditablePipeline.fromConfig(config);
         Graph g = DAGUtils.generateGraphForPipeline(pipeline);
-        g.layout(new AbegoTreeLayout(100, 300, Configuration.Location.Top));
+        g.layout(new AbegoTreeLayout(150, 500, Configuration.Location.Top));
         primaryStage.setScene(new Scene(new BorderPane(g.getCanvas())));
         primaryStage.setMaximized(true);
         primaryStage.show();
