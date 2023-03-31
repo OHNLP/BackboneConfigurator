@@ -53,10 +53,10 @@ public class DirectedEdgeFromToLabel extends Edge {
                 this.getLine().endXProperty().bind(src.getXAnchor(graph, edge).subtract(125).subtract(width/2.).add(width * (idx + 1)));
             }
             if (tgt.getInputs().size() > 1 && !tgtLabel.equalsIgnoreCase("*")) {
-                double width = 250./tgt.getOutputs().size();
+                double width = 250./tgt.getInputs().size();
                 int idx = tgt.getInputs().indexOf(tgtLabel);
                 tgt.setInputIdx(idx);
-                this.getLine().startXProperty().bind(tgt.getXAnchor(graph, edge).subtract(125).add(width * (idx + 1)));
+                this.getLine().startXProperty().bind(tgt.getXAnchor(graph, edge).subtract(125).subtract(width/2.).add(width * (idx + 1)));
             }
             // Draw arrow for directionality
             DoubleProperty startX = getLine().startXProperty();
@@ -65,8 +65,8 @@ public class DirectedEdgeFromToLabel extends Edge {
             DoubleProperty endY = getLine().endYProperty();
             DoubleBinding dx = endX.subtract(startX);
             DoubleBinding dy = endY.subtract(startY);
-            // Use "50" as an approximation for infinite slope so other calculations can still be done without requiring a whole separate set of bindings
-            DoubleBinding slope = Bindings.createDoubleBinding(() -> dx.isEqualTo(0).get() ? 50 : dy.divide(dx).get(), dy, dx); ;
+            // Use "50" as an approximation for infinite slope so other calculations can still be done without requiring a whole separate set of bindings due to NaN
+            DoubleBinding slope = Bindings.createDoubleBinding(() -> dx.isEqualTo(0).get() ? 50 : dy.divide(dx).get(), dy, dx);
             DoubleBinding lineAngle = Bindings.createDoubleBinding(() -> Math.atan(slope.get()), slope);
             DoubleBinding arrowAngle = Bindings.createDoubleBinding(() -> endX.greaterThan(startX.get()).get() ?  Math.toRadians(10) : -Math.toRadians(190), endX, startX);
             DoubleBinding arrowLength = Bindings.createDoubleBinding(() -> 15d);
