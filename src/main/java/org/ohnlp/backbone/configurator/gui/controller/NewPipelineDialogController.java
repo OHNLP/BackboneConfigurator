@@ -1,4 +1,4 @@
 package org.ohnlp.backbone.configurator.gui.controller;
 
-public class CurrentPipelineController {
+public class NewPipelineDialogController {
 }

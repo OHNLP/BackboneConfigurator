@@ -19,4 +19,5 @@ open module org.ohnlp.backbone.configurator {
     exports org.ohnlp.backbone.configurator.structs.modules;
     exports org.ohnlp.backbone.configurator.structs.modules.types;
     exports org.ohnlp.backbone.configurator.structs.pipeline;
+    exports org.ohnlp.backbone.configurator.gui.controller;
 }

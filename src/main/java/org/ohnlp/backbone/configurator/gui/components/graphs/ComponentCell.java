@@ -68,10 +68,10 @@ public class ComponentCell extends RectangleCell {
         }
         if (!this.inputs.isEmpty()) {
             int cnt = this.inputs.size();
-            int width = (int) Math.round(Math.floor(250f/cnt));
+            int width = (int) Math.round(Math.floor(350f/cnt));
             for (int i = 0; i < this.inputs.size(); i++) {
                 String label = this.inputs.get(i);
-                Rectangle bckgnd = new Rectangle(i == this.inputs.size() - 1 ? (250 - width * i) : width, 20);
+                Rectangle bckgnd = new Rectangle(i == this.inputs.size() - 1 ? (350 - width * i) : width, 20);
                 bckgnd.setFill(Color.LIGHTYELLOW);
                 bckgnd.setStroke(Color.BLACK);
                 Text labelText = new Text(label);
@@ -80,7 +80,7 @@ public class ComponentCell extends RectangleCell {
                 inputPane.getChildren().add(labelPane);
             }
         } else {
-            Rectangle bckgnd = new Rectangle(250, 20);
+            Rectangle bckgnd = new Rectangle(350, 20);
             bckgnd.setFill(Color.DARKGRAY);
             bckgnd.setStroke(Color.BLACK);
             Text labelText = new Text("No Inputs");
@@ -88,21 +88,21 @@ public class ComponentCell extends RectangleCell {
             StackPane labelPane = new StackPane(bckgnd, labelText);
             inputPane.getChildren().add(labelPane);
         }
-        final Rectangle componentBackground = new Rectangle(250, 40);
+        final Rectangle componentBackground = new Rectangle(350, 40);
         componentBackground.setStroke(Color.BLACK);
         componentBackground.setFill(color);
         Text componentLabel = new Text(this.id + "\r\n" + this.name);
         componentLabel.setTextAlignment(TextAlignment.CENTER);
         StackPane layeredComponentPane = new StackPane(componentBackground, componentLabel);
         Pane componentPane = new Pane(layeredComponentPane);
-        componentPane.setPrefSize(250, 40);
+        componentPane.setPrefSize(350, 40);
 
         if (!this.outputs.isEmpty()) {
             int cnt = this.outputs.size();
-            int width = (int) Math.round(Math.floor(250f/cnt));
+            int width = (int) Math.round(Math.floor(350f/cnt));
             for (int i = 0; i < this.outputs.size(); i++) {
                 String label = this.outputs.get(i);
-                Rectangle bckgnd = new Rectangle(i == this.outputs.size() - 1 ? (250 - width * i) : width, 20);
+                Rectangle bckgnd = new Rectangle(i == this.outputs.size() - 1 ? (350 - width * i) : width, 20);
                 bckgnd.setFill(Color.LIGHTYELLOW);
                 bckgnd.setStroke(Color.BLACK);
                 Text labelText = new Text(label);
@@ -111,7 +111,7 @@ public class ComponentCell extends RectangleCell {
                 outputPane.getChildren().add(labelPane);
             }
         } else {
-            Rectangle bckgnd = new Rectangle(250, 20);
+            Rectangle bckgnd = new Rectangle(350, 20);
             bckgnd.setFill(Color.DARKGRAY);
             bckgnd.setStroke(Color.BLACK);
             Text labelText = new Text("No Outputs");
@@ -125,7 +125,7 @@ public class ComponentCell extends RectangleCell {
         node.setTop(inputPane);
         node.setCenter(componentPane);
         node.setBottom(outputPane);
-        node.setPrefWidth(250);
+        node.setPrefWidth(350);
 
 //        CellGestures.makeResizable(node);
 

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.WelcomeAndConfigSelectionController">
+    <children>
+        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" spacing="10.0">
+                    <children>
+                        <Label>🔍</Label>
+                        <TextField fx:id="searchFilter" promptText="Search Pipelines" HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false" text="New Pipeline" />
+                        <Button mnemonicParsing="false" onAction="#onOpenSelectedPipeline" text="Open Selected Pipeline" />
+                        <Button disable="true" mnemonicParsing="false" text="Browse Pipeline Templates" />
+                    </children>
+                    <padding>
+                        <Insets left="10.0" right="10.0" />
+                    </padding>
+                </HBox>
+                <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+                    <ListView fx:id="activeConfigList" />
+                </ScrollPane>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

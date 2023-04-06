@@ -110,6 +110,6 @@ public class EditablePipeline {
         List<PipelineComponentDeclaration> components = pipelineComponents.stream().map(PipelineConfigUtils::fromJSONConfig).collect(Collectors.toList());
 
         // And now construct pipeline with pre-constructed elements
-        return EditablePipeline.create(config.getId()).withDescription(config.getDecription()).withComponents(components);
+        return EditablePipeline.create(config.getId()).withDescription(config.getDescription()).withComponents(components);
     }
 }

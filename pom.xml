@@ -9,8 +9,19 @@
     <version>1.0-SNAPSHOT</version>
     <name>BackboneConfigurator</name>
 
+    <repositories>
+        <repository>
+            <id>backbone-maven</id>
+            <name>OHNLP Backbone Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/OHNLP/Backbone</url>
+        </repository>
+    </repositories>
+
     <properties>
         <spring.version>5.3.25</spring.version>
+        <backbone.version>3.0.2</backbone.version>
+        <beam.version>2.41.0</beam.version>
+        <javafx.version>17.0.2</javafx.version>
     </properties>
 
     <dependencies>
@@ -18,7 +29,7 @@
         <dependency>
             <groupId>org.ohnlp.backbone</groupId>
             <artifactId>api</artifactId>
-            <version>3.0.1</version>
+            <version>${backbone.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -28,7 +39,7 @@
         <dependency>
             <groupId>org.apache.beam</groupId>
             <artifactId>beam-sdks-java-core</artifactId>
-            <version>2.41.0</version>
+            <version>${beam.version}</version>
         </dependency>
         <!-- Spring, used for classpath/module resolution -->
         <dependency>
@@ -40,17 +51,17 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>17.0.2</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>17.0.2</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-web</artifactId>
-            <version>17.0.2</version>
+            <version>${javafx.version}</version>
         </dependency>
         <!-- GraphViz -->
         <dependency>
