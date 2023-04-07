@@ -66,12 +66,22 @@ public class ComponentCell extends RectangleCell {
         } else {
             color = Color.DODGERBLUE;
         }
+        // Calculate main components first so we know what to use for width
+        Text componentLabel = new Text(this.id + "\r\n" + this.name);
+        componentLabel.setTextAlignment(TextAlignment.CENTER);
+//        double mainTextWidth = componentLabel.getLayoutBounds().getWidth() + 50;
+        double mainTextWidth = 350; // TODO dynamically calculate based on max of children text nodes/label sums
+        final Rectangle componentBackground = new Rectangle(mainTextWidth, 40);
+        componentBackground.setStroke(Color.BLACK);
+        componentBackground.setFill(color);
+        StackPane layeredComponentPane = new StackPane(componentBackground, componentLabel);
+        Pane componentPane = new Pane(layeredComponentPane);
+        componentPane.setPrefSize(mainTextWidth, 40);
         if (!this.inputs.isEmpty()) {
             int cnt = this.inputs.size();
-            int width = (int) Math.round(Math.floor(350f/cnt));
             for (int i = 0; i < this.inputs.size(); i++) {
                 String label = this.inputs.get(i);
-                Rectangle bckgnd = new Rectangle(i == this.inputs.size() - 1 ? (350 - width * i) : width, 20);
+                Rectangle bckgnd = new Rectangle(i == this.inputs.size() - 1 ? (mainTextWidth - Math.floor(mainTextWidth/cnt) * i) : Math.floor(mainTextWidth/cnt), 20);
                 bckgnd.setFill(Color.LIGHTYELLOW);
                 bckgnd.setStroke(Color.BLACK);
                 Text labelText = new Text(label);
@@ -80,7 +90,7 @@ public class ComponentCell extends RectangleCell {
                 inputPane.getChildren().add(labelPane);
             }
         } else {
-            Rectangle bckgnd = new Rectangle(350, 20);
+            Rectangle bckgnd = new Rectangle(mainTextWidth, 20);
             bckgnd.setFill(Color.DARKGRAY);
             bckgnd.setStroke(Color.BLACK);
             Text labelText = new Text("No Inputs");
@@ -88,21 +98,12 @@ public class ComponentCell extends RectangleCell {
             StackPane labelPane = new StackPane(bckgnd, labelText);
             inputPane.getChildren().add(labelPane);
         }
-        final Rectangle componentBackground = new Rectangle(350, 40);
-        componentBackground.setStroke(Color.BLACK);
-        componentBackground.setFill(color);
-        Text componentLabel = new Text(this.id + "\r\n" + this.name);
-        componentLabel.setTextAlignment(TextAlignment.CENTER);
-        StackPane layeredComponentPane = new StackPane(componentBackground, componentLabel);
-        Pane componentPane = new Pane(layeredComponentPane);
-        componentPane.setPrefSize(350, 40);
 
         if (!this.outputs.isEmpty()) {
             int cnt = this.outputs.size();
-            int width = (int) Math.round(Math.floor(350f/cnt));
             for (int i = 0; i < this.outputs.size(); i++) {
                 String label = this.outputs.get(i);
-                Rectangle bckgnd = new Rectangle(i == this.outputs.size() - 1 ? (350 - width * i) : width, 20);
+                Rectangle bckgnd = new Rectangle(i == this.outputs.size() - 1 ? (mainTextWidth - Math.floor(mainTextWidth/cnt) * i) : Math.floor(mainTextWidth/cnt), 20);
                 bckgnd.setFill(Color.LIGHTYELLOW);
                 bckgnd.setStroke(Color.BLACK);
                 Text labelText = new Text(label);
@@ -111,7 +112,7 @@ public class ComponentCell extends RectangleCell {
                 outputPane.getChildren().add(labelPane);
             }
         } else {
-            Rectangle bckgnd = new Rectangle(350, 20);
+            Rectangle bckgnd = new Rectangle(mainTextWidth, 20);
             bckgnd.setFill(Color.DARKGRAY);
             bckgnd.setStroke(Color.BLACK);
             Text labelText = new Text("No Outputs");
@@ -125,7 +126,7 @@ public class ComponentCell extends RectangleCell {
         node.setTop(inputPane);
         node.setCenter(componentPane);
         node.setBottom(outputPane);
-        node.setPrefWidth(350);
+        node.setPrefWidth(mainTextWidth);
 
 //        CellGestures.makeResizable(node);
 

@@ -47,16 +47,16 @@ public class DirectedEdgeFromToLabel extends Edge {
             this.getLine().endYProperty().bind(src.getYAnchor(graph, edge).add(40));
             // Now recalculate source/target x
             if (src.getOutputs().size() > 1 && !srcLabel.equalsIgnoreCase("*")) {
-                double width = 250./src.getOutputs().size();
+                double width = 350./src.getOutputs().size();
                 int idx = src.getOutputs().indexOf(srcLabel);
                 tgt.setSrcOutputIndex(idx);
-                this.getLine().endXProperty().bind(src.getXAnchor(graph, edge).subtract(125).subtract(width/2.).add(width * (idx + 1)));
+                this.getLine().endXProperty().bind(src.getXAnchor(graph, edge).subtract(175).subtract(width/2.).add(width * (idx + 1)));
             }
             if (tgt.getInputs().size() > 1 && !tgtLabel.equalsIgnoreCase("*")) {
-                double width = 250./tgt.getInputs().size();
+                double width = 350./tgt.getInputs().size();
                 int idx = tgt.getInputs().indexOf(tgtLabel);
                 tgt.setInputIdx(idx);
-                this.getLine().startXProperty().bind(tgt.getXAnchor(graph, edge).subtract(125).subtract(width/2.).add(width * (idx + 1)));
+                this.getLine().startXProperty().bind(tgt.getXAnchor(graph, edge).subtract(175).subtract(width/2.).add(width * (idx + 1)));
             }
             // Draw arrow for directionality
             DoubleProperty startX = getLine().startXProperty();
