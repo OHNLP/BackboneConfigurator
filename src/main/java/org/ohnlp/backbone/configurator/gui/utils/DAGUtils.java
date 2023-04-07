@@ -1,12 +1,7 @@
 package org.ohnlp.backbone.configurator.gui.utils;
 
-import com.fxgraph.edges.CorneredEdge;
-import com.fxgraph.edges.DoubleCorneredEdge;
-import com.fxgraph.edges.Edge;
 import com.fxgraph.graph.Graph;
-import com.fxgraph.graph.ICell;
 import com.fxgraph.graph.Model;
-import javafx.geometry.Orientation;
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.components.HasOutputs;
@@ -25,6 +20,7 @@ public class DAGUtils {
     public static Graph generateGraphForPipeline(EditablePipeline pipeline) {
         List<List<PipelineComponentDeclaration>> pipelineComponents = pipeline.getPipelineAsSteps();
         Graph outputGraph = new Graph();
+        outputGraph.getUseNodeGestures().setValue(false);
         Model model = outputGraph.getModel();
         Map<String, PipelineComponentDeclaration> componentsByID = new HashMap<>();
         Map<String, ComponentCell> cellsByID = new HashMap<>();
@@ -52,9 +48,6 @@ public class DAGUtils {
                     String sourceID = src.getComponentID();
                     ComponentCell srcCell = cellsByID.get(sourceID);
                     if (srcCell != null) {
-//                        DoubleCorneredEdge edge = new DoubleCorneredEdge(tgtCell, srcCell, Orientation.VERTICAL);
-//                        model.addEdge(edge);
-//                        model.addEdge(tgtCell, srcCell);
                         model.addEdge(new DirectedEdgeFromToLabel(tgtCell, srcCell, src.getInputTag(), tag));
                     }
                 });

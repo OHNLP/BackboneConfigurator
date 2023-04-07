@@ -1,10 +1,313 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import org.kordamp.ikonli.javafx.*?>
 
+<AnchorPane fx:id="container" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController"
+            style="-fx-background-color: #2F2F2F">
+    <VBox>
+        <children>
+            <HBox styleClass="toolbar" fx:id="toolbar" >
+                <VBox styleClass="toolbar_block">
+                    <children>
+                        <HBox>
+                            <children>
+                                <Button>
+                                    <graphic>
+                                        <VBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <FontIcon iconColor="lightgray" iconLiteral="far-save" iconSize="32"
+                                                              textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <Text styleClass="toolbar_text" text="Save&#13;Config"
+                                                          textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                                <Button>
+                                    <graphic>
+                                        <VBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <FontIcon iconColor="lightgray" iconLiteral="fa-refresh"
+                                                              iconSize="32" textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <Text styleClass="toolbar_text" text="Reload&#13;Config"
+                                                          textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Pane HBox.hgrow="ALWAYS"/>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController">
-   <children>
-      <Pane fx:id="pipelineDisplay" layoutX="200.0" layoutY="113.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-   </children>
+                                <Text styleClass="toolbar_text" textAlignment="CENTER">
+                                    Save
+                                </Text>
+                                <Pane HBox.hgrow="ALWAYS"/>
+
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox styleClass="toolbar_block">
+                    <HBox>
+                        <Button>
+                            <graphic>
+                                <VBox>
+                                    <HBox>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <FontIcon iconColor="lightgray" iconLiteral="fas-cogs" iconSize="32"/>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                    </HBox>
+                                    <HBox>
+                                        <children>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                            <Text styleClass="toolbar_text" text="Add&#13;Step" textAlignment="CENTER"/>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                        </children>
+                                    </HBox>
+                                </VBox>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="removeStepButton">
+                            <graphic>
+                                <VBox>
+                                    <HBox>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <FontIcon iconColor="lightgray" iconLiteral="far-times-circle" iconSize="32"/>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                    </HBox>
+                                    <HBox>
+                                        <children>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                            <Text styleClass="toolbar_text" text="Remove&#13;Step"
+                                                  textAlignment="CENTER"/>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                        </children>
+                                    </HBox>
+                                </VBox>
+                            </graphic>
+                        </Button>
+                        <Button fx:id="editStepButton">
+                            <graphic>
+                                <VBox>
+                                    <HBox>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <FontIcon iconColor="lightgray" iconLiteral="far-edit" iconSize="32"/>
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                    </HBox>
+                                    <HBox>
+                                        <children>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                            <Text styleClass="toolbar_text" text="Edit&#13;Step"
+                                                  textAlignment="CENTER"/>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                        </children>
+                                    </HBox>
+                                </VBox>
+                            </graphic>
+                        </Button>
+                    </HBox>
+                    <HBox>
+                        <children>
+                            <Pane HBox.hgrow="ALWAYS"/>
+
+                            <Text styleClass="toolbar_text" textAlignment="CENTER">
+                                Pipeline Steps
+                            </Text>
+                            <Pane HBox.hgrow="ALWAYS"/>
+                        </children>
+                    </HBox>
+                </VBox>
+                <VBox styleClass="toolbar_block">
+                    <children>
+                        <HBox>
+                            <children>
+                                <Button>
+                                    <graphic>
+                                        <VBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <FontIcon iconColor="lightgray" iconLiteral="fas-check-double" iconSize="32"
+                                                              textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <Text styleClass="toolbar_text" text="Validate&#13;Pipeline"
+                                                          textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                                <Button>
+                                    <graphic>
+                                        <VBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <FontIcon iconColor="lightgray" iconLiteral="fas-hammer"
+                                                              iconSize="32" textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <Text styleClass="toolbar_text" text="Build&#13;Executable"
+                                                          textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Pane HBox.hgrow="ALWAYS"/>
+
+                                <Text styleClass="toolbar_text" textAlignment="CENTER">
+                                    Pipeline Deployment
+                                </Text>
+                                <Pane HBox.hgrow="ALWAYS"/>
+
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <Pane HBox.hgrow="ALWAYS"/>
+                <VBox styleClass="toolbar_block_right">
+                    <children>
+                        <HBox>
+                            <children>
+                                <Button>
+                                    <graphic>
+                                        <VBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <FontIcon iconColor="lightgray" iconLiteral="fas-sitemap" iconSize="32"
+                                                              textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <Text styleClass="toolbar_text" text="Module&#13;Selection"
+                                                          textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                                <Button>
+                                    <graphic>
+                                        <VBox>
+                                            <HBox>
+                                                <Pane HBox.hgrow="ALWAYS"/>
+                                                <FontIcon iconColor="lightgray" iconLiteral="fas-cubes" iconSize="32"/>
+                                                <Pane HBox.hgrow="ALWAYS"/>
+                                            </HBox>
+                                            <HBox>
+                                                <children>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                    <Text styleClass="toolbar_text" text="OHNLPTK&#13;Commons"
+                                                          textAlignment="CENTER"/>
+                                                    <Pane HBox.hgrow="ALWAYS"/>
+                                                </children>
+                                            </HBox>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </HBox>
+                        <HBox>
+                            <children>
+                                <Pane HBox.hgrow="ALWAYS"/>
+
+                                <Text styleClass="toolbar_text" textAlignment="CENTER">
+                                    Module Management
+                                </Text>
+                                <Pane HBox.hgrow="ALWAYS"/>
+
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox styleClass="toolbar_block_right">
+                    <HBox>
+                        <Button>
+                            <graphic>
+                                <VBox>
+                                    <HBox>
+                                        <children>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                            <FontIcon iconColor="lightgray" iconLiteral="fas-window-close"
+                                                      iconSize="32"/>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                        </children>
+                                    </HBox>
+                                    <HBox>
+                                        <children>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                            <Text styleClass="toolbar_text" text="Close&#13;"
+                                                  textAlignment="CENTER"/>
+                                            <Pane HBox.hgrow="ALWAYS"/>
+                                        </children>
+                                    </HBox>
+                                </VBox>
+                            </graphic>
+                        </Button>
+                    </HBox>
+                    <HBox>
+                        <children>
+                            <Pane HBox.hgrow="ALWAYS"/>
+
+                            <Text styleClass="toolbar_text" textAlignment="CENTER">
+                                Close
+                            </Text>
+                            <Pane HBox.hgrow="ALWAYS"/>
+
+                        </children>
+                    </HBox>
+                </VBox>
+            </HBox>
+            <Pane fx:id="pipelineDisplay" VBox.vgrow="ALWAYS"/>
+        </children>
+    </VBox>
 </AnchorPane>

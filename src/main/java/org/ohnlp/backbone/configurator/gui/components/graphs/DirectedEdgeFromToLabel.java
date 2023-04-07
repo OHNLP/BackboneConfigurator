@@ -6,6 +6,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 public class DirectedEdgeFromToLabel extends Edge {
@@ -87,6 +88,10 @@ public class DirectedEdgeFromToLabel extends Edge {
             arrow2.endYProperty().bind(startY.add(arrowLength.multiply(
                     Bindings.createDoubleBinding(() -> Math.sin(lineAngle.add(arrowAngle).get()), lineAngle, arrowAngle))));
             this.getGroup().getChildren().addAll(arrow1, arrow2);
+            // And now reset colors
+            getLine().setStroke(Color.LIGHTGRAY);
+            arrow1.setStroke(Color.LIGHTGRAY);
+            arrow2.setStroke(Color.LIGHTGRAY);
         }
     }
 }

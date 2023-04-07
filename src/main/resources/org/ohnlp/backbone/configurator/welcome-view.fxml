@@ -12,7 +12,7 @@
                     <children>
                         <Label>🔍</Label>
                         <TextField fx:id="searchFilter" promptText="Search Pipelines" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" text="New Pipeline" />
+                        <Button mnemonicParsing="false" onAction="#createNewPipeline" text="New Pipeline" />
                         <Button mnemonicParsing="false" onAction="#onOpenSelectedPipeline" text="Open Selected Pipeline" />
                         <Button disable="true" mnemonicParsing="false" text="Browse Pipeline Templates" />
                     </children>

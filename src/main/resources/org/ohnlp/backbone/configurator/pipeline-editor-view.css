@@ -1,0 +1,28 @@
+.toolbar {
+    -fx-background-color: #373d3f;
+}
+.toolbar_block {
+    -fx-padding: 5 5 5 5;
+    -fx-border-style: hidden solid hidden hidden;
+    -fx-border-color: lightgray;
+}
+.toolbar_block_right {
+    -fx-padding: 5 5 5 5;
+    -fx-border-style: hidden hidden hidden solid;
+    -fx-border-color: lightgray;
+}
+.button {
+    -fx-background-color: #373d3f;
+}
+.toolbar_text {
+    -fx-fill: lightgray;
+}
+.toolbar_text:disabled {
+    -fx-fill: darkgray;
+}
+.button:hover {
+    -fx-background-color: #575d60;
+}
+.button:pressed {
+    -fx-background-color: #979c9d;
+}
