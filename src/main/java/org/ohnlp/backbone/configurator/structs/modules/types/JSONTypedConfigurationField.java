@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
+import java.util.List;
+
 public class JSONTypedConfigurationField extends TypedConfigurationField {
     private boolean object;
     private boolean array;
@@ -34,7 +36,7 @@ public class JSONTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render() { // TODO
+    public Node render(List<InputColumn> availableColumns) { // TODO
         TextField ret = new TextField(observableEditedValue.asString().get());
         ret.textProperty().addListener((obs, ov, nv) -> {
             this.updateValue(nv);

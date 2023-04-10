@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render() {
+    public Node render(List<InputColumn> availableColumns) {
         VBox ret = new VBox();
         Button addButton = new Button("Add new Entry");
         addButton.setOnMouseClicked((e) -> {
@@ -82,7 +83,13 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
         if (this.getCurrValue() != null) {
             List<TypedConfigurationField> children = (List<TypedConfigurationField>) this.getCurrValue();
             children.forEach((child) -> {
-                ret.getChildren().add(child.render());
+                HBox toAdd = new HBox();
+                Node childRender = child.render(availableColumns);
+                Button removeChild = new Button("-");
+                // TODO add listener func
+                toAdd.getChildren().addAll(childRender, removeChild);
+                HBox.setHgrow(childRender, Priority.ALWAYS);
+                ret.getChildren().add(toAdd);
             });
             ret.getChildren().add(addButton);
         }
@@ -90,7 +97,13 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
             List<TypedConfigurationField> val = (List<TypedConfigurationField>) newValue;
             ret.getChildren().clear();
             val.forEach(field -> {
-                ret.getChildren().add(field.render());
+                HBox toAdd = new HBox();
+                Node childRender = field.render(availableColumns);
+                Button removeChild = new Button("-");
+                // TODO add listener func
+                toAdd.getChildren().addAll(childRender, removeChild);
+                HBox.setHgrow(childRender, Priority.ALWAYS);
+                ret.getChildren().add(toAdd);
             });
             ret.getChildren().add(addButton);
         });

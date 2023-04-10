@@ -3,12 +3,16 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class InputColumnTypedConfigurationField extends TypedConfigurationField {
     public InputColumnTypedConfigurationField() {
@@ -37,9 +41,19 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
     }
 
     @Override
-    public Node render() { // TODO
-        TextField ret = new TextField(observableEditedValue.asString().get());
-        ret.textProperty().addListener((obs, ov, nv) -> {
+    public Node render(List<InputColumn> availableColumns) { // TODO split sourceTag and columnname into two combo boxes
+        ComboBox<String> ret = new ComboBox<>();
+        ret.setEditable(true);
+        List<String> cols = availableColumns.stream().map(s -> s.sourceTag + "." + s.columnName).collect(Collectors.toList());
+        ObservableList<String> items = FXCollections.observableArrayList(cols);
+        ret.setItems(items);
+        if (this.observableEditedValue.get() != null) {
+            int idx = new ArrayList<>(cols).indexOf(this.observableEditedValue.get().toString());
+            ret.getSelectionModel().select(idx);
+            ret.setValue(this.observableEditedValue.get().toString());
+        }
+        ret.valueProperty().addListener((obs, ov, nv) -> {
+            ret.setValue(nv);
             this.updateValue(nv);
         });
         return ret;

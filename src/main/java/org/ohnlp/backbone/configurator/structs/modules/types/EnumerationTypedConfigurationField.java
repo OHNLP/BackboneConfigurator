@@ -43,7 +43,7 @@ public class EnumerationTypedConfigurationField extends TypedConfigurationField 
     }
 
     @Override
-    public Node render() {
+    public Node render(List<InputColumn> availableColumns) {
         ComboBox<String> ret = new ComboBox<>();
         ObservableList<String> items = FXCollections.observableArrayList(constants);
         ret.setItems(items);

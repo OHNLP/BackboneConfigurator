@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
+import java.util.List;
+
 public class NumericTypedConfigurationField extends TypedConfigurationField {
     private boolean floating;
     private Number minValue;
@@ -47,7 +49,7 @@ public class NumericTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render() {
+    public Node render(List<InputColumn> availableColumns) {
         TextField ret = new TextField(observableEditedValue.asString().get());
         ret.textProperty().addListener((obs, ov, nv) -> {
             this.updateValue(nv);

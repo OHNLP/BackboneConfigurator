@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
 
+import java.util.List;
+
 public abstract class TypedConfigurationField implements Cloneable {
 
     private Object currValue;
@@ -54,5 +56,15 @@ public abstract class TypedConfigurationField implements Cloneable {
 
     public abstract void cloneFields(TypedConfigurationField target);
 
-    public abstract Node render();
+    public abstract Node render(List<InputColumn> availableColumns);
+
+    public static class InputColumn {
+        String sourceTag;
+        String columnName;
+
+        public InputColumn(String sourceTag, String columnName) {
+            this.sourceTag = sourceTag;
+            this.columnName = columnName;
+        }
+    }
 }

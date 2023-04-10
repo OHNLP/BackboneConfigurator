@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MapTypedConfigurationField extends TypedConfigurationField {
@@ -63,7 +64,7 @@ public class MapTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render() { // TODO
+    public Node render(List<InputColumn> availableColumns) { // TODO
         TextField ret = new TextField();
         ret.textProperty().bind(observableEditedValue.asString());
         return ret;

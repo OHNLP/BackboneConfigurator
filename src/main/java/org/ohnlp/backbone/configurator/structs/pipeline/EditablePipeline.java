@@ -1,12 +1,11 @@
 package org.ohnlp.backbone.configurator.structs.pipeline;
 
-import org.apache.beam.sdk.Pipeline;
+import javafx.scene.control.ComboBox;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.config.BackboneConfiguration;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -16,6 +15,7 @@ public class EditablePipeline {
     private String description;
 
     private List<PipelineComponentDeclaration> components = new ArrayList<>();
+    private Map<String, PipelineComponentDeclaration> componentsByID = new HashMap<>();
     private EditablePipeline(String id) {this.id = id;}
 
     public EditablePipeline withID(String id) {
@@ -30,17 +30,23 @@ public class EditablePipeline {
 
     public EditablePipeline withComponents(List<PipelineComponentDeclaration> components) {
         this.components = components;
+        this.componentsByID = new HashMap<>();
+        this.components.forEach(d -> {
+            this.componentsByID.put(d.getComponentID(), d);
+        });
         return this;
     }
 
     public EditablePipeline addComponent(PipelineComponentDeclaration component) {
         this.components.add(component);
+        this.componentsByID.put(component.getComponentID(), component);
         // TODO  need to validate input defs for new inputs
         return this;
     }
 
     public EditablePipeline removeComponent(PipelineComponentDeclaration component) {
         this.components.remove(component);
+        this.componentsByID.remove(component.getComponentID());
         // TODO impl a more efficient approach for this (e.g. by indexing input IDs beforehand on insert)
         this.components.forEach(c -> {
             if (c.getInputs() != null) {
@@ -52,6 +58,19 @@ public class EditablePipeline {
             }
         });
         return this;
+    }
+
+    public Set<String> getAvailableInputs(PipelineComponentDeclaration componentDec) {
+        Set<String> ret = new HashSet<>(componentsByID.keySet());
+        ret.remove(componentDec.getComponentID());
+        if (componentsByID.containsKey(componentDec.getComponentID())) {
+            // TODO traverse graph down
+        }
+        return ret;
+    }
+
+    public PipelineComponentDeclaration getComponentByID(String inputComponentID) {
+        return componentsByID.get(inputComponentID);
     }
 
     public List<List<PipelineComponentDeclaration>> getPipelineAsSteps() {

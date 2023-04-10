@@ -14,7 +14,7 @@
                         <VBox fx:id="configList">
                         </VBox>
                         <HBox>
-                            <Button>Reset</Button>
+                            <Button onAction="#onReset">Reset</Button>
                             <Pane HBox.hgrow="ALWAYS"/>
                             <Button>Apply</Button>
                             <Button>Close</Button>

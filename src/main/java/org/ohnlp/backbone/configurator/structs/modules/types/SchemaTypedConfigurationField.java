@@ -6,6 +6,8 @@ import javafx.scene.control.TextField;
 import org.apache.beam.sdk.schemas.Schema;
 import org.ohnlp.backbone.api.util.SchemaConfigUtils;
 
+import java.util.List;
+
 public class SchemaTypedConfigurationField extends TypedConfigurationField {
     @Override
     public void injectValueFromJSON(JsonNode json) {
@@ -32,7 +34,7 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render() { // TODO
+    public Node render(List<InputColumn> availableColumns) { // TODO
         TextField ret = new TextField();
         ret.textProperty().bind(observableEditedValue.asString());
         return ret;

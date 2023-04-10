@@ -10,6 +10,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 
+import java.util.List;
+
 public class BooleanTypedConfigurationField extends TypedConfigurationField {
     @Override
     public void injectValueFromJSON(JsonNode json) {
@@ -34,7 +36,7 @@ public class BooleanTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render() {
+    public Node render(List<InputColumn> availableColumns) {
         HBox ret = new HBox();
         final ToggleGroup g = new ToggleGroup();
         boolean selected = observableEditedValue.isEqualTo(true).get();
