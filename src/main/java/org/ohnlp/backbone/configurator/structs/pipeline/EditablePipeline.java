@@ -35,11 +35,22 @@ public class EditablePipeline {
 
     public EditablePipeline addComponent(PipelineComponentDeclaration component) {
         this.components.add(component);
+        // TODO  need to validate input defs for new inputs
         return this;
     }
 
     public EditablePipeline removeComponent(PipelineComponentDeclaration component) {
         this.components.remove(component);
+        // TODO impl a more efficient approach for this (e.g. by indexing input IDs beforehand on insert)
+        this.components.forEach(c -> {
+            if (c.getInputs() != null) {
+                new HashMap<>(c.getInputs()).forEach((tag, input) -> {
+                    if (input.getComponentID().equals(component.getComponentID())) {
+                        c.getInputs().remove(tag);
+                    }
+                });
+            }
+        });
         return this;
     }
 
@@ -53,6 +64,7 @@ public class EditablePipeline {
             if (toSchedule.size() == currSize) {
                 throw new IllegalArgumentException("Cyclic Dependency in config, " + toSchedule.stream().map(PipelineComponentDeclaration::getComponentID).collect(Collectors.joining(",")));
             }
+            currSize = toSchedule.size();
             ArrayList<PipelineComponentDeclaration> componentsNextIteration = new ArrayList<>();
             for (PipelineComponentDeclaration pc : toSchedule) {
                 if (pc.getInputs() != null) {

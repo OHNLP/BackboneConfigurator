@@ -1,6 +1,8 @@
 package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import javafx.scene.Node;
+import javafx.scene.control.TextField;
 
 public class JSONTypedConfigurationField extends TypedConfigurationField {
     private boolean object;
@@ -29,5 +31,14 @@ public class JSONTypedConfigurationField extends TypedConfigurationField {
     public void cloneFields(TypedConfigurationField target) {
         ((JSONTypedConfigurationField) target).object = object;
         ((JSONTypedConfigurationField) target).array = array;
+    }
+
+    @Override
+    public Node render() { // TODO
+        TextField ret = new TextField(observableEditedValue.asString().get());
+        ret.textProperty().addListener((obs, ov, nv) -> {
+            this.updateValue(nv);
+        });
+        return ret;
     }
 }

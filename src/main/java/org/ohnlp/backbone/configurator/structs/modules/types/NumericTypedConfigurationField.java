@@ -3,6 +3,8 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import javafx.scene.Node;
+import javafx.scene.control.TextField;
 
 public class NumericTypedConfigurationField extends TypedConfigurationField {
     private boolean floating;
@@ -42,5 +44,14 @@ public class NumericTypedConfigurationField extends TypedConfigurationField {
         ((NumericTypedConfigurationField)target).floating = floating;
         ((NumericTypedConfigurationField)target).minValue = minValue;
         ((NumericTypedConfigurationField)target).maxValue = maxValue;
+    }
+
+    @Override
+    public Node render() {
+        TextField ret = new TextField(observableEditedValue.asString().get());
+        ret.textProperty().addListener((obs, ov, nv) -> {
+            this.updateValue(nv);
+        });
+        return ret;
     }
 }

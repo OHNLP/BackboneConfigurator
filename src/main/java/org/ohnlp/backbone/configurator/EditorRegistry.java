@@ -41,4 +41,10 @@ public class EditorRegistry {
     public static SimpleObjectProperty<PipelineComponentDeclaration> getCurrentEditedComponent() {
         return INSTANCE.currentEditedComponent;
     }
+
+    public static void reset() {
+        INSTANCE.configMeta.setValue(null);
+        INSTANCE.pipeline.setValue(null);
+        INSTANCE.currentEditedComponent.setValue(null);
+    }
 }

@@ -3,6 +3,8 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import javafx.scene.Node;
+import javafx.scene.control.TextField;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,5 +60,12 @@ public class MapTypedConfigurationField extends TypedConfigurationField {
     public void cloneFields(TypedConfigurationField target) {
         ((MapTypedConfigurationField)target).key = key.clone();
         ((MapTypedConfigurationField)target).value = value.clone();
+    }
+
+    @Override
+    public Node render() { // TODO
+        TextField ret = new TextField();
+        ret.textProperty().bind(observableEditedValue.asString());
+        return ret;
     }
 }

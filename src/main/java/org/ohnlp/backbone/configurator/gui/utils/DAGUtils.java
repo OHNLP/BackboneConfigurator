@@ -34,7 +34,8 @@ public class DAGUtils {
                         component.getComponentDef().getDesc(),
                         componentInstance instanceof HasInputs ? ((HasInputs)componentInstance).getInputTags() : Collections.emptyList(),
                         componentInstance instanceof HasOutputs ? ((HasOutputs)componentInstance).getOutputTags() : Collections.emptyList(),
-                        componentInstance);
+                        componentInstance,
+                        component);
                 componentsByID.put(component.getComponentID(), component);
                 cellsByID.put(component.getComponentID(), cell);
                 model.addCell(cell);

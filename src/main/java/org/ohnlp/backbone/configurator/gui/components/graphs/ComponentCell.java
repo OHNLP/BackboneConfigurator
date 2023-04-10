@@ -2,7 +2,13 @@ package org.ohnlp.backbone.configurator.gui.components.graphs;
 
 import com.fxgraph.cells.RectangleCell;
 import com.fxgraph.graph.Graph;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ObservableBooleanValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -13,6 +19,9 @@ import org.ohnlp.backbone.api.components.ExtractComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.components.HasOutputs;
 import org.ohnlp.backbone.api.components.LoadComponent;
+import org.ohnlp.backbone.configurator.EditorRegistry;
+import org.ohnlp.backbone.configurator.ModuleRegistry;
+import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
 import java.util.List;
 
@@ -24,13 +33,15 @@ public class ComponentCell extends RectangleCell {
     private final List<String> outputs;
     private int srcOutputIndex = -1;
     private int inputIdx = -1;
+    private PipelineComponentDeclaration pipelineDec;
 
-    public ComponentCell(String id, String name, String desc, List<String> inputs, List<String> outputs, BackbonePipelineComponent instance) {
+    public ComponentCell(String id, String name, String desc, List<String> inputs, List<String> outputs, BackbonePipelineComponent instance, PipelineComponentDeclaration pipelineDec) {
         this.id = id;
         this.name = name;
         this.instance = instance;
         this.inputs = inputs;
         this.outputs = outputs;
+        this.pipelineDec = pipelineDec;
     }
 
     public boolean hasInput() {
@@ -51,7 +62,7 @@ public class ComponentCell extends RectangleCell {
 
     @Override
     public Region getGraphic(Graph graph) {
-        BorderPane node = new BorderPane();
+        ComponentCellPane node = new ComponentCellPane();
         FlowPane inputPane  = new FlowPane(Orientation.HORIZONTAL);
         inputPane.setHgap(-1);
         inputPane.setPrefHeight(20);
@@ -128,9 +139,28 @@ public class ComponentCell extends RectangleCell {
         node.setBottom(outputPane);
         node.setPrefWidth(mainTextWidth);
 
+        // Add a click listener to trigger selected
+        node.onMousePressedProperty().setValue(e -> {
+            if (e.getButton().equals(MouseButton.PRIMARY)) {
+                EditorRegistry.getCurrentEditedComponent().setValue(this.pipelineDec);
+                if (e.getClickCount() > 1) {
+                    // TODO open editor dialog
+                }
+            }
+        });
+        BooleanBinding selected = EditorRegistry.getCurrentEditedComponent().isEqualTo(this.pipelineDec);
+        node.styleProperty().bind(Bindings.createStringBinding(() -> {
+            if (selected.get()) {
+                return "-fx-border-color: #3D84B9FF; -fx-border-width: 5px; ";
+            } else {
+                return "";
+            }
+        }, selected));
+
+
 //        CellGestures.makeResizable(node);
 
-        return new Pane(node);
+        return node;
     }
 
 
@@ -148,5 +178,14 @@ public class ComponentCell extends RectangleCell {
 
     public int getInputIdx() {
         return inputIdx;
+    }
+
+    public static class ComponentCellPane extends BorderPane {
+
+
+        public ComponentCellPane() {
+            super();
+            this.getStyleClass().add("component_cell_pane");
+        }
     }
 }

@@ -2,7 +2,14 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -33,5 +40,20 @@ public class EnumerationTypedConfigurationField extends TypedConfigurationField 
     @Override
     public void cloneFields(TypedConfigurationField target) {
         ((EnumerationTypedConfigurationField) target).constants = new LinkedHashSet<>(constants);
+    }
+
+    @Override
+    public Node render() {
+        ComboBox<String> ret = new ComboBox<>();
+        ObservableList<String> items = FXCollections.observableArrayList(constants);
+        ret.setItems(items);
+        if (this.observableEditedValue.get() != null) {
+            int idx = new ArrayList<>(constants).indexOf(this.observableEditedValue.get());
+            ret.getSelectionModel().select(idx);
+        }
+        ret.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
+            this.updateValue(nv);
+        });
+        return ret;
     }
 }

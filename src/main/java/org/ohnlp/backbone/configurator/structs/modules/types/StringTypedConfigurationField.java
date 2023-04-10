@@ -2,6 +2,8 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import javafx.scene.Node;
+import javafx.scene.control.TextField;
 
 public class StringTypedConfigurationField extends TypedConfigurationField {
     @Override
@@ -22,5 +24,14 @@ public class StringTypedConfigurationField extends TypedConfigurationField {
 
     @Override
     public void cloneFields(TypedConfigurationField target) {
+    }
+
+    @Override
+    public Node render() {
+        TextField ret = new TextField(observableEditedValue.asString().get());
+        ret.textProperty().addListener((obs, ov, nv) -> {
+            this.updateValue(nv);
+        });
+        return ret;
     }
 }

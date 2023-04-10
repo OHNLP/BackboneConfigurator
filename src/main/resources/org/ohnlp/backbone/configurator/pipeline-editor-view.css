@@ -26,3 +26,10 @@
 .button:pressed {
     -fx-background-color: #979c9d;
 }
+.component_cell_pane {
+    -fx-border-color: lightgray;
+}
+
+.ikonli-font-icon:disabled {
+    -fx-fill: darkgray;
+}

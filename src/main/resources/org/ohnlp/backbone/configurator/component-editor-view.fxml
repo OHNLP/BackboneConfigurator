@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="container" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.ohnlp.backbone.configurator.gui.controller.ComponentEditorController">
+    <children>
+        <HBox>
+            <children>
+                <VBox HBox.hgrow="ALWAYS">
+                    <children>
+                        <VBox fx:id="configList">
+                        </VBox>
+                        <HBox>
+                            <Button>Reset</Button>
+                            <Pane HBox.hgrow="ALWAYS"/>
+                            <Button>Apply</Button>
+                            <Button>Close</Button>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>

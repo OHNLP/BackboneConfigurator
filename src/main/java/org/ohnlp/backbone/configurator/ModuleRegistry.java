@@ -165,7 +165,13 @@ public class ModuleRegistry {
         ret.setRequired(config.required());
         JavaType javaType = this.objectMapper.constructType(f.getGenericType());
         if (config.isInputColumn()) {
-            ret.setImpl(new InputColumnTypedConfigurationField(javaType.isArrayType() || javaType.isCollectionLikeType()));
+            if (javaType.isArrayType() || javaType.isCollectionLikeType()) {
+                CollectionTypedConfigurationField t = new CollectionTypedConfigurationField();
+                t.setContents(new InputColumnTypedConfigurationField());
+                ret.setImpl(t);
+            } else {
+                ret.setImpl(new InputColumnTypedConfigurationField());
+            }
         } else {
             ret.setImpl(resolveTypedConfig(javaType));
         }

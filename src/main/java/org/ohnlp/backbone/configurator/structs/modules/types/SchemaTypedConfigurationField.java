@@ -1,6 +1,8 @@
 package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import javafx.scene.Node;
+import javafx.scene.control.TextField;
 import org.apache.beam.sdk.schemas.Schema;
 import org.ohnlp.backbone.api.util.SchemaConfigUtils;
 
@@ -27,5 +29,12 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
     @Override
     public void cloneFields(TypedConfigurationField target) {
 
+    }
+
+    @Override
+    public Node render() { // TODO
+        TextField ret = new TextField();
+        ret.textProperty().bind(observableEditedValue.asString());
+        return ret;
     }
 }

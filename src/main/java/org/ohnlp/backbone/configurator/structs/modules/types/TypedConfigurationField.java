@@ -3,13 +3,22 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Node;
 
 public abstract class TypedConfigurationField implements Cloneable {
 
     private Object currValue;
+    protected SimpleObjectProperty<Object> observableEditedValue = new SimpleObjectProperty<>();
+
 
     public void setCurrValue(Object currValue) {
         this.currValue = currValue;
+        this.observableEditedValue.set(currValue);
+    }
+
+    public void updateValue(Object value) {
+        this.observableEditedValue.setValue(value);
     }
 
     public Object getCurrValue() {
@@ -27,11 +36,23 @@ public abstract class TypedConfigurationField implements Cloneable {
             TypedConfigurationField clone = (TypedConfigurationField) super.clone();
             clone.currValue = om.readTree(om.writer().writeValueAsString(this.currValue));
             cloneFields(clone);
+            clone.observableEditedValue = new SimpleObjectProperty<>();
+            clone.observableEditedValue.setValue(om.readTree(om.writeValueAsString(this.observableEditedValue.getValue())));
             return clone;
         } catch (CloneNotSupportedException | JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
+    public void commit() {
+        this.currValue = this.observableEditedValue.getValue();
+    }
+
+    public void reset() {
+        this.observableEditedValue.set(this.currValue);
+    }
+
     public abstract void cloneFields(TypedConfigurationField target);
+
+    public abstract Node render();
 }
