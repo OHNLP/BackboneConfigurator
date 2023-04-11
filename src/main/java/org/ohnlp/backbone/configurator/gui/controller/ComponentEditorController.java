@@ -1,8 +1,8 @@
 package org.ohnlp.backbone.configurator.gui.controller;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,7 +30,7 @@ public class ComponentEditorController {
     @FXML
     public AnchorPane container;
 
-    private Map<String, StringProperty> boundInputs = new HashMap<>();
+    private Map<String, ObjectBinding<BackbonePipelineComponentConfiguration.InputDefinition>> boundInputs = new HashMap<>();
 
     @FXML
     public void initialize() {
@@ -58,11 +58,12 @@ public class ComponentEditorController {
         Set<String> possibleInputs = pipeline.getAvailableInputs(componentDec);
         BackbonePipelineComponent cmp = initComponent(componentDec);
         if (cmp instanceof HasInputs) {
-            boundInputs.clear();;
+            boundInputs.clear();
             TitledPane inputPrompt = new TitledPane();
             inputPrompt.setText("Input Steps");
             VBox out = new VBox();
             ((HasInputs) cmp).getInputTags().forEach(tag -> {
+                // Render input row and generate available output collections for this tag
                 HBox inputRow = new HBox();
                 Text label = new Text(tag + " From: ");
                 ComboBox<String> inputComponentID = new ComboBox<>();
@@ -82,6 +83,22 @@ public class ComponentEditorController {
 
                 }, inputComponentID.valueProperty()));
                 inputRow.getChildren().addAll(label, inputComponentID, inputComponentTag);
+                // Add bound property to keep track of values
+                ObjectBinding<BackbonePipelineComponentConfiguration.InputDefinition> def = Bindings.createObjectBinding(
+                        () -> {
+                            if (inputComponentID.valueProperty().isNotNull().and(inputComponentTag.valueProperty().isNotNull()).get()) {
+                                BackbonePipelineComponentConfiguration.InputDefinition d = new BackbonePipelineComponentConfiguration.InputDefinition();
+                                d.setComponentID(inputComponentID.getValue());
+                                d.setInputTag(inputComponentTag.getValue());
+                                return d;
+                            } else {
+                                return null;
+                            }
+                        }, inputComponentID.valueProperty(), inputComponentTag.valueProperty()
+                );
+                boundInputs.put(tag, def);
+
+                // Load Pre-existing values
                 String outputID = null;
                 String outputTag = null;
                 if (componentDec.getInputs().containsKey(tag)) {
@@ -100,6 +117,7 @@ public class ComponentEditorController {
                     inputComponentTag.getSelectionModel().select(inputComponentTag.getItems().indexOf(outputTag));
                 }
                 out.getChildren().add(inputRow);
+
             });
             inputPrompt.setContent(out);
             configList.getChildren().add(inputPrompt);
@@ -121,11 +139,24 @@ public class ComponentEditorController {
         EditorRegistry.getCurrentEditedComponent().get().getConfig().forEach(f -> {
             f.getImpl().commit();
         });
+        HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> inputs = convertBoundInputsToUnbound();
+        EditorRegistry.getCurrentEditedComponent().get().setInputs(inputs);
+    }
+
+    private HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> convertBoundInputsToUnbound() {
+        HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> ret = new HashMap<>();
+        boundInputs.forEach((tag, def) -> {
+            if (def.isNotNull().get()) {
+                ret.put(tag, def.getValue());
+            }
+        });
+        return ret;
     }
 
     @FXML
     public void onClose(ActionEvent actionEvent) {
         boolean promptSave = EditorRegistry.getCurrentEditedComponent().get().getConfig().stream().map(f -> f.getImpl().isDirty()).reduce((b1, b2) -> b1 || b2).orElse(false);
+        promptSave = promptSave || !convertBoundInputsToUnbound().equals(EditorRegistry.getCurrentEditedComponent().get().getInputs());
         if (promptSave) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Unsaved Changes");

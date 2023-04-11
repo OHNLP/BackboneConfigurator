@@ -1,10 +1,14 @@
 package org.ohnlp.backbone.configurator.structs.pipeline;
 
-import javafx.scene.control.ComboBox;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.config.BackboneConfiguration;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
+import org.ohnlp.backbone.configurator.ModuleRegistry;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -163,5 +167,27 @@ public class EditablePipeline {
 
         // And now construct pipeline with pre-constructed elements
         return EditablePipeline.create(config.getId()).withDescription(config.getDescription()).withComponents(components).setDirty(dirty);
+    }
+
+    public BackboneConfiguration commit() {
+        return save(null);
+    }
+
+    public BackboneConfiguration save(File out) {
+        BackboneConfiguration ret = new BackboneConfiguration();
+        ret.setId(this.id);
+        ret.setDescription(this.description);
+        ret.setPipeline(this.components.stream().map(PipelineComponentDeclaration::toBackboneConfigFormat).collect(Collectors.toList()));
+        if (out != null) {
+            try {
+                new ObjectMapper().setTypeFactory(TypeFactory.defaultInstance().withClassLoader(ModuleRegistry.getComponentClassLoader()))
+                        .writerWithDefaultPrettyPrinter()
+                        .writeValue(out, ret);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to Save Config", e);
+            }
+        }
+        this.dirty = false;
+        return ret;
     }
 }

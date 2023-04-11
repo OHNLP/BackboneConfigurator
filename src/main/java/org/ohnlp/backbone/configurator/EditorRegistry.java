@@ -3,6 +3,7 @@ package org.ohnlp.backbone.configurator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import org.ohnlp.backbone.api.config.BackboneConfiguration;
 import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
@@ -17,10 +18,13 @@ public class EditorRegistry {
     private SimpleObjectProperty<EditablePipeline> pipeline;
     private SimpleObjectProperty<PipelineComponentDeclaration> currentEditedComponent;
 
+    private SimpleBooleanProperty refreshGraph;
+
     public EditorRegistry() {
         this.configMeta = new SimpleObjectProperty<>();
         this.pipeline = new SimpleObjectProperty<>();
         this.currentEditedComponent = new SimpleObjectProperty<>();
+        this.refreshGraph = new SimpleBooleanProperty(false);
     }
 
     public static SimpleObjectProperty<ConfigManager.ConfigMeta> getConfigMetadata() {
@@ -40,6 +44,10 @@ public class EditorRegistry {
 
     public static SimpleObjectProperty<PipelineComponentDeclaration> getCurrentEditedComponent() {
         return INSTANCE.currentEditedComponent;
+    }
+
+    public SimpleBooleanProperty refreshGraphProperty() {
+        return refreshGraph;
     }
 
     public static void reset() {
