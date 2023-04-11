@@ -45,8 +45,7 @@ public class ComponentEditorController {
         edited.get().getConfig().forEach(f -> {
             TitledPane p = new TitledPane();
             p.setText(f.getDesc());
-            p.setContent(f.getImpl().render(Arrays.asList( // TODO how do we generate this?
-            )));
+            p.setContent(f.getImpl().render(new HashMap<>())); // TODO how do we generate this
             configList.getChildren().add(p);
         });
     }

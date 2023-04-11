@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import org.apache.beam.sdk.schemas.Schema;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MapTypedConfigurationField extends TypedConfigurationField {
@@ -64,7 +64,7 @@ public class MapTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render(List<InputColumn> availableColumns) { // TODO
+    public Node render(Map<String, Schema> schema) { // TODO
         TextField ret = new TextField();
         ret.textProperty().bind(observableEditedValue.asString());
         return ret;

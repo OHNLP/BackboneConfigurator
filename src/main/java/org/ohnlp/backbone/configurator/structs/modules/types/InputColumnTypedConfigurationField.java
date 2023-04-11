@@ -1,20 +1,24 @@
 package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
+import org.apache.beam.sdk.schemas.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class InputColumnTypedConfigurationField extends TypedConfigurationField {
+    private Map<String, Schema> schema;
+
     public InputColumnTypedConfigurationField() {
 
     }
@@ -30,7 +34,7 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
     @Override
     public JsonNode valueToJSON() {
         if (getCurrValue() != null) {
-                return JsonNodeFactory.instance.textNode(getCurrValue().toString());
+            return JsonNodeFactory.instance.textNode(getCurrValue().toString());
         } else {
             return null;
         }
@@ -41,22 +45,74 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
     }
 
     @Override
-    public Node render(List<InputColumn> availableColumns) { // TODO split sourceTag and columnname into two combo boxes
-        ComboBox<String> ret = new ComboBox<>();
-        ret.setEditable(true);
-        List<String> cols = availableColumns.stream().map(s -> s.sourceTag + "." + s.columnName).collect(Collectors.toList());
-        ObservableList<String> items = FXCollections.observableArrayList(cols);
-        ret.setItems(items);
+    public Node render(Map<String, Schema> schema) { // TODO split sourceTag and columnname into two combo boxes
+        HBox ret = new HBox();
+        this.schema = schema;
+        // Source Collection Schemas
+        ComboBox<String> sourceComponent = new ComboBox<>();
+        sourceComponent.setEditable(true);
+        ObservableList<String> items = FXCollections.observableArrayList(this.schema.keySet()).sorted();
+        sourceComponent.setItems(items);
+        // Fields for a given Source Schema
+        ComboBox<String> sourceFieldName = new ComboBox<>();
+        sourceFieldName.setEditable(true);
+        ObservableList<String> sourceFieldItems = FXCollections.observableArrayList();
+        sourceFieldName.setItems(sourceFieldItems);
+
+        // Actually populate the return HBox and set bound growth
+        ret.getChildren().addAll(new Text("Input Collection: "), sourceComponent, new Text("Input Field Name: "), sourceFieldName);
+        sourceComponent.setMaxWidth(Double.MAX_VALUE);
+        sourceFieldName.setMaxWidth(Double.MAX_VALUE);
+
+        // Populate model if existing
         if (this.observableEditedValue.get() != null) {
-            int idx = new ArrayList<>(cols).indexOf(this.observableEditedValue.get().toString());
-            ret.getSelectionModel().select(idx);
-            ret.setValue(this.observableEditedValue.get().toString());
+            String raw = this.observableEditedValue.get().toString();
+            int sepIdx = raw.indexOf(".");
+            String srcTag = "";
+            String fieldName = raw;
+            if (sepIdx != -1) {
+                srcTag = raw.substring(0, sepIdx);
+                fieldName = raw.substring(sepIdx + 1);
+            }
+            int srcTagIdx = sourceComponent.getItems().indexOf(srcTag);
+            sourceComponent.getSelectionModel().select(srcTagIdx);
+            sourceComponent.setValue(srcTag);
+            int srcFieldIdx = sourceFieldName.getItems().indexOf(fieldName);
+            sourceFieldName.getSelectionModel().select(srcFieldIdx);
+            sourceFieldName.setValue(fieldName);
         }
-        ret.valueProperty().addListener((obs, ov, nv) -> {
-            ret.setValue(nv);
-            this.updateValue(nv);
+
+        // Bind functionality
+        // - Bind updating source field list to changes in sourceComponent selection
+        sourceComponent.valueProperty().addListener((o, ov, nv) -> {
+            sourceFieldName.getItems().clear();
+            Schema target = schema.get(nv);
+            if (target != null) {
+                sourceFieldName.getItems().addAll(target.getFieldNames());
+            }
         });
-        ret.setMaxWidth(Double.MAX_VALUE);
+        // - Bind changes to sourcecomponent or sourcefieldname values to updateValue
+        sourceComponent.valueProperty().addListener((e, o, n) -> {
+            generateAndUpdateValue(sourceComponent, sourceFieldName);
+        });
+        sourceFieldName.valueProperty().addListener((e, o, n) -> {
+            generateAndUpdateValue(sourceComponent, sourceFieldName);
+        });
         return ret;
+    }
+
+    private void generateAndUpdateValue(ComboBox<String> sourceComponent, ComboBox<String> sourceFieldName) {
+        String component = Optional.ofNullable(sourceComponent.getValue()).orElse("").trim();
+        String fieldName = Optional.ofNullable(sourceFieldName.getValue()).orElse("").trim();
+        if (fieldName.length() > 0) {
+            if (component.length() > 0) {
+                updateValue(component + "." + fieldName);
+            } else {
+                updateValue(fieldName);
+            }
+        } else {
+            updateValue(null);
+        }
+
     }
 }

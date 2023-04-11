@@ -3,8 +3,9 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.databind.JsonNode;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import org.apache.beam.sdk.schemas.Schema;
 
-import java.util.List;
+import java.util.Map;
 
 public class JSONTypedConfigurationField extends TypedConfigurationField {
     private boolean object;
@@ -36,7 +37,7 @@ public class JSONTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render(List<InputColumn> availableColumns) { // TODO
+    public Node render(Map<String, Schema> schema) { // TODO
         TextField ret = new TextField(observableEditedValue.asString().get());
         ret.textProperty().addListener((obs, ov, nv) -> {
             this.updateValue(nv);

@@ -9,9 +9,11 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.apache.beam.sdk.schemas.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CollectionTypedConfigurationField extends TypedConfigurationField {
 
@@ -64,7 +66,7 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render(List<InputColumn> availableColumns) {
+    public Node render(Map<String, Schema> schema) {
         VBox ret = new VBox();
         Button addButton = new Button("Add new Entry");
         addButton.setOnMouseClicked((e) -> {
@@ -84,7 +86,7 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
             List<TypedConfigurationField> children = (List<TypedConfigurationField>) this.getCurrValue();
             children.forEach((child) -> {
                 HBox toAdd = new HBox();
-                Node childRender = child.render(availableColumns);
+                Node childRender = child.render(schema);
                 Button removeChild = new Button("-");
                 removeChild.setOnMouseClicked(e -> {
                     if (e.getButton().equals(MouseButton.PRIMARY)) {
@@ -104,7 +106,7 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
             ret.getChildren().clear();
             val.forEach(field -> {
                 HBox toAdd = new HBox();
-                Node childRender = field.render(availableColumns);
+                Node childRender = field.render(schema);
                 Button removeChild = new Button("-");
                 removeChild.setOnMouseClicked(e -> {
                     if (e.getButton().equals(MouseButton.PRIMARY)) {

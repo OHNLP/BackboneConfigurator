@@ -3,12 +3,10 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import javafx.scene.Node;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.layout.HBox;
+import org.apache.beam.sdk.schemas.Schema;
 
-import java.util.List;
+import java.util.Map;
 
 public class CharacterTypedConfigurationField extends TypedConfigurationField {
     @Override
@@ -37,7 +35,7 @@ public class CharacterTypedConfigurationField extends TypedConfigurationField {
 
 
     @Override
-    public Node render(List<InputColumn> availableColumns) {
+    public Node render(Map<String, Schema> schema) {
         TextField ret = new TextField(observableEditedValue.asString().get());
         ret.textProperty().addListener((obs, ov, nv) -> {
             this.updateValue(nv);

@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.Node;
+import org.apache.beam.sdk.schemas.Schema;
 
 import java.util.List;
+import java.util.Map;
 
 public abstract class TypedConfigurationField implements Cloneable {
 
@@ -59,15 +61,5 @@ public abstract class TypedConfigurationField implements Cloneable {
 
     public abstract void cloneFields(TypedConfigurationField target);
 
-    public abstract Node render(List<InputColumn> availableColumns);
-
-    public static class InputColumn {
-        String sourceTag;
-        String columnName;
-
-        public InputColumn(String sourceTag, String columnName) {
-            this.sourceTag = sourceTag;
-            this.columnName = columnName;
-        }
-    }
+    public abstract Node render(Map<String, Schema> schema);
 }
