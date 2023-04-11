@@ -16,8 +16,8 @@
                         <HBox>
                             <Button onAction="#onReset">Reset</Button>
                             <Pane HBox.hgrow="ALWAYS"/>
-                            <Button>Apply</Button>
-                            <Button>Close</Button>
+                            <Button onAction="#onCommit">Apply</Button>
+                            <Button onAction="#onClose">Close</Button>
                         </HBox>
                     </children>
                 </VBox>

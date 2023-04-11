@@ -62,4 +62,8 @@ public abstract class TypedConfigurationField implements Cloneable {
     public abstract void cloneFields(TypedConfigurationField target);
 
     public abstract Node render(Map<String, Schema> schema);
+
+    public boolean isDirty() {
+        return currValue.equals(observableEditedValue.get());
+    }
 }

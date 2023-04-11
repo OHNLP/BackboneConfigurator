@@ -6,9 +6,8 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TitledPane;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -111,6 +110,41 @@ public class ComponentEditorController {
         });
         configList.getChildren().clear();
         initialize();
+    }
+
+    @FXML
+    public void onCommit(ActionEvent e) {
+        EditorRegistry.getCurrentEditedComponent().get().getConfig().forEach(f -> {
+            f.getImpl().commit();
+        });
+    }
+
+    @FXML
+    public void onClose(ActionEvent actionEvent) {
+        boolean promptSave = EditorRegistry.getCurrentEditedComponent().get().getConfig().stream().map(f -> f.getImpl().isDirty()).reduce((b1, b2) -> b1 || b2).orElse(false);
+        if (promptSave) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Unsaved Changes");
+            alert.setHeaderText("Unsaved Changes");
+            alert.setContentText("There are unsaved changes to this module configuration. Do you wish to save?");
+            ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+            ButtonType noSave = new ButtonType("Don't Save", ButtonBar.ButtonData.FINISH);
+            ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(ok, noSave, cancel);
+            Optional<ButtonType> output = alert.showAndWait();
+            if (output.isEmpty()) {
+                return;
+            }
+            if (output.get().equals(cancel)) {
+                return;
+            }
+            if (output.get().equals(ok)) {
+                onCommit(actionEvent);
+            } else if (output.get().equals(noSave)) {
+                onReset(actionEvent);
+            }
+            ((Node)actionEvent.getSource()).getScene().getWindow().hide();
+        }
     }
 
     private static BackbonePipelineComponent initComponent(PipelineComponentDeclaration component) {
