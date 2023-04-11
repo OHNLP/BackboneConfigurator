@@ -2,6 +2,8 @@ package org.ohnlp.backbone.configurator.structs.pipeline;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.config.BackboneConfiguration;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
@@ -20,7 +22,7 @@ public class EditablePipeline {
 
     private List<PipelineComponentDeclaration> components = new ArrayList<>();
     private Map<String, PipelineComponentDeclaration> componentsByID = new HashMap<>();
-    private boolean dirty = false;
+    private SimpleBooleanProperty dirty = new SimpleBooleanProperty(false);
     private EditablePipeline(String id) {this.id = id;}
 
     public EditablePipeline withID(String id) {
@@ -46,7 +48,7 @@ public class EditablePipeline {
         this.components.add(component);
         this.componentsByID.put(component.getComponentID(), component);
         // TODO  need to validate input defs for new inputs
-        this.dirty = true;
+        this.dirty.set(true);
         return this;
     }
 
@@ -63,11 +65,11 @@ public class EditablePipeline {
                 });
             }
         });
-        this.dirty = true;
+        this.dirty.set(true);
         return this;
     }
     private EditablePipeline setDirty(boolean dirty) {
-        this.dirty = dirty;
+        this.dirty.set(dirty);
         return this;
     }
 
@@ -92,7 +94,7 @@ public class EditablePipeline {
                     if (!componentsByID.containsKey(def.getComponentID())) {
                         Logger.getGlobal().warning("An input declaration for " + tag + " is declared in " + c.getComponentID() + " from source component " + def.getComponentID() + " which does not exist. Removing");
                         c.getInputs().remove(tag);
-                        this.dirty = true;
+                        this.dirty.set(true);
                     }
                 });
             }
@@ -187,7 +189,7 @@ public class EditablePipeline {
                 });
             }
         });
-        dirty = true;
+        this.dirty.set(true);
     }
 
     public BackboneConfiguration commit() {
@@ -208,7 +210,11 @@ public class EditablePipeline {
                 throw new RuntimeException("Failed to Save Config", e);
             }
         }
-        this.dirty = false;
+        this.dirty.set(false);
         return ret;
+    }
+
+    public ObservableValue<Boolean> dirtyProperty() {
+        return this.dirty;
     }
 }

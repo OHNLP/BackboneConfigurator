@@ -13,7 +13,7 @@
                     <children>
                         <HBox>
                             <children>
-                                <Button>
+                                <Button fx:id="savePipelineButton" onAction="#savePipeline">
                                     <graphic>
                                         <VBox>
                                             <HBox>

@@ -36,6 +36,8 @@ public class PipelineEditorController {
     @FXML
     public HBox toolbar;
     @FXML
+    public Button savePipelineButton;
+    @FXML
     public Button removeStepButton;
     @FXML
     public Button editStepButton;
@@ -59,6 +61,8 @@ public class PipelineEditorController {
         BooleanBinding stepNotSelected = EditorRegistry.getCurrentEditedComponent().isNull();
         removeStepButton.disableProperty().bind(stepNotSelected);
         editStepButton.disableProperty().bind(stepNotSelected);
+        // Bind save to whether or not pipeline is currently dirty
+        savePipelineButton.disableProperty().bind(EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty());
         // Add listener to refresh property to know when to refresh graph
         EditorRegistry.refreshGraphProperty().addListener((e, o, n) -> {
             if (n) {
@@ -135,6 +139,15 @@ public class PipelineEditorController {
             ((Node)e.getSource()).getScene().getWindow().hide();
         } catch (IOException t) {
             throw new RuntimeException(t);
+        }
+    }
+
+    @FXML
+    public void savePipeline(ActionEvent actionEvent) {
+        try {
+            EditorRegistry.getCurrentEditablePipeline().get().save(EditorRegistry.getConfigMetadata().get().getFile());
+        } catch (Throwable t) {
+            throw new RuntimeException(t); // TODO do not fail silently here
         }
     }
 }
