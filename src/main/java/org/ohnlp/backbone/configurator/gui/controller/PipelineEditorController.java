@@ -59,6 +59,15 @@ public class PipelineEditorController {
         BooleanBinding stepNotSelected = EditorRegistry.getCurrentEditedComponent().isNull();
         removeStepButton.disableProperty().bind(stepNotSelected);
         editStepButton.disableProperty().bind(stepNotSelected);
+        // Add listener to refresh property to know when to refresh graph
+        EditorRegistry.refreshGraphProperty().addListener((e, o, n) -> {
+            if (n) {
+                Graph newGraph = DAGUtils.generateGraphForPipeline(EditorRegistry.getCurrentEditablePipeline().getValue());
+                newGraph.layout(new LabelPositionAbegoTreeLayout(150, 500, Configuration.Location.Top));
+                this.renderedGraph.setCenter(newGraph.getCanvas());
+                EditorRegistry.refreshGraphProperty().set(false);
+            }
+        });
         // Generate arrow buttons for pipeline scroll
 //        Button right = new Button();
 //        right.getStyleClass().add("compass-button");

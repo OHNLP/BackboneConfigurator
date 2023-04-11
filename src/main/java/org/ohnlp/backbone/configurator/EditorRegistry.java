@@ -46,8 +46,8 @@ public class EditorRegistry {
         return INSTANCE.currentEditedComponent;
     }
 
-    public SimpleBooleanProperty refreshGraphProperty() {
-        return refreshGraph;
+    public static SimpleBooleanProperty refreshGraphProperty() {
+        return INSTANCE.refreshGraph;
     }
 
     public static void reset() {

@@ -144,10 +144,12 @@ public class ComponentEditorController {
         });
         HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> inputs = convertBoundInputsToUnbound();
         currComponent.setInputs(inputs);
-        // Renaming step ID bit more involved as we have to check for input declarations as well
+        // Renaming step ID is a bit more involved as we have to check for input declarations as well
         if (EditorRegistry.getCurrentEditablePipeline().get().getComponentByID(currComponent.getComponentID()) != null) {
             EditorRegistry.getCurrentEditablePipeline().get().renameComponent(currComponent.getComponentID(), stepIDProperty.getValue());
         }
+        // Now indicate that relns etc. might have changed and we might need to redraw the graph
+        EditorRegistry.refreshGraphProperty().set(true);
     }
 
     private HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> convertBoundInputsToUnbound() {
