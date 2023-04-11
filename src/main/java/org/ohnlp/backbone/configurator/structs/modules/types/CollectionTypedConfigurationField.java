@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CollectionTypedConfigurationField extends TypedConfigurationField {
+
+    public CollectionTypedConfigurationField() {
+        setCurrValue(new ArrayList<TypedConfigurationField>());
+    }
     private TypedConfigurationField contents;
 
     public TypedConfigurationField getContents() {
