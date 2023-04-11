@@ -3,6 +3,7 @@ package org.ohnlp.backbone.configurator.gui.controller;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,6 +32,7 @@ public class ComponentEditorController {
     public AnchorPane container;
 
     private Map<String, ObjectBinding<BackbonePipelineComponentConfiguration.InputDefinition>> boundInputs = new HashMap<>();
+    private StringProperty stepIDProperty;
 
     @FXML
     public void initialize() {
@@ -39,7 +41,7 @@ public class ComponentEditorController {
         configList.prefWidthProperty().bind(container.widthProperty());
         TitledPane stepIDPrompt = new TitledPane("Step ID (Required)", new TextField(edited.get().getComponentID()));
         configList.getChildren().add(stepIDPrompt);
-        // TODO generate inputs prompt
+        this.stepIDProperty = stepIDPrompt.textProperty();
         generateInputs(edited.get());
         edited.get().getConfig().forEach(f -> {
             TitledPane p = new TitledPane();
@@ -136,11 +138,16 @@ public class ComponentEditorController {
 
     @FXML
     public void onCommit(ActionEvent e) {
-        EditorRegistry.getCurrentEditedComponent().get().getConfig().forEach(f -> {
+        PipelineComponentDeclaration currComponent = EditorRegistry.getCurrentEditedComponent().get();
+        currComponent.getConfig().forEach(f -> {
             f.getImpl().commit();
         });
         HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> inputs = convertBoundInputsToUnbound();
-        EditorRegistry.getCurrentEditedComponent().get().setInputs(inputs);
+        currComponent.setInputs(inputs);
+        // Renaming step ID bit more involved as we have to check for input declarations as well
+        if (EditorRegistry.getCurrentEditablePipeline().get().getComponentByID(currComponent.getComponentID()) != null) {
+            EditorRegistry.getCurrentEditablePipeline().get().renameComponent(currComponent.getComponentID(), stepIDProperty.getValue());
+        }
     }
 
     private HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> convertBoundInputsToUnbound() {
@@ -157,6 +164,7 @@ public class ComponentEditorController {
     public void onClose(ActionEvent actionEvent) {
         boolean promptSave = EditorRegistry.getCurrentEditedComponent().get().getConfig().stream().map(f -> f.getImpl().isDirty()).reduce((b1, b2) -> b1 || b2).orElse(false);
         promptSave = promptSave || !convertBoundInputsToUnbound().equals(EditorRegistry.getCurrentEditedComponent().get().getInputs());
+        promptSave = promptSave || !stepIDProperty.getValue().equals(EditorRegistry.getCurrentEditedComponent().get().getComponentID());
         if (promptSave) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Unsaved Changes");
