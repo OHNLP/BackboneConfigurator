@@ -16,6 +16,7 @@ public class EditablePipeline {
 
     private List<PipelineComponentDeclaration> components = new ArrayList<>();
     private Map<String, PipelineComponentDeclaration> componentsByID = new HashMap<>();
+    private boolean dirty = false;
     private EditablePipeline(String id) {this.id = id;}
 
     public EditablePipeline withID(String id) {
@@ -41,6 +42,7 @@ public class EditablePipeline {
         this.components.add(component);
         this.componentsByID.put(component.getComponentID(), component);
         // TODO  need to validate input defs for new inputs
+        this.dirty = true;
         return this;
     }
 
@@ -57,6 +59,11 @@ public class EditablePipeline {
                 });
             }
         });
+        this.dirty = true;
+        return this;
+    }
+    private EditablePipeline setDirty(boolean dirty) {
+        this.dirty = dirty;
         return this;
     }
 
@@ -74,6 +81,18 @@ public class EditablePipeline {
     }
 
     public List<List<PipelineComponentDeclaration>> getPipelineAsSteps() {
+        // Validate inputs actually exist, if not remove
+        this.components.forEach(c -> {
+            if (c.getInputs() != null && c.getInputs().size() > 0) {
+                new HashMap<>(c.getInputs()).forEach((tag, def) -> {
+                    if (!componentsByID.containsKey(def.getComponentID())) {
+                        Logger.getGlobal().warning("An input declaration for " + tag + " is declared in " + c.getComponentID() + " from source component " + def.getComponentID() + " which does not exist. Removing");
+                        c.getInputs().remove(tag);
+                        this.dirty = true;
+                    }
+                });
+            }
+        });
         List<List<PipelineComponentDeclaration>> ret = new ArrayList<>();
         ArrayList<PipelineComponentDeclaration> toSchedule = new ArrayList<>(this.components);
         Set<String> visited = new HashSet<>();
@@ -131,16 +150,18 @@ public class EditablePipeline {
             }
         }
         // Warn if auto-conversion occurred
+        boolean dirty = false;
         if (!legacyConfigs.isEmpty()) {
             LOGGER.warning("This configuration contains legacy component declarations that were auto-converted. " +
                     "Please ensure that component input/output linkages are correct.");
             for (String c : legacyConfigs) {
                 LOGGER.warning("- at " + c);
             }
+            dirty = true;
         }
         List<PipelineComponentDeclaration> components = pipelineComponents.stream().map(PipelineConfigUtils::fromJSONConfig).collect(Collectors.toList());
 
         // And now construct pipeline with pre-constructed elements
-        return EditablePipeline.create(config.getId()).withDescription(config.getDescription()).withComponents(components);
+        return EditablePipeline.create(config.getId()).withDescription(config.getDescription()).withComponents(components).setDirty(dirty);
     }
 }

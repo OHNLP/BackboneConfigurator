@@ -31,7 +31,10 @@ public class StringTypedConfigurationField extends TypedConfigurationField {
 
     @Override
     public Node render(Map<String, Schema> schema) {
-        TextField ret = new TextField(observableEditedValue.asString().get());
+        TextField ret = new TextField();
+        if (observableEditedValue.isNotNull().get()) {
+            ret.textProperty().set(observableEditedValue.getValue().toString());
+        }
         ret.textProperty().addListener((obs, ov, nv) -> {
             this.updateValue(nv);
         });
