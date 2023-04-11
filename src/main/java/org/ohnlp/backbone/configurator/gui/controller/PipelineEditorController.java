@@ -62,7 +62,7 @@ public class PipelineEditorController {
         removeStepButton.disableProperty().bind(stepNotSelected);
         editStepButton.disableProperty().bind(stepNotSelected);
         // Bind save to whether or not pipeline is currently dirty
-        savePipelineButton.disableProperty().bind(EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty());
+        savePipelineButton.disableProperty().bind(Bindings.createBooleanBinding(() -> !EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty().getValue(), EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty()));
         // Add listener to refresh property to know when to refresh graph
         EditorRegistry.refreshGraphProperty().addListener((e, o, n) -> {
             if (n) {
