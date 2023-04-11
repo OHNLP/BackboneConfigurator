@@ -1,6 +1,7 @@
 package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.beans.property.SimpleObjectProperty;
@@ -36,10 +37,12 @@ public abstract class TypedConfigurationField implements Cloneable {
         ObjectMapper om = new ObjectMapper();
         try {
             TypedConfigurationField clone = (TypedConfigurationField) super.clone();
-            clone.currValue = om.readTree(om.writer().writeValueAsString(this.currValue));
+            if (this.currValue != null) {
+                clone.currValue = om.readValue(om.writer().writeValueAsString(this.currValue), this.currValue.getClass());
+                clone.observableEditedValue = new SimpleObjectProperty<>();
+                clone.observableEditedValue.setValue(om.readValue(om.writeValueAsString(this.observableEditedValue.getValue()), this.observableEditedValue.getValue().getClass()));
+            }
             cloneFields(clone);
-            clone.observableEditedValue = new SimpleObjectProperty<>();
-            clone.observableEditedValue.setValue(om.readTree(om.writeValueAsString(this.observableEditedValue.getValue())));
             return clone;
         } catch (CloneNotSupportedException | JsonProcessingException e) {
             throw new RuntimeException(e);
