@@ -2,12 +2,10 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -54,6 +52,7 @@ public class EnumerationTypedConfigurationField extends TypedConfigurationField 
         ret.getSelectionModel().selectedItemProperty().addListener((obs, ov, nv) -> {
             this.updateValue(nv);
         });
+        ret.setMaxWidth(Double.MAX_VALUE);
         return ret;
     }
 }

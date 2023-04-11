@@ -3,13 +3,8 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -71,12 +66,13 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
         addButton.setOnMouseClicked((e) -> {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
                 List<TypedConfigurationField> children;
-                if (this.getCurrValue() != null) {
-                    children = (List<TypedConfigurationField>) this.getCurrValue();
+                if (this.observableEditedValue.isNotNull().get()) {
+                    children = new ArrayList<>((List<TypedConfigurationField>) this.observableEditedValue.get());
                 } else {
                     children = new ArrayList<>();
                 }
                 children.add(contents.clone());
+                this.updateValue(children);
             }
         });
         ret.getChildren().clear();
@@ -86,7 +82,13 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
                 HBox toAdd = new HBox();
                 Node childRender = child.render(availableColumns);
                 Button removeChild = new Button("-");
-                // TODO add listener func
+                removeChild.setOnMouseClicked(e -> {
+                    if (e.getButton().equals(MouseButton.PRIMARY)) {
+                        ArrayList<TypedConfigurationField> val = new ArrayList<>((List<TypedConfigurationField>) this.observableEditedValue.get());
+                        val.remove(child);
+                        updateValue(val);
+                    }
+                });
                 toAdd.getChildren().addAll(childRender, removeChild);
                 HBox.setHgrow(childRender, Priority.ALWAYS);
                 ret.getChildren().add(toAdd);
@@ -100,15 +102,19 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
                 HBox toAdd = new HBox();
                 Node childRender = field.render(availableColumns);
                 Button removeChild = new Button("-");
-                // TODO add listener func
+                removeChild.setOnMouseClicked(e -> {
+                    if (e.getButton().equals(MouseButton.PRIMARY)) {
+                        ArrayList<TypedConfigurationField> v = new ArrayList<>((List<TypedConfigurationField>) this.observableEditedValue.get());
+                        v.remove(field);
+                        updateValue(v);
+                    }
+                });
                 toAdd.getChildren().addAll(childRender, removeChild);
                 HBox.setHgrow(childRender, Priority.ALWAYS);
                 ret.getChildren().add(toAdd);
             });
             ret.getChildren().add(addButton);
         });
-        // TODO Bindings are not properly handled here
-
         return ret;
     }
 }

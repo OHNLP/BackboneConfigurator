@@ -56,6 +56,7 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
             ret.setValue(nv);
             this.updateValue(nv);
         });
+        ret.setMaxWidth(Double.MAX_VALUE);
         return ret;
     }
 }
