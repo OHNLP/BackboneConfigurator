@@ -39,8 +39,8 @@ public class ComponentEditorController {
         Assert.notNull(EditorRegistry.getCurrentEditedComponent(), "Component Editor Dialog Initialized with Null Component");
         SimpleObjectProperty<PipelineComponentDeclaration> edited = EditorRegistry.getCurrentEditedComponent();
         configList.prefWidthProperty().bind(container.widthProperty());
-        TitledPane stepIDPrompt = new TitledPane("Step ID (Required)", new TextField(edited.get().getComponentID()));
-        configList.getChildren().add(stepIDPrompt);
+        TextField stepIDPrompt = new TextField(edited.get().getComponentID());
+        configList.getChildren().add(new TitledPane("Step ID (Required)", stepIDPrompt));
         this.stepIDProperty = stepIDPrompt.textProperty();
         generateInputs(edited.get());
         edited.get().getConfig().forEach(f -> {
