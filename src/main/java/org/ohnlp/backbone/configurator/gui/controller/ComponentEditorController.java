@@ -37,13 +37,17 @@ public class ComponentEditorController {
         Assert.notNull(EditorRegistry.getCurrentEditedComponent(), "Component Editor Dialog Initialized with Null Component");
         SimpleObjectProperty<PipelineComponentDeclaration> edited = EditorRegistry.getCurrentEditedComponent();
         configList.prefWidthProperty().bind(container.widthProperty());
-        TitledPane stepIDPrompt = new TitledPane("Step ID", new TextField(edited.get().getComponentID()));
+        TitledPane stepIDPrompt = new TitledPane("Step ID (Required)", new TextField(edited.get().getComponentID()));
         configList.getChildren().add(stepIDPrompt);
         // TODO generate inputs prompt
         generateInputs(edited.get());
         edited.get().getConfig().forEach(f -> {
             TitledPane p = new TitledPane();
-            p.setText(f.getDesc());
+            String title = f.getDesc();
+            if (f.isRequired()) {
+                title += " (Required)";
+            }
+            p.setText(title);
             p.setContent(f.getImpl().render(new HashMap<>())); // TODO how do we generate this
             configList.getChildren().add(p);
         });
@@ -143,8 +147,9 @@ public class ComponentEditorController {
             } else if (output.get().equals(noSave)) {
                 onReset(actionEvent);
             }
-            ((Node)actionEvent.getSource()).getScene().getWindow().hide();
         }
+        ((Node)actionEvent.getSource()).getScene().getWindow().hide();
+
     }
 
     private static BackbonePipelineComponent initComponent(PipelineComponentDeclaration component) {

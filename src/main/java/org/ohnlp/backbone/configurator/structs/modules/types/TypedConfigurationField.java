@@ -65,9 +65,9 @@ public abstract class TypedConfigurationField implements Cloneable {
 
     public boolean isDirty() {
         if (currValue == null) {
-            return observableEditedValue.isNull().get();
+            return observableEditedValue.isNotNull().get();
         } else {
-            return currValue.equals(observableEditedValue.get());
+            return !currValue.equals(observableEditedValue.get());
         }
     }
 }
