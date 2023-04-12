@@ -24,6 +24,7 @@ import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.gui.ConfiguratorGUI;
 import org.ohnlp.backbone.configurator.gui.components.graphs.LabelPositionAbegoTreeLayout;
 import org.ohnlp.backbone.configurator.gui.utils.DAGUtils;
+import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
 import java.io.IOException;
@@ -62,7 +63,7 @@ public class PipelineEditorController {
         removeStepButton.disableProperty().bind(stepNotSelected);
         editStepButton.disableProperty().bind(stepNotSelected);
         // Bind save to whether or not pipeline is currently dirty
-        savePipelineButton.disableProperty().bind(Bindings.createBooleanBinding(() -> !EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty().getValue(), EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty()));
+        savePipelineButton.disableProperty().bind(Bindings.createBooleanBinding(() -> !EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty().getValue(), EditorRegistry.getCurrentEditablePipeline(), EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty()));
         // Add listener to refresh property to know when to refresh graph
         EditorRegistry.refreshGraphProperty().addListener((e, o, n) -> {
             if (n) {
@@ -149,5 +150,11 @@ public class PipelineEditorController {
         } catch (Throwable t) {
             throw new RuntimeException(t); // TODO do not fail silently here
         }
+    }
+
+    @FXML
+    public void onReload(ActionEvent actionEvent) throws IOException {
+        EditorRegistry.setCurrentConfig(EditorRegistry.getConfigMetadata().get());
+        EditorRegistry.refreshGraphProperty().set(true);
     }
 }

@@ -33,7 +33,7 @@
                                         </VBox>
                                     </graphic>
                                 </Button>
-                                <Button>
+                                <Button onAction="#onReload">
                                     <graphic>
                                         <VBox>
                                             <HBox>
