@@ -70,7 +70,7 @@
                 </VBox>
                 <VBox styleClass="toolbar_block">
                     <HBox>
-                        <Button>
+                        <Button onAction="#onAddComponent">
                             <graphic>
                                 <VBox>
                                     <HBox>

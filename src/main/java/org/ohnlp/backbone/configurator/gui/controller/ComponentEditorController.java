@@ -144,6 +144,10 @@ public class ComponentEditorController {
         });
         HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> inputs = convertBoundInputsToUnbound();
         currComponent.setInputs(inputs);
+        if (EditorRegistry.inCreateNewComponentState().get()) {
+            EditorRegistry.getCurrentEditablePipeline().get().addComponent(currComponent);
+            EditorRegistry.inCreateNewComponentState().set(false);
+        }
         // Renaming step ID is a bit more involved as we have to check for input declarations as well
         if (EditorRegistry.getCurrentEditablePipeline().get().getComponentByID(currComponent.getComponentID()) != null) {
             EditorRegistry.getCurrentEditablePipeline().get().renameComponent(currComponent.getComponentID(), stepIDProperty.getValue());
@@ -166,7 +170,9 @@ public class ComponentEditorController {
     public void onClose(ActionEvent actionEvent) {
         boolean promptSave = EditorRegistry.getCurrentEditedComponent().get().getConfig().stream().map(f -> f.getImpl().isDirty()).reduce((b1, b2) -> b1 || b2).orElse(false);
         promptSave = promptSave || !convertBoundInputsToUnbound().equals(EditorRegistry.getCurrentEditedComponent().get().getInputs());
-        promptSave = promptSave || !stepIDProperty.getValue().equals(EditorRegistry.getCurrentEditedComponent().get().getComponentID());
+        if (stepIDProperty.isNotNull().get()) {
+            promptSave = promptSave || !stepIDProperty.getValue().equals(EditorRegistry.getCurrentEditedComponent().get().getComponentID());
+        }
         if (promptSave) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Unsaved Changes");

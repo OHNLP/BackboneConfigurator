@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="window" prefHeight="900.0" prefWidth="1280.0" styleClass="window"
+            xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.ohnlp.backbone.configurator.gui.controller.ComponentBrowserController">
+    <children>
+        <VBox>
+            <children>
+                <Pane fx:id="container" VBox.vgrow="ALWAYS">
+                    <children>
+                        <SplitPane fx:id="contentPane" dividerPositions="0.4" styleClass="content-pane">
+                            <items>
+                                <ListView fx:id="moduleList" styleClass="module-list"/>
+                                <VBox fx:id="componentPane" styleClass="window">
+                                    <ListView fx:id="componentList" styleClass="component-list" VBox.vgrow="ALWAYS"/>
+                                    <HBox fx:id="buttonBar" spacing="5.0">
+                                        <Pane HBox.hgrow="ALWAYS"/>
+                                        <Button fx:id="okButton" onMouseClicked="#onOK">OK</Button>
+                                        <Button fx:id="cancelButton" onMouseClicked="#onCancel">Cancel</Button>
+                                        <padding>
+                                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                        </padding>
+                                    </HBox>
+                                </VBox>
+                            </items>
+                        </SplitPane>
+                    </children>
+                </Pane>
+
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

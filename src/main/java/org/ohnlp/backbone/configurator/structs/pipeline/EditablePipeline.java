@@ -178,7 +178,7 @@ public class EditablePipeline {
         }
         String finalNewID = newID;
         components.forEach(c -> {
-            if (c.getComponentID().equals(oldID)) {
+            if (c.getComponentID() == null || c.getComponentID().equals(oldID)) {
                 c.setComponentID(finalNewID);
             }
             if (c.getInputs() != null) {

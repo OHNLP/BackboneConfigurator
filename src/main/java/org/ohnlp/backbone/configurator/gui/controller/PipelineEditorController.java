@@ -100,16 +100,6 @@ public class PipelineEditorController {
     }
 
     @FXML
-    public void onClickRemoveStep(ActionEvent e) {
-        if (EditorRegistry.getCurrentEditedComponent().isNotNull().get()) {
-            EditorRegistry.getCurrentEditablePipeline().get().removeComponent(EditorRegistry.getCurrentEditedComponent().get());
-            Graph g = DAGUtils.generateGraphForPipeline(EditorRegistry.getCurrentEditablePipeline().getValue());
-            g.layout(new LabelPositionAbegoTreeLayout(150, 500, Configuration.Location.Top));
-            this.renderedGraph.setCenter(g.getCanvas());
-        }
-    }
-
-    @FXML
     public void onEdit(ActionEvent event) {
         PipelineComponentDeclaration active = EditorRegistry.getCurrentEditedComponent().get();
         if (active == null) {
@@ -156,5 +146,30 @@ public class PipelineEditorController {
     public void onReload(ActionEvent actionEvent) throws IOException {
         EditorRegistry.setCurrentConfig(EditorRegistry.getConfigMetadata().get());
         EditorRegistry.refreshGraphProperty().set(true);
+    }
+
+    @FXML
+    public void onAddComponent(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/component-browser-view.fxml"));
+            Stage stage = new Stage();
+            stage.setTitle("Add Pipeline Component");
+            Scene s = new Scene(loader.load());
+            s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/component-browser-view.css").toExternalForm());
+            stage.setScene(s);
+            stage.show();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @FXML
+    public void onClickRemoveStep(ActionEvent e) {
+        if (EditorRegistry.getCurrentEditedComponent().isNotNull().get()) {
+            EditorRegistry.getCurrentEditablePipeline().get().removeComponent(EditorRegistry.getCurrentEditedComponent().get());
+            Graph g = DAGUtils.generateGraphForPipeline(EditorRegistry.getCurrentEditablePipeline().getValue());
+            g.layout(new LabelPositionAbegoTreeLayout(150, 500, Configuration.Location.Top));
+            this.renderedGraph.setCenter(g.getCanvas());
+        }
     }
 }
