@@ -41,7 +41,10 @@ public abstract class TypedConfigurationField implements Cloneable {
             TypedConfigurationField clone = (TypedConfigurationField) super.clone();
             if (this.currValue != null) {
                 clone.currValue = om.readValue(om.writer().writeValueAsString(this.currValue), this.currValue.getClass());
-                clone.observableEditedValue = new SimpleObjectProperty<>();
+
+            }
+            clone.observableEditedValue = new SimpleObjectProperty<>();
+            if (this.currValue != null) {
                 clone.observableEditedValue.setValue(om.readValue(om.writeValueAsString(this.currValue), this.currValue.getClass()));
             }
             cloneFields(clone);
