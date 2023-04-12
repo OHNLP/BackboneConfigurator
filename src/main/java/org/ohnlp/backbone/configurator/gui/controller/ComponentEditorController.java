@@ -144,13 +144,16 @@ public class ComponentEditorController {
         });
         HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> inputs = convertBoundInputsToUnbound();
         currComponent.setInputs(inputs);
-        if (EditorRegistry.inCreateNewComponentState().get()) {
-            EditorRegistry.getCurrentEditablePipeline().get().addComponent(currComponent);
-            EditorRegistry.inCreateNewComponentState().set(false);
-        }
         // Renaming step ID is a bit more involved as we have to check for input declarations as well
         if (EditorRegistry.getCurrentEditablePipeline().get().getComponentByID(currComponent.getComponentID()) != null) {
             EditorRegistry.getCurrentEditablePipeline().get().renameComponent(currComponent.getComponentID(), stepIDProperty.getValue());
+        } else {
+            currComponent.setComponentID(stepIDProperty.getValue());
+        }
+        // If creating new component, ensure this is reflected in edited pipeline
+        if (EditorRegistry.inCreateNewComponentState().get()) {
+            EditorRegistry.getCurrentEditablePipeline().get().addComponent(currComponent);
+            EditorRegistry.inCreateNewComponentState().set(false);
         }
         // Now indicate that relns etc. might have changed and we might need to redraw the graph
         EditorRegistry.refreshGraphProperty().set(true);
