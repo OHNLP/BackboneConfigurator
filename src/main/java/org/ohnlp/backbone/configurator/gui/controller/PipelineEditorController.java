@@ -12,8 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
@@ -32,6 +31,7 @@ import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class PipelineEditorController {
     @FXML
@@ -135,8 +135,31 @@ public class PipelineEditorController {
     }
 
     @FXML
-    public void onClose(ActionEvent e) {
-        // TODO track for dirty changes
+    public void onClose(ActionEvent e) throws IOException {
+        if (EditorRegistry.getCurrentEditablePipeline().isNotNull().get() && EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty().getValue()) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.initStyle(StageStyle.UNDECORATED);
+            alert.setTitle("Unsaved Changes");
+            alert.setHeaderText("Unsaved Changes");
+            alert.setContentText("There are unsaved changes to this pipeline. Do you wish to save?");
+            ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+            ButtonType noSave = new ButtonType("Don't Save", ButtonBar.ButtonData.FINISH);
+            ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(ok, noSave, cancel);
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+            Optional<ButtonType> output = alert.showAndWait();
+            if (output.isEmpty()) {
+                return;
+            }
+            if (output.get().equals(cancel)) {
+                return;
+            }
+            if (output.get().equals(ok)) {
+                savePipeline(e);
+            } else if (output.get().equals(noSave)) {
+                onReload(e);
+            }
+        }
         try {
             Stage stage = new Stage();
             FXMLLoader fxmlLoader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/welcome-view.fxml"));
