@@ -222,7 +222,7 @@
                     <children>
                         <HBox>
                             <children>
-                                <Button>
+                                <Button disable="true">
                                     <graphic>
                                         <VBox>
                                             <HBox>
@@ -242,7 +242,7 @@
                                         </VBox>
                                     </graphic>
                                 </Button>
-                                <Button>
+                                <Button disable="true">
                                     <graphic>
                                         <VBox>
                                             <HBox>
