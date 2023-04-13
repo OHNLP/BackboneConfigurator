@@ -2,9 +2,11 @@ package org.ohnlp.backbone.configurator.gui.controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
+import javafx.beans.property.SimpleMapProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -15,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.StageStyle;
+import org.apache.beam.sdk.schemas.Schema;
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.components.HasOutputs;
@@ -35,10 +38,12 @@ public class ComponentEditorController {
 
     private Map<String, ObjectBinding<BackbonePipelineComponentConfiguration.InputDefinition>> boundInputs = new HashMap<>();
     private StringProperty stepIDProperty;
+    private ObservableMap<String, Schema> inputSchemas = FXCollections.observableHashMap();
 
     @FXML
     public void initialize() {
         Assert.notNull(EditorRegistry.getCurrentEditedComponent(), "Component Editor Dialog Initialized with Null Component");
+        EditorRegistry.getCurrentEditedComponent().get().setUpdateOutputSchemas(true);
         SimpleObjectProperty<PipelineComponentDeclaration> edited = EditorRegistry.getCurrentEditedComponent();
         configList.prefWidthProperty().bind(container.widthProperty());
         TextField stepIDPrompt = new TextField(edited.get().getComponentID());
@@ -52,7 +57,7 @@ public class ComponentEditorController {
                 title += " (Required)";
             }
             p.setText(title);
-            p.setContent(f.getImpl().render(new HashMap<>())); // TODO how do we generate this
+            p.setContent(f.getImpl().render(inputSchemas));
             configList.getChildren().add(p);
         });
     }
@@ -60,7 +65,7 @@ public class ComponentEditorController {
     private void generateInputs(PipelineComponentDeclaration componentDec) {
         EditablePipeline pipeline = EditorRegistry.getCurrentEditablePipeline().get();
         Set<String> possibleInputs = pipeline.getAvailableInputs(componentDec);
-        BackbonePipelineComponent cmp = initComponent(componentDec);
+        BackbonePipelineComponent<?,?> cmp = componentDec.componentInstance(false);
         if (cmp instanceof HasInputs) {
             boundInputs.clear();
             TitledPane inputPrompt = new TitledPane();
@@ -79,7 +84,7 @@ public class ComponentEditorController {
                     if (inputComponentID.valueProperty().isNotNull().get()) {
                         PipelineComponentDeclaration v = pipeline.getComponentByID(inputComponentID.valueProperty().get());
                         if (v != null) {
-                            BackbonePipelineComponent srcComponent = initComponent(v);
+                            BackbonePipelineComponent<?,?> srcComponent = v.componentInstance(false);
                             if (srcComponent instanceof HasOutputs) {
                                 return FXCollections.observableArrayList(((HasOutputs) srcComponent).getOutputTags());
                             }
@@ -103,6 +108,15 @@ public class ComponentEditorController {
                         }, inputComponentID.valueProperty(), inputComponentTag.valueProperty()
                 );
                 boundInputs.put(tag, def);
+                // Update the available input map on change
+                def.addListener((e, o, n) -> {
+                    if (n == null || pipeline.getComponentByID(n.getComponentID()) == null) {
+                        inputSchemas.put(tag, Schema.of());
+                    } else {
+                        PipelineComponentDeclaration srcComponent = pipeline.getComponentByID(n.getComponentID());
+                        inputSchemas.put(tag, srcComponent.getStepOutput().getOrDefault(n.getInputTag(), Schema.of()));
+                    }
+                });
 
                 // Load Pre-existing values
                 String outputID = null;
@@ -206,15 +220,5 @@ public class ComponentEditorController {
         }
         ((Node)actionEvent.getSource()).getScene().getWindow().hide();
 
-    }
-
-    private static BackbonePipelineComponent initComponent(PipelineComponentDeclaration component) {
-        try {
-            Constructor<? extends BackbonePipelineComponent> ctor =
-                    component.getComponentDef().getClazz().getDeclaredConstructor();
-            return ctor.newInstance();
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
     }
 }

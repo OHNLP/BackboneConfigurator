@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -55,7 +56,7 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render(Map<String, Schema> schema) {
+    public Node render(ObservableMap<String, Schema> schema) {
         SimpleBooleanProperty invalidationFlag = new SimpleBooleanProperty(false); // Use this to track changes to if contents change/need to be updated
         SchemaEditorNode ret = new ObjectSchemaEditorNode(invalidationFlag, null);
         // Add listener to invalidationFlag to update values on change to true

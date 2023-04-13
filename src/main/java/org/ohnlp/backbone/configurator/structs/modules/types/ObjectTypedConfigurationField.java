@@ -3,6 +3,7 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import org.apache.beam.sdk.schemas.Schema;
@@ -57,7 +58,7 @@ public class ObjectTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render(Map<String, Schema> schema) { // TODO
+    public Node render(ObservableMap<String, Schema> schema) { // TODO
         TextField ret = new TextField();
         ret.textProperty().bind(observableEditedValue.asString());
         return ret;

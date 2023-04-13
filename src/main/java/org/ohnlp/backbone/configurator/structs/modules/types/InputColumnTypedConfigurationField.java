@@ -3,7 +3,9 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import javafx.collections.FXCollections;
+import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
@@ -11,11 +13,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import org.apache.beam.sdk.schemas.Schema;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class InputColumnTypedConfigurationField extends TypedConfigurationField {
     private Map<String, Schema> schema;
@@ -46,7 +45,7 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
     }
 
     @Override
-    public Node render(Map<String, Schema> schema) {
+    public Node render(ObservableMap<String, Schema> schema) {
         HBox ret = new HBox();
         ret.setSpacing(5);
         ret.setAlignment(Pos.CENTER_LEFT);
@@ -54,8 +53,13 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
         // Source Collection Schemas
         ComboBox<String> sourceComponent = new ComboBox<>();
         sourceComponent.setEditable(true);
-        ObservableList<String> items = FXCollections.observableArrayList(this.schema.keySet()).sorted();
-        sourceComponent.setItems(items);
+        ObservableList<String> items = FXCollections.observableArrayList();
+        items.addAll(schema.keySet());
+        schema.addListener((MapChangeListener<String, Schema>) change -> {
+            items.clear();
+            items.addAll(change.getMap().keySet());
+        });
+        sourceComponent.setItems(items.sorted());
         // Fields for a given Source Schema
         ComboBox<String> sourceFieldName = new ComboBox<>();
         sourceFieldName.setEditable(true);
@@ -92,6 +96,14 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
             Schema target = schema.get(nv);
             if (target != null) {
                 sourceFieldName.getItems().addAll(target.getFieldNames());
+            }
+        });
+        schema.addListener((MapChangeListener<String, Schema>) change -> {
+            if (sourceComponent.getValue() != null) {
+                if (sourceComponent.getValue().equals(change.getKey())) {
+                    sourceFieldItems.clear();
+                    sourceFieldItems.addAll(change.getValueAdded().getFieldNames());
+                }
             }
         });
         // - Bind changes to sourcecomponent or sourcefieldname values to updateValue

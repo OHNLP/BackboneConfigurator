@@ -6,7 +6,9 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
+import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -14,6 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.ExtractComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
@@ -21,8 +25,10 @@ import org.ohnlp.backbone.api.components.HasOutputs;
 import org.ohnlp.backbone.api.components.LoadComponent;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
+import org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ComponentCell extends RectangleCell {
@@ -145,7 +151,18 @@ public class ComponentCell extends RectangleCell {
             if (e.getButton().equals(MouseButton.PRIMARY)) {
                 EditorRegistry.getCurrentEditedComponent().setValue(this.pipelineDec);
                 if (e.getClickCount() > 1) {
-                    // TODO open editor dialog
+                    try {
+                        FXMLLoader loader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/component-editor-view.fxml"));
+                        Stage stage = new Stage();
+                        stage.setTitle("Edit Pipeline Step");
+                        Scene s = new Scene(loader.load());
+                        s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+                        stage.setScene(s);
+                        stage.initStyle(StageStyle.UNDECORATED);
+                        stage.show();
+                    } catch (IOException t) {
+                        throw new RuntimeException(t);
+                    }
                 }
             }
         });

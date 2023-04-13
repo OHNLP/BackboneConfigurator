@@ -2,14 +2,13 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import org.apache.beam.sdk.schemas.Schema;
-
-import java.util.Map;
 
 public class BooleanTypedConfigurationField extends TypedConfigurationField {
     @Override
@@ -35,7 +34,7 @@ public class BooleanTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render(Map<String, Schema> schema) {
+    public Node render(ObservableMap<String, Schema> schema) {
         HBox ret = new HBox();
         ret.setAlignment(Pos.CENTER_LEFT);
         ret.setSpacing(5);

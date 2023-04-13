@@ -3,11 +3,10 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import org.apache.beam.sdk.schemas.Schema;
-
-import java.util.Map;
 
 public class NumericTypedConfigurationField extends TypedConfigurationField {
     private boolean floating;
@@ -50,7 +49,7 @@ public class NumericTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render(Map<String, Schema> schema) {
+    public Node render(ObservableMap<String, Schema> schema) {
         TextField ret = new TextField(observableEditedValue.asString().get());
         ret.textProperty().addListener((obs, ov, nv) -> {
             this.updateValue(nv);

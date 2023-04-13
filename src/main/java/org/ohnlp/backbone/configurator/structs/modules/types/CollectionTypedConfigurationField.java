@@ -3,6 +3,7 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import javafx.collections.ObservableMap;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -14,7 +15,6 @@ import org.apache.beam.sdk.schemas.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class CollectionTypedConfigurationField extends TypedConfigurationField {
 
@@ -67,7 +67,7 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render(Map<String, Schema> schema) {
+    public Node render(ObservableMap<String, Schema> schema) {
         VBox ret = new VBox();
         Button addButton = new Button("Add new Entry");
         addButton.setOnMouseClicked((e) -> {

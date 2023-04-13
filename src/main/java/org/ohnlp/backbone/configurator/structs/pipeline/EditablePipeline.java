@@ -40,19 +40,26 @@ public class EditablePipeline {
         this.componentsByID = new HashMap<>();
         this.components.forEach(d -> {
             this.componentsByID.put(d.getComponentID(), d);
+            d.setParent(this);
         });
+        for (PipelineComponentDeclaration component : this.components) {
+            component.setUpdateOutputSchemas(true);
+        }
         return this;
     }
 
     public EditablePipeline addComponent(PipelineComponentDeclaration component) {
         this.components.add(component);
         this.componentsByID.put(component.getComponentID(), component);
+        component.setParent(this);
+        component.setUpdateOutputSchemas(true);
         // TODO  need to validate input defs for new inputs
         this.dirty.set(true);
         return this;
     }
 
     public EditablePipeline removeComponent(PipelineComponentDeclaration component) {
+        component.setParent(null);
         this.components.remove(component);
         this.componentsByID.remove(component.getComponentID());
         // TODO impl a more efficient approach for this (e.g. by indexing input IDs beforehand on insert)
@@ -165,7 +172,7 @@ public class EditablePipeline {
             }
             dirty = true;
         }
-        List<PipelineComponentDeclaration> components = pipelineComponents.stream().map(PipelineConfigUtils::fromJSONConfig).collect(Collectors.toList());
+        List<PipelineComponentDeclaration> components = pipelineComponents.stream().map(c -> PipelineConfigUtils.fromJSONConfig(null, c)).collect(Collectors.toList());
 
         // And now construct pipeline with pre-constructed elements
         return EditablePipeline.create(config.getId()).withDescription(config.getDescription()).withComponents(components).setDirty(dirty);

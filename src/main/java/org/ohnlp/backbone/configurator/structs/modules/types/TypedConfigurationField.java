@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import org.apache.beam.sdk.schemas.Schema;
 
@@ -64,7 +65,7 @@ public abstract class TypedConfigurationField implements Cloneable {
 
     public abstract void cloneFields(TypedConfigurationField target);
 
-    public abstract Node render(Map<String, Schema> schema);
+    public abstract Node render(ObservableMap<String, Schema> schema);
 
     public boolean isDirty() {
         if (currValue == null) {

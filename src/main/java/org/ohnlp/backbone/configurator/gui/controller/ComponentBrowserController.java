@@ -78,7 +78,7 @@ public class ComponentBrowserController {
     @FXML
     public void onOK(MouseEvent e) {
         ModulePipelineComponentDeclaration selected = componentList.getSelectionModel().getSelectedItem();
-        PipelineComponentDeclaration pcd = new PipelineComponentDeclaration();
+        PipelineComponentDeclaration pcd = new PipelineComponentDeclaration(EditorRegistry.getCurrentEditablePipeline().get());
         pcd.setComponentDef(selected);
         pcd.setInputs(new HashMap<>());
         pcd.setConfig(new ArrayList<>());

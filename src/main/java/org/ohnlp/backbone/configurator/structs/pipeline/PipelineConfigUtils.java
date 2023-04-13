@@ -8,13 +8,13 @@ import org.ohnlp.backbone.configurator.structs.modules.ModulePipelineComponentDe
 import java.util.ArrayList;
 
 public class PipelineConfigUtils {
-    public static PipelineComponentDeclaration fromJSONConfig(BackbonePipelineComponentConfiguration config) {
+    public static PipelineComponentDeclaration fromJSONConfig(EditablePipeline parent, BackbonePipelineComponentConfiguration config) {
         ModulePipelineComponentDeclaration module = ModuleRegistry.getComponentByClass(config.getClazz().getName());
         if (module == null) {
             // Declared module not found, discard TODO maybe log this somewhere?
             return null;
         }
-        PipelineComponentDeclaration ret = new PipelineComponentDeclaration();
+        PipelineComponentDeclaration ret = new PipelineComponentDeclaration(parent);
         ret.setComponentID(config.getComponentID());
         ret.setComponentDef(module);
         ret.setConfig(new ArrayList<>());

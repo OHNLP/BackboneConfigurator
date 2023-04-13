@@ -2,11 +2,10 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import org.apache.beam.sdk.schemas.Schema;
-
-import java.util.Map;
 
 public class StringTypedConfigurationField extends TypedConfigurationField {
     @Override
@@ -30,7 +29,7 @@ public class StringTypedConfigurationField extends TypedConfigurationField {
     }
 
     @Override
-    public Node render(Map<String, Schema> schema) {
+    public Node render(ObservableMap<String, Schema> schema) {
         TextField ret = new TextField();
         if (observableEditedValue.isNotNull().get()) {
             ret.textProperty().set(observableEditedValue.getValue().toString());

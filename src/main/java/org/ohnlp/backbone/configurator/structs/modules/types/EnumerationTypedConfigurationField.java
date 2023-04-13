@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import org.apache.beam.sdk.schemas.Schema;
@@ -11,7 +12,6 @@ import org.apache.beam.sdk.schemas.Schema;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 
 public class EnumerationTypedConfigurationField extends TypedConfigurationField {
     private LinkedHashSet<String> constants;
@@ -43,7 +43,7 @@ public class EnumerationTypedConfigurationField extends TypedConfigurationField 
     }
 
     @Override
-    public Node render(Map<String, Schema> schema) {
+    public Node render(ObservableMap<String, Schema> schema) {
         ComboBox<String> ret = new ComboBox<>();
         ObservableList<String> items = FXCollections.observableArrayList(constants);
         ret.setItems(items);
