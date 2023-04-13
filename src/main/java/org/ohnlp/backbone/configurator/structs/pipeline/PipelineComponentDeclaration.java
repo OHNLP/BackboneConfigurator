@@ -122,7 +122,7 @@ public class PipelineComponentDeclaration {
                     String otherComponentID = definition.getComponentID();
                     String otherComponentTag = definition.getInputTag();
                     Schema sourceSchema = Schema.of(
-                            Schema.Field.of(getComponentID() + "_" + thisComponentTag + "_ unresolvable_fields", Schema.FieldType.STRING)
+                            Schema.Field.of(getComponentID() + "_" + thisComponentTag + "_unresolvable_fields", Schema.FieldType.STRING)
                     );
                     PipelineComponentDeclaration source = parent.getComponentByID(otherComponentID);
                     if (source != null) {
@@ -143,7 +143,7 @@ public class PipelineComponentDeclaration {
                 // Unresolvable instance due to error, create empty schema TODO
                 ((HasOutputs) instance).getOutputTags().forEach(tag -> {
                     ret.put(tag, Schema.of(
-                            Schema.Field.of(getComponentID() + "_" + tag + "_ unresolvable_fields", Schema.FieldType.STRING)
+                            Schema.Field.of(getComponentID() + "_" + tag + "_unresolvable_fields", Schema.FieldType.STRING)
                     ));
                 });
                 return ret;
