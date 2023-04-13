@@ -10,10 +10,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
+import org.ohnlp.backbone.configurator.gui.components.TitleBar;
 import org.ohnlp.backbone.configurator.structs.modules.ModuleConfigField;
 import org.ohnlp.backbone.configurator.structs.modules.ModulePackageDeclaration;
 import org.ohnlp.backbone.configurator.structs.modules.ModulePipelineComponentDeclaration;
@@ -45,6 +47,8 @@ public class ComponentBrowserController {
 
     @FXML
     public Button okButton;
+    @FXML
+    public TitleBar titlebar;
 
     @FXML
     public void initialize() {
@@ -64,7 +68,7 @@ public class ComponentBrowserController {
         // Bindings for layout
         componentList.prefWidthProperty().bind(componentPane.prefWidthProperty());
         container.prefWidthProperty().bind(window.widthProperty());
-        container.prefHeightProperty().bind(window.heightProperty());
+        container.prefHeightProperty().bind(window.heightProperty().subtract(titlebar.heightProperty()));
         contentPane.prefWidthProperty().bind(container.widthProperty());
         contentPane.prefHeightProperty().bind(container.heightProperty());
         componentPane.prefWidthProperty().bind(container.widthProperty().subtract(moduleList.widthProperty()));
@@ -93,6 +97,7 @@ public class ComponentBrowserController {
             Scene s = new Scene(loader.load());
             s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             stage.setScene(s);
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.show();
         } catch (IOException t) {
             throw new RuntimeException(t);

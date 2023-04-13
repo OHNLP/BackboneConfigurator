@@ -4,10 +4,12 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.*?>
+<?import org.ohnlp.backbone.configurator.gui.components.*?>
 
-<AnchorPane fx:id="container" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #2F2F2F" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController" styleClass="content">
+<AnchorPane fx:id="container"  styleClass="content" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController">
     <VBox>
         <children>
+            <TitleBar fx:id="titlebar" viewOrder="-Infinity" />
             <HBox fx:id="toolbar" styleClass="control">
                 <VBox styleClass="toolbar_block">
                     <children>
@@ -26,7 +28,7 @@
                                             <HBox>
                                                 <children>
                                                     <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text styleClass="toolbar_text" text="Save&#13;Config" textAlignment="CENTER" />
+                                                    <Text text="Save&#13;Config" textAlignment="CENTER" />
                                                     <Pane HBox.hgrow="ALWAYS" />
                                                 </children>
                                             </HBox>
@@ -46,7 +48,7 @@
                                             <HBox>
                                                 <children>
                                                     <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text styleClass="toolbar_text" text="Reload&#13;Config" textAlignment="CENTER" />
+                                                    <Text text="Reload&#13;Config" textAlignment="CENTER" />
                                                     <Pane HBox.hgrow="ALWAYS" />
                                                 </children>
                                             </HBox>
@@ -59,7 +61,7 @@
                             <children>
                                 <Pane HBox.hgrow="ALWAYS" />
 
-                                <Text styleClass="toolbar_text" textAlignment="CENTER">
+                                <Text textAlignment="CENTER">
                                     Save
                                 </Text>
                                 <Pane HBox.hgrow="ALWAYS" />
@@ -81,7 +83,7 @@
                                     <HBox>
                                         <children>
                                             <Pane HBox.hgrow="ALWAYS" />
-                                            <Text styleClass="toolbar_text" text="Add&#13;Step" textAlignment="CENTER" />
+                                            <Text text="Add&#13;Step" textAlignment="CENTER" />
                                             <Pane HBox.hgrow="ALWAYS" />
                                         </children>
                                     </HBox>
@@ -99,7 +101,7 @@
                                     <HBox>
                                         <children>
                                             <Pane HBox.hgrow="ALWAYS" />
-                                            <Text styleClass="toolbar_text" text="Remove&#13;Step" textAlignment="CENTER" />
+                                            <Text text="Remove&#13;Step" textAlignment="CENTER" />
                                             <Pane HBox.hgrow="ALWAYS" />
                                         </children>
                                     </HBox>
@@ -117,7 +119,7 @@
                                     <HBox>
                                         <children>
                                             <Pane HBox.hgrow="ALWAYS" />
-                                            <Text styleClass="toolbar_text" text="Edit&#13;Step" textAlignment="CENTER" />
+                                            <Text text="Edit&#13;Step" textAlignment="CENTER" />
                                             <Pane HBox.hgrow="ALWAYS" />
                                         </children>
                                     </HBox>
@@ -129,7 +131,7 @@
                         <children>
                             <Pane HBox.hgrow="ALWAYS" />
 
-                            <Text styleClass="toolbar_text" textAlignment="CENTER">
+                            <Text textAlignment="CENTER">
                                 Pipeline Steps
                             </Text>
                             <Pane HBox.hgrow="ALWAYS" />
@@ -153,7 +155,7 @@
                                             <HBox>
                                                 <children>
                                                     <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text styleClass="toolbar_text" text="Validate&#13;Pipeline" textAlignment="CENTER" />
+                                                    <Text text="Validate&#13;Pipeline" textAlignment="CENTER" />
                                                     <Pane HBox.hgrow="ALWAYS" />
                                                 </children>
                                             </HBox>
@@ -173,7 +175,7 @@
                                             <HBox>
                                                 <children>
                                                     <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text styleClass="toolbar_text" text="Build&#13;Executable" textAlignment="CENTER" />
+                                                    <Text text="Build&#13;Executable" textAlignment="CENTER" />
                                                     <Pane HBox.hgrow="ALWAYS" />
                                                 </children>
                                             </HBox>
@@ -193,7 +195,7 @@
                                             <HBox>
                                                 <children>
                                                     <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text styleClass="toolbar_text" text="Local&#13;Run" textAlignment="CENTER" />
+                                                    <Text text="Local&#13;Run" textAlignment="CENTER" />
                                                     <Pane HBox.hgrow="ALWAYS" />
                                                 </children>
                                             </HBox>
@@ -206,7 +208,7 @@
                             <children>
                                 <Pane HBox.hgrow="ALWAYS" />
 
-                                <Text styleClass="toolbar_text" textAlignment="CENTER">
+                                <Text textAlignment="CENTER">
                                     Pipeline Deployment
                                 </Text>
                                 <Pane HBox.hgrow="ALWAYS" />
@@ -233,7 +235,7 @@
                                             <HBox>
                                                 <children>
                                                     <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text styleClass="toolbar_text" text="Module&#13;Selection" textAlignment="CENTER" />
+                                                    <Text text="Module&#13;Selection" textAlignment="CENTER" />
                                                     <Pane HBox.hgrow="ALWAYS" />
                                                 </children>
                                             </HBox>
@@ -251,7 +253,7 @@
                                             <HBox>
                                                 <children>
                                                     <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text styleClass="toolbar_text" text="OHNLPTK&#13;Commons" textAlignment="CENTER" />
+                                                    <Text text="OHNLPTK&#13;Commons" textAlignment="CENTER" />
                                                     <Pane HBox.hgrow="ALWAYS" />
                                                 </children>
                                             </HBox>
@@ -264,7 +266,7 @@
                             <children>
                                 <Pane HBox.hgrow="ALWAYS" />
 
-                                <Text styleClass="toolbar_text" textAlignment="CENTER">
+                                <Text textAlignment="CENTER">
                                     Module Management
                                 </Text>
                                 <Pane HBox.hgrow="ALWAYS" />
@@ -288,7 +290,7 @@
                                     <HBox>
                                         <children>
                                             <Pane HBox.hgrow="ALWAYS" />
-                                            <Text styleClass="toolbar_text" text="Close&#13;" textAlignment="CENTER" />
+                                            <Text text="Close&#13;" textAlignment="CENTER" />
                                             <Pane HBox.hgrow="ALWAYS" />
                                         </children>
                                     </HBox>
@@ -300,7 +302,7 @@
                         <children>
                             <Pane HBox.hgrow="ALWAYS" />
 
-                            <Text styleClass="toolbar_text" textAlignment="CENTER">
+                            <Text textAlignment="CENTER">
                                 Close
                             </Text>
                             <Pane HBox.hgrow="ALWAYS" />
@@ -309,7 +311,7 @@
                     </HBox>
                 </VBox>
             </HBox>
-            <AnchorPane fx:id="pipelineDisplay" VBox.vgrow="ALWAYS" />
+            <Pane fx:id="pipelineDisplay" VBox.vgrow="ALWAYS" />
 <!--         <BorderPane>-->
 <!--            <right>-->
 <!--               <StackPane fx:id="compass" BorderPane.alignment="BOTTOM_RIGHT" />-->

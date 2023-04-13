@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import org.ohnlp.backbone.configurator.ConfigManager;
 import org.ohnlp.backbone.configurator.EditorRegistry;
@@ -82,6 +83,7 @@ public class WelcomeAndConfigSelectionController {
             s.getStylesheets().add(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.css").toExternalForm());
             stage.setScene(s);
             stage.setMaximized(true);
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.show();
             ((Node)event.getSource()).getScene().getWindow().hide();
         } catch (IOException e) {
@@ -98,6 +100,7 @@ public class WelcomeAndConfigSelectionController {
             Scene scene = new Scene(loader.load());
             scene.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             stage.setScene(scene);
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);

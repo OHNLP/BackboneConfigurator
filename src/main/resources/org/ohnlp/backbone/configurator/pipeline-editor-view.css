@@ -1,12 +1,12 @@
 .toolbar_block {
     -fx-padding: 5 5 5 5;
     -fx-border-style: hidden solid hidden hidden;
-    -fx-border-color: lightgray;
+    -fx-border-color: #5b5b5b;
 }
 .toolbar_block_right {
     -fx-padding: 5 5 5 5;
     -fx-border-style: hidden hidden hidden solid;
-    -fx-border-color: lightgray;
+    -fx-border-color: #5b5b5b;
 }
 .button {
     -fx-background-color: #373d3f;

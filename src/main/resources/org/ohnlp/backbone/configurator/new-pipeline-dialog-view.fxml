@@ -4,10 +4,12 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import org.ohnlp.backbone.configurator.gui.components.TitleBar?>
 <AnchorPane xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.NewPipelineDialogController" styleClass="content">
    <children>
       <VBox minWidth="600.0" spacing="10.0">
          <children>
+            <TitleBar maximizable="false"/>
             <HBox alignment="CENTER_LEFT">
                <children>
                   <Label>Pipeline Name: </Label>

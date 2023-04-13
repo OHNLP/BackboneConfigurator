@@ -3,27 +3,32 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import org.ohnlp.backbone.configurator.gui.components.TitleBar?>
 <AnchorPane fx:id="container" prefHeight="800.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.14-internal"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.ohnlp.backbone.configurator.gui.controller.ComponentEditorController" styleClass="content">
     <children>
-        <HBox>
-            <children>
-                <VBox HBox.hgrow="ALWAYS">
-                    <children>
-                        <VBox fx:id="configList">
-                        </VBox>
-                        <HBox spacing="5">
-                            <Pane/>
-                            <Button onAction="#onReset">Reset</Button>
-                            <Pane HBox.hgrow="ALWAYS"/>
-                            <Button onAction="#onCommit">Apply</Button>
-                            <Button onAction="#onClose">Close</Button>
-                            <Pane/>
-                        </HBox>
-                    </children>
-                </VBox>
-            </children>
-        </HBox>
+        <VBox>
+            <TitleBar/>
+            <HBox>
+                <children>
+                    <VBox HBox.hgrow="ALWAYS">
+                        <children>
+                            <VBox fx:id="configList">
+                            </VBox>
+                            <HBox spacing="5">
+                                <Pane/>
+                                <Button onAction="#onReset">Reset</Button>
+                                <Pane HBox.hgrow="ALWAYS"/>
+                                <Button onAction="#onCommit">Apply</Button>
+                                <Button onAction="#onClose">Close</Button>
+                                <Pane/>
+                            </HBox>
+                        </children>
+                    </VBox>
+                </children>
+            </HBox>
+        </VBox>
+
     </children>
 </AnchorPane>

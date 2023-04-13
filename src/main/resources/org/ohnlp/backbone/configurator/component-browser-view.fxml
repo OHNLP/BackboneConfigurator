@@ -4,12 +4,14 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
+<?import org.ohnlp.backbone.configurator.gui.components.TitleBar?>
 <AnchorPane fx:id="window" prefHeight="900.0" prefWidth="1280.0" styleClass="window"
             xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.ohnlp.backbone.configurator.gui.controller.ComponentBrowserController">
     <children>
         <VBox>
             <children>
+                <TitleBar fx:id="titlebar"/>
                 <Pane fx:id="container" VBox.vgrow="ALWAYS">
                     <children>
                         <SplitPane fx:id="contentPane" dividerPositions="0.4" styleClass="content-pane">

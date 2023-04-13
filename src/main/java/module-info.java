@@ -13,6 +13,7 @@ open module org.ohnlp.backbone.configurator {
     requires fxgraph;
     requires org.abego.treelayout.core;
     requires java.desktop;
+    requires org.kordamp.ikonli.javafx;
 
 
     exports org.ohnlp.backbone.configurator;

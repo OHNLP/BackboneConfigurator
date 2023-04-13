@@ -2,6 +2,7 @@ package org.ohnlp.backbone.configurator.gui.controller;
 
 import com.fxgraph.graph.Graph;
 import com.fxgraph.graph.PannableCanvas;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
@@ -19,10 +20,12 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import org.abego.treelayout.Configuration;
 import org.ohnlp.backbone.configurator.ConfigManager;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.gui.ConfiguratorGUI;
+import org.ohnlp.backbone.configurator.gui.components.TitleBar;
 import org.ohnlp.backbone.configurator.gui.components.graphs.LabelPositionAbegoTreeLayout;
 import org.ohnlp.backbone.configurator.gui.utils.DAGUtils;
 import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
@@ -32,7 +35,7 @@ import java.io.IOException;
 
 public class PipelineEditorController {
     @FXML
-    public AnchorPane pipelineDisplay;
+    public Pane pipelineDisplay;
     @FXML
     public AnchorPane container;
     @FXML
@@ -45,10 +48,17 @@ public class PipelineEditorController {
     public Button editStepButton;
     @FXML
     public StackPane compass;
+    @FXML
+    public TitleBar titlebar;
     private BorderPane renderedGraph;
 
     @FXML
     public void initialize() {
+        Platform.runLater(() -> {
+            this.container.prefWidthProperty().bind(this.container.getScene().getWindow().widthProperty());
+        });
+
+        this.titlebar.prefWidthProperty().bind(container.widthProperty());
         // Generate pipeline graph
         Graph g = DAGUtils.generateGraphForPipeline(EditorRegistry.getCurrentEditablePipeline().getValue());
         g.layout(new LabelPositionAbegoTreeLayout(150, 500, Configuration.Location.Top));
@@ -56,11 +66,9 @@ public class PipelineEditorController {
         canvas.prefWidthProperty().bind(container.widthProperty());
         this.renderedGraph = new BorderPane(canvas);
         this.pipelineDisplay.getChildren().add(renderedGraph);
-        this.renderedGraph.prefWidthProperty().bind(pipelineDisplay.widthProperty());
-        this.renderedGraph.prefHeightProperty().bind(pipelineDisplay.heightProperty());
+        this.renderedGraph.minHeightProperty().set(200);
         this.pipelineDisplay.viewOrderProperty().set(Double.MAX_VALUE); // Move to back
         // Toolbar Display Options
-        this.toolbar.prefWidthProperty().bind(this.container.widthProperty());
         DropShadow shadow = new DropShadow();
         this.toolbar.effectProperty().set(shadow);
         // Bind remove/edit step to whether a component is selected for editing
@@ -119,6 +127,7 @@ public class PipelineEditorController {
             Scene s = new Scene(loader.load());
             s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             stage.setScene(s);
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -135,6 +144,7 @@ public class PipelineEditorController {
             scene.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             stage.setScene(scene);
             stage.setTitle("OHNLP Toolkit Pipeline Configuration Editor");
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.show();
             ((Node)e.getSource()).getScene().getWindow().hide();
         } catch (IOException t) {
@@ -167,6 +177,7 @@ public class PipelineEditorController {
             s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/component-browser-view.css").toExternalForm());
             stage.setScene(s);
+            stage.initStyle(StageStyle.UNDECORATED);
             stage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);

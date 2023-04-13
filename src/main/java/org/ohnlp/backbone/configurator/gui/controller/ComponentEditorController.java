@@ -14,6 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.StageStyle;
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.components.HasOutputs;
@@ -180,7 +181,8 @@ public class ComponentEditorController {
             promptSave = promptSave || !stepIDProperty.getValue().equals(EditorRegistry.getCurrentEditedComponent().get().getComponentID());
         }
         if (promptSave) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.initStyle(StageStyle.UNDECORATED);
             alert.setTitle("Unsaved Changes");
             alert.setHeaderText("Unsaved Changes");
             alert.setContentText("There are unsaved changes to this module configuration. Do you wish to save?");
