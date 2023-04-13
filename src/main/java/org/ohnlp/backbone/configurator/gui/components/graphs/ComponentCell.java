@@ -2,6 +2,7 @@ package org.ohnlp.backbone.configurator.gui.components.graphs;
 
 import com.fxgraph.cells.RectangleCell;
 import com.fxgraph.graph.Graph;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.value.ObservableBooleanValue;
@@ -9,6 +10,9 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Orientation;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -152,15 +156,33 @@ public class ComponentCell extends RectangleCell {
                 EditorRegistry.getCurrentEditedComponent().setValue(this.pipelineDec);
                 if (e.getClickCount() > 1) {
                     try {
-                        FXMLLoader loader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/component-editor-view.fxml"));
-                        Stage stage = new Stage();
-                        stage.setTitle("Edit Pipeline Step");
-                        Scene s = new Scene(loader.load());
-                        s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-                        stage.setScene(s);
-                        stage.initStyle(StageStyle.UNDECORATED);
-                        stage.show();
-                    } catch (IOException t) {
+                        // Since component editor can lead to schema re-resolution, display here first
+                        Dialog<Boolean> alert = new Dialog();
+                        alert.initStyle(StageStyle.UNDECORATED);
+                        alert.setTitle("Resolving Input/Output Schemas");
+                        alert.setHeaderText("Attempting to Resolve Input/Output Schemas");
+                        alert.setContentText("Please Wait...");
+                        alert.getDialogPane().getStyleClass().add("window");
+                        alert.getDialogPane().getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+                        alert.show();
+                        Platform.runLater(() -> {
+                            FXMLLoader loader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/component-editor-view.fxml"));
+                            Stage stage = new Stage();
+                            stage.setTitle("Edit Pipeline Step");
+                            Scene s = null;
+                            try {
+                                s = new Scene(loader.load());
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
+                            }
+                            s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+                            stage.setScene(s);
+                            stage.initStyle(StageStyle.UNDECORATED);
+                            stage.show();
+                            alert.setResult(true);
+                            alert.close();
+                        });
+                    } catch (Throwable t) {
                         throw new RuntimeException(t);
                     }
                 }

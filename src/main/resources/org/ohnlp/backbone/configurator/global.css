@@ -1,3 +1,7 @@
+/* Globals */
+.window {
+    -fx-border-color: #4f4f4f;
+}
 Text {
     -fx-fill: lightgray;
 }
@@ -50,15 +54,21 @@ Text {
 
 /* Default Dialogs */
 .dialog-pane {
-    -fx-background-color: #2f2f2f;
+    -fx-background-color: #3f3f3f;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 0.0, 0.0)
 }
 
 .dialog-pane .header-panel {
-    -fx-background-color: #2f2f2f;
+    -fx-background-color: #3f3f3f;
+}
+
+
+.dialog-pane .label.content {
+    -fx-background-color: #3f3f3f;
 }
 
 .dialog-pane > .button-bar {
-    -fx-background-color: #2f2f2f;
+    -fx-background-color: #3f3f3f;
 }
 /* Control Styling */
 

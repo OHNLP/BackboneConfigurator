@@ -9,7 +9,7 @@
             xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.ohnlp.backbone.configurator.gui.controller.ComponentBrowserController">
     <children>
-        <VBox>
+        <VBox styleClass="window">
             <children>
                 <TitleBar fx:id="titlebar"/>
                 <Pane fx:id="container" VBox.vgrow="ALWAYS">

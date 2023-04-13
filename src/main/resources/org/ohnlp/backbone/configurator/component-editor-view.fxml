@@ -8,14 +8,15 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.ohnlp.backbone.configurator.gui.controller.ComponentEditorController" styleClass="content">
     <children>
-        <VBox>
+        <VBox fx:id="contents" styleClass="window">
             <TitleBar/>
-            <HBox>
+            <HBox VBox.vgrow="ALWAYS">
                 <children>
-                    <VBox HBox.hgrow="ALWAYS">
+                    <VBox HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                         <children>
                             <VBox fx:id="configList">
                             </VBox>
+                            <Pane VBox.vgrow="ALWAYS"/>
                             <HBox spacing="5">
                                 <Pane/>
                                 <Button onAction="#onReset">Reset</Button>

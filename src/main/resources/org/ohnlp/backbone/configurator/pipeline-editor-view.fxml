@@ -7,7 +7,7 @@
 <?import org.ohnlp.backbone.configurator.gui.components.*?>
 
 <AnchorPane minWidth="1024" minHeight="768" fx:id="container" styleClass="content" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController">
-    <VBox>
+    <VBox fx:id="window" styleClass="window">
         <children>
             <TitleBar fx:id="titlebar" viewOrder="-Infinity" />
             <HBox fx:id="toolbar" styleClass="control">

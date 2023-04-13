@@ -35,6 +35,8 @@ public class ComponentEditorController {
     public VBox configList;
     @FXML
     public AnchorPane container;
+    @FXML
+    public VBox contents;
 
     private Map<String, ObjectBinding<BackbonePipelineComponentConfiguration.InputDefinition>> boundInputs = new HashMap<>();
     private StringProperty stepIDProperty;
@@ -42,6 +44,7 @@ public class ComponentEditorController {
 
     @FXML
     public void initialize() {
+        contents.prefHeightProperty().bind(container.heightProperty());
         Assert.notNull(EditorRegistry.getCurrentEditedComponent(), "Component Editor Dialog Initialized with Null Component");
         EditorRegistry.getCurrentEditedComponent().get().setUpdateOutputSchemas(true);
         SimpleObjectProperty<PipelineComponentDeclaration> edited = EditorRegistry.getCurrentEditedComponent();
