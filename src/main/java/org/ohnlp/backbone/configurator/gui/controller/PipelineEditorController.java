@@ -117,6 +117,7 @@ public class PipelineEditorController {
             Stage stage = new Stage();
             stage.setTitle("Edit Pipeline Step");
             Scene s = new Scene(loader.load());
+            s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             stage.setScene(s);
             stage.show();
         } catch (IOException e) {
@@ -131,6 +132,7 @@ public class PipelineEditorController {
             Stage stage = new Stage();
             FXMLLoader fxmlLoader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/welcome-view.fxml"));
             Scene scene = new Scene(fxmlLoader.load());
+            scene.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             stage.setScene(scene);
             stage.setTitle("OHNLP Toolkit Pipeline Configuration Editor");
             stage.show();
@@ -162,6 +164,7 @@ public class PipelineEditorController {
             Stage stage = new Stage();
             stage.setTitle("Add Pipeline Component");
             Scene s = new Scene(loader.load());
+            s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/component-browser-view.css").toExternalForm());
             stage.setScene(s);
             stage.show();

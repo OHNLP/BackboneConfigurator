@@ -9,6 +9,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -175,7 +176,9 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
         public CollectionSchemaEditorNode(SimpleBooleanProperty invalidationFlag, ObservableList<SchemaEditorNode> parent) {
             super(invalidationFlag, parent);
             this.child.set(null);
-            this.render = new HBox(new Text("Content Type: "), this.editor, new Pane());
+            this.render = new HBox(new Text("Content Type:"), this.editor, new Pane());
+            this.render.setSpacing(5);
+            this.render.setAlignment(Pos.CENTER_LEFT);
             this.child.addListener((e, ov, nv) -> {
                 if (nv != null) {
                     Node n = nv.render();

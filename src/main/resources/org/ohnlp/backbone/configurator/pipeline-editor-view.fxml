@@ -5,10 +5,10 @@
 <?import javafx.scene.text.*?>
 <?import org.kordamp.ikonli.javafx.*?>
 
-<AnchorPane fx:id="container" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #2F2F2F" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController">
+<AnchorPane fx:id="container" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #2F2F2F" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController" styleClass="content">
     <VBox>
         <children>
-            <HBox fx:id="toolbar" styleClass="toolbar">
+            <HBox fx:id="toolbar" styleClass="control">
                 <VBox styleClass="toolbar_block">
                     <children>
                         <HBox>

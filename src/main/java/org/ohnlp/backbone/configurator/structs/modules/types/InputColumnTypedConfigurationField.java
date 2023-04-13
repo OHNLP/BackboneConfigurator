@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.HBox;
@@ -45,8 +46,10 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
     }
 
     @Override
-    public Node render(Map<String, Schema> schema) { // TODO split sourceTag and columnname into two combo boxes
+    public Node render(Map<String, Schema> schema) {
         HBox ret = new HBox();
+        ret.setSpacing(5);
+        ret.setAlignment(Pos.CENTER_LEFT);
         this.schema = schema;
         // Source Collection Schemas
         ComboBox<String> sourceComponent = new ComboBox<>();
@@ -60,7 +63,7 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
         sourceFieldName.setItems(sourceFieldItems);
 
         // Actually populate the return HBox and set bound growth
-        ret.getChildren().addAll(new Text("Input Collection: "), sourceComponent, new Text("Input Field Name: "), sourceFieldName);
+        ret.getChildren().addAll(new Text("Input Collection:"), sourceComponent, new Text("Input Field Name:"), sourceFieldName);
         sourceComponent.setMaxWidth(Double.MAX_VALUE);
         sourceFieldName.setMaxWidth(Double.MAX_VALUE);
 

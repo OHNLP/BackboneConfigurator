@@ -18,8 +18,9 @@ public class ConfiguratorGUI extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         ModuleRegistry.registerFiles(new File("modules").listFiles());
-        FXMLLoader fxmlLoader = new FXMLLoader(ConfiguratorGUI.class.getResource("/org/ohnlp/backbone/configurator/welcome-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/ohnlp/backbone/configurator/welcome-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
+        scene.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.setTitle("OHNLP Toolkit Pipeline Configuration Editor");
         primaryStage.show();

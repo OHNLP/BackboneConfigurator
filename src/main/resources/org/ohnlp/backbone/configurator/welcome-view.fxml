@@ -4,13 +4,13 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.WelcomeAndConfigSelectionController">
+<AnchorPane prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.WelcomeAndConfigSelectionController" styleClass="content">
     <children>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" spacing="10.0">
+                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" spacing="10.0" styleClass="control">
                     <children>
-                        <Label>🔍</Label>
+                        <Label style="-fx-text-fill: lightgray">🔍</Label>
                         <TextField fx:id="searchFilter" promptText="Search Pipelines" HBox.hgrow="ALWAYS" />
                         <Button mnemonicParsing="false" onAction="#createNewPipeline" text="New Pipeline" />
                         <Button mnemonicParsing="false" onAction="#onOpenSelectedPipeline" text="Open Selected Pipeline" />

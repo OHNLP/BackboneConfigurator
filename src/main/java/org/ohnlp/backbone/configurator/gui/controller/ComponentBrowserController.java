@@ -91,6 +91,7 @@ public class ComponentBrowserController {
             Stage stage = new Stage();
             stage.setTitle("Edit Pipeline Step");
             Scene s = new Scene(loader.load());
+            s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             stage.setScene(s);
             stage.show();
         } catch (IOException t) {

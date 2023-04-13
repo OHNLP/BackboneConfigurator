@@ -1,6 +1,3 @@
-.toolbar {
-    -fx-background-color: #373d3f;
-}
 .toolbar_block {
     -fx-padding: 5 5 5 5;
     -fx-border-style: hidden solid hidden hidden;
@@ -14,12 +11,6 @@
 .button {
     -fx-background-color: #373d3f;
 }
-.toolbar_text {
-    -fx-fill: lightgray;
-}
-.toolbar_text:disabled {
-    -fx-fill: darkgray;
-}
 .button:hover {
     -fx-background-color: #575d60;
 }
@@ -32,4 +23,7 @@
 
 .ikonli-font-icon:disabled {
     -fx-fill: darkgray;
+}
+.graph-cell Text {
+    -fx-fill: black;
 }

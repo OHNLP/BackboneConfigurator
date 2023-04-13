@@ -77,6 +77,8 @@ public class WelcomeAndConfigSelectionController {
             Stage stage = new Stage();
             stage.setTitle("OHNLP Toolkit Pipeline Configuration Editor: " + active.getFile().getName());
             Scene s = new Scene(loader.load());
+            s.getStylesheets().add(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+
             s.getStylesheets().add(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.css").toExternalForm());
             stage.setScene(s);
             stage.setMaximized(true);
@@ -93,7 +95,9 @@ public class WelcomeAndConfigSelectionController {
             FXMLLoader loader = new FXMLLoader(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/new-pipeline-dialog-view.fxml"));
             Stage stage = new Stage();
             stage.setTitle("OHNLP Toolkit Pipeline Configuration Editor: Create new Pipeline");
-            stage.setScene(new Scene(loader.load()));
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+            stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
             throw new RuntimeException(e);

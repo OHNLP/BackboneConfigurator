@@ -3,6 +3,7 @@ package org.ohnlp.backbone.configurator.structs.modules.types;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
@@ -86,6 +87,8 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
             List<TypedConfigurationField> children = (List<TypedConfigurationField>) this.getCurrValue();
             children.forEach((child) -> {
                 HBox toAdd = new HBox();
+                toAdd.setSpacing(5);
+                toAdd.setAlignment(Pos.CENTER_LEFT);
                 Node childRender = child.render(schema);
                 Button removeChild = new Button("-");
                 removeChild.setOnMouseClicked(e -> {

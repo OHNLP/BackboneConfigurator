@@ -63,6 +63,7 @@ public class ComponentCell extends RectangleCell {
     @Override
     public Region getGraphic(Graph graph) {
         ComponentCellPane node = new ComponentCellPane();
+        node.getStyleClass().add("graph-cell");
         FlowPane inputPane  = new FlowPane(Orientation.HORIZONTAL);
         inputPane.setHgap(-1);
         inputPane.setPrefHeight(20);

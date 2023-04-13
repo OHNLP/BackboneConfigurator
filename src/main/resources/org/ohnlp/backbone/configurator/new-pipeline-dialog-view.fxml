@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.NewPipelineDialogController">
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.NewPipelineDialogController" styleClass="content">
    <children>
       <VBox minWidth="600.0" spacing="10.0">
          <children>

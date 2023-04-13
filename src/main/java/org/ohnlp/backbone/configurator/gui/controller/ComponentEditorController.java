@@ -7,6 +7,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -67,7 +68,9 @@ public class ComponentEditorController {
             ((HasInputs) cmp).getInputTags().forEach(tag -> {
                 // Render input row and generate available output collections for this tag
                 HBox inputRow = new HBox();
-                Text label = new Text(tag + " From: ");
+                inputRow.setAlignment(Pos.CENTER_LEFT);
+                inputRow.setSpacing(5);
+                Text label = new Text(tag + " From:");
                 ComboBox<String> inputComponentID = new ComboBox<>();
                 inputComponentID.setItems(FXCollections.observableArrayList(possibleInputs).sorted());
                 ComboBox<String> inputComponentTag = new ComboBox<>();
@@ -185,6 +188,7 @@ public class ComponentEditorController {
             ButtonType noSave = new ButtonType("Don't Save", ButtonBar.ButtonData.FINISH);
             ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
             alert.getButtonTypes().setAll(ok, noSave, cancel);
+            alert.getDialogPane().getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             Optional<ButtonType> output = alert.showAndWait();
             if (output.isEmpty()) {
                 return;

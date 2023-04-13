@@ -1,45 +1,21 @@
 .window {
     -fx-background-color: #2F2F2F;
 }
-.content-pane {
-    -fx-box-border: transparent;
-}
-.content-pane > .split-pane-divider {
-    -fx-padding: 0;
-}
-.component-list {
-    -fx-background-color: #2F2F2F;
+.module-list {
+    -fx-background-color: #373d3f;
 }
 .module-list .list-cell {
     -fx-background-color: #373d3f;
 }
-.component-list .list-cell {
+.component-list {
     -fx-background-color: #2F2F2F;
 }
-.module-list .list-cell:selected {
-    -fx-background-color: #3d84b9;
+.component-list .list-cell {
+    -fx-background-color: #2F2F2F;
 }
 .component-list .list-cell:selected {
     -fx-background-color: #2d74a9;
 }
-.module-list .list-cell:filled:hover {
-    -fx-background-color: #575d60;
-}
 .component-list .list-cell:filled:hover {
     -fx-background-color: #474d50;
-}
-.text-display {
-    -fx-fill: lightgray;
-    -fx-text-fill: lightgray;
-}
-.button {
-    -fx-text-fill: lightgray;
-    -fx-background-color: #373d3f;
-}
-.button:hover {
-    -fx-background-color: #575d60;
-}
-
-.button:pressed {
-    -fx-background-color: #979c9d;
 }

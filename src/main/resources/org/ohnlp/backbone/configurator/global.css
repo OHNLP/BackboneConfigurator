@@ -1,0 +1,145 @@
+Text {
+    -fx-fill: lightgray;
+}
+
+.label {
+    -fx-text-fill: lightgray;
+}
+
+.content {
+    -fx-background-color: #2f2f2f;
+}
+
+.control {
+    -fx-background-color: #373d3f;
+}
+
+/* Default Dialogs */
+.dialog-pane {
+    -fx-background-color: #2f2f2f;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #2f2f2f;
+}
+
+.dialog-pane > .button-bar {
+    -fx-background-color: #2f2f2f;
+}
+/* Control Styling */
+
+.button {
+    -fx-text-fill: lightgray;
+    -fx-background-color: #474d4f;
+}
+.button:hover {
+    -fx-background-color: #575d60;
+}
+
+.button:pressed {
+    -fx-background-color: #979c9d;
+}
+
+.scroll-pane {
+    -fx-background-color: #2f2f2f;
+}
+
+.split-pane {
+    -fx-background-color: #2f2f2f;
+}
+
+.list-view {
+    -fx-padding: 0;
+}
+
+.list-view .list-cell {
+    -fx-background-color: #2F2F2F;
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: #3d84b9;
+}
+
+.list-view .list-cell:filled:hover {
+    -fx-background-color: #575d60;
+}
+
+.text-field {
+    -fx-background-color: #2f2f2f;
+    -fx-border-color: #373d3f;
+    -fx-prompt-text-fill: lightgray;
+    -fx-text-fill: lightgray;
+}
+
+.text-field:hover {
+    -fx-background-color: #373d3f;
+}
+
+.split-pane {
+    -fx-box-border: transparent;
+}
+
+.split-pane > .split-pane-divider {
+    -fx-padding: 0;
+}
+
+.titled-pane {
+    -fx-box-border: transparent;
+    -fx-padding: 0;
+}
+
+.titled-pane > .title {
+    -fx-background-color: #373d3f;
+}
+
+.titled-pane > .title > .text {
+    -fx-fill: lightgray;
+}
+
+.combo-box-base {
+    -fx-fill: lightgray;
+    -fx-background-color: #2f2f2f;
+    -fx-border-color: #373d3f;
+    -fx-padding: 5 2 5 2;
+}
+
+
+.combo-box-base > .arrow-button {
+    -fx-background-color: #2f2f2f;
+}
+
+.combo-box-base .list-cell {
+    -fx-text-fill: lightgray
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #2f2f2f;
+}
+
+.combo-box-base:hover {
+    -fx-background-color: #373d3f;
+}
+
+.combo-box-base:hover .text-input {
+    -fx-background-color: #373d3f;
+}
+
+.combo-box-base:hover .arrow-button {
+    -fx-background-color: #373d3f;
+}
+
+.radio-button {
+    -fx-fill: lightgray;
+    -fx-text-fill: lightgray;
+}
+.radio-button .radio {
+    -fx-background-color: #2f2f2f;
+    -fx-border-color: #474d4f;
+    -fx-border-radius: 15px;
+}
+.radio-button:selected .radio .dot {
+    -fx-background-color: lightgray;
+    -fx-background-insets: 0;
+}
+
+
