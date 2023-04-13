@@ -6,7 +6,7 @@
 <?import org.kordamp.ikonli.javafx.*?>
 <?import org.ohnlp.backbone.configurator.gui.components.*?>
 
-<AnchorPane fx:id="container"  styleClass="content" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController">
+<AnchorPane minWidth="1024" minHeight="768" fx:id="container" styleClass="content" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController">
     <VBox>
         <children>
             <TitleBar fx:id="titlebar" viewOrder="-Infinity" />
