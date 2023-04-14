@@ -88,6 +88,7 @@ public class TitleBar extends HBox {
             Window stage = ((Node) e.getSource()).getScene().getWindow();
             stage.setX(e.getScreenX() + drag.x);
             stage.setY(e.getScreenY() + drag.y);
+            ((Stage)stage).setMaximized(false);
         });
 
         // Bind button actions
