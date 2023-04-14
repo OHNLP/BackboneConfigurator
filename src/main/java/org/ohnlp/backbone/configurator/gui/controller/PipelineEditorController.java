@@ -7,32 +7,20 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.abego.treelayout.Configuration;
 import org.ohnlp.backbone.configurator.ConfigManager;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.Views;
-import org.ohnlp.backbone.configurator.gui.ConfiguratorGUI;
 import org.ohnlp.backbone.configurator.gui.components.TitleBar;
 import org.ohnlp.backbone.configurator.gui.components.graphs.LabelPositionAbegoTreeLayout;
 import org.ohnlp.backbone.configurator.gui.utils.DAGUtils;
-import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
 import java.io.IOException;
-import java.util.Optional;
 
 public class PipelineEditorController {
     @FXML
@@ -92,30 +80,6 @@ public class PipelineEditorController {
                 EditorRegistry.refreshGraphProperty().set(false);
             }
         });
-        // Generate arrow buttons for pipeline scroll
-//        Button right = new Button();
-//        right.getStyleClass().add("compass-button");
-//        StackPane.setAlignment(right, Pos.CENTER_RIGHT);
-//        Button down = new Button();
-//        down.setRotate(90);
-//        down.getStyleClass().add("compass-button");
-//        StackPane.setAlignment(down, Pos.BOTTOM_CENTER);
-//        Button left = new Button();
-//        left.setRotate(180);
-//        left.getStyleClass().add("compass-button");
-//        StackPane.setAlignment(left, Pos.CENTER_LEFT);
-//        Button up = new Button();
-//        up.setRotate(270);
-//        up.getStyleClass().add("compass-button");
-//        StackPane.setAlignment(up, Pos.TOP_CENTER);
-//        Button center = new Button("o");
-//        StackPane.setMargin(up, new Insets(10, 0, 0, 0));
-//        StackPane.setMargin(right, new Insets(0, 10, 0, 0));
-//        StackPane.setMargin(down, new Insets(0, 0, 10, 0));
-//        StackPane.setMargin(left, new Insets(0, 0, 0, 10));
-//        compass.getChildren().addAll(center, left, right, up, down);
-//        compass.setPrefSize(64, 80);
-
     }
 
     @FXML
@@ -180,8 +144,18 @@ public class PipelineEditorController {
     @FXML
     public void onClickRemoveStep(ActionEvent e) {
         if (EditorRegistry.getCurrentEditedComponent().isNotNull().get()) {
-            EditorRegistry.getCurrentEditablePipeline().get().removeComponent(EditorRegistry.getCurrentEditedComponent().get());
-            EditorRegistry.refreshGraphProperty().set(true);
+            PipelineComponentDeclaration currComponent = EditorRegistry.getCurrentEditedComponent().get();
+            try {
+                Views.displayConfirmationDialog("Delete Component?",
+                        "Are you sure you want to delete " + currComponent.getComponentID() + "?",
+                        () -> {
+                            EditorRegistry.getCurrentEditablePipeline().get().removeComponent(currComponent);
+                            EditorRegistry.refreshGraphProperty().set(true);
+                        },
+                        () -> {}
+                );
+            } catch (Views.DialogCancelledException ignored) {
+            }
         }
     }
 }
