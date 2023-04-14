@@ -97,10 +97,12 @@ public class EditablePipeline {
         // Validate inputs actually exist, if not remove
         this.components.forEach(c -> {
             if (c.getInputs() != null && c.getInputs().size() > 0) {
+                HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> newInputs = new HashMap<>(c.getInputs());
                 new HashMap<>(c.getInputs()).forEach((tag, def) -> {
                     if (!componentsByID.containsKey(def.getComponentID())) {
                         Logger.getGlobal().warning("An input declaration for " + tag + " is declared in " + c.getComponentID() + " from source component " + def.getComponentID() + " which does not exist. Removing");
-                        c.getInputs().remove(tag);
+                        newInputs.remove(tag);
+                        c.setInputs(newInputs);
                         this.dirty.set(true);
                     }
                 });
@@ -150,8 +152,10 @@ public class EditablePipeline {
                     legacyConfigs.add("Pipeline Definition Index " + i + ": " + component.getClazz().getName());
                     BackbonePipelineComponentConfiguration.InputDefinition generatedDef
                             = new BackbonePipelineComponentConfiguration.InputDefinition();
-                    generatedDef.setComponentID(lastUID.toString().toLowerCase(Locale.ROOT));
-                    generatedDef.setInputTag("*");
+                    if (lastUID != null) {
+                        generatedDef.setComponentID(lastUID.toString().toLowerCase(Locale.ROOT));
+                        generatedDef.setInputTag("*");
+                    }
                     component.setInputs(Map.of("*", generatedDef));
                 }
                 if (component.getComponentID() == null || component.getComponentID().trim().length() == 0) {
