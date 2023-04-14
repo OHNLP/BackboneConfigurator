@@ -205,4 +205,7 @@ Text {
     -fx-background-insets: 0;
 }
 
-
+.context-menu {
+    -fx-background-color: #2f2f2f;
+    -fx-text-fill: lightgray
+}

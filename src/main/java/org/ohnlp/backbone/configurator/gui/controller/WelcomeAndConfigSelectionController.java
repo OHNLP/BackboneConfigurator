@@ -5,17 +5,15 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -23,6 +21,8 @@ import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import org.ohnlp.backbone.configurator.ConfigManager;
 import org.ohnlp.backbone.configurator.EditorRegistry;
+import org.ohnlp.backbone.configurator.Views;
+import org.ohnlp.backbone.configurator.gui.components.ConfigListContextMenu;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -74,18 +74,7 @@ public class WelcomeAndConfigSelectionController {
         }
         try {
             EditorRegistry.setCurrentConfig(active);
-            FXMLLoader loader = new FXMLLoader(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("OHNLP Toolkit Pipeline Configuration Editor: " + active.getFile().getName());
-            Scene s = new Scene(loader.load());
-            s.getStylesheets().add(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-
-            s.getStylesheets().add(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.css").toExternalForm());
-            stage.setScene(s);
-            stage.setMaximized(true);
-            stage.initStyle(StageStyle.UNDECORATED);
-            stage.show();
-            ((Node)event.getSource()).getScene().getWindow().hide();
+            Views.openView(Views.ViewType.PIPELINE_EDITOR, ((Node)event.getSource()).getScene().getWindow(), true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -94,14 +83,7 @@ public class WelcomeAndConfigSelectionController {
     @FXML
     public void createNewPipeline(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/new-pipeline-dialog-view.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("OHNLP Toolkit Pipeline Configuration Editor: Create new Pipeline");
-            Scene scene = new Scene(loader.load());
-            scene.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-            stage.setScene(scene);
-            stage.initStyle(StageStyle.UNDECORATED);
-            stage.show();
+            Views.openView(Views.ViewType.NEW_PIPELINE);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -119,6 +101,7 @@ public class WelcomeAndConfigSelectionController {
                     if (empty || config == null) {
                         setGraphic(null);
                     } else {
+                        Label wrapper = new Label();
                         VBox node = new VBox();
                         HBox main = new HBox();
                         String desc = "No description saved";
@@ -135,7 +118,12 @@ public class WelcomeAndConfigSelectionController {
                         main.getChildren().add(lm);
                         main.setAlignment(Pos.TOP_RIGHT);
                         node.getChildren().addAll(main, new Text(desc));
-                        setGraphic(node);
+                        wrapper.setGraphic(node);
+                        Pane parent = new Pane(wrapper); // Control cannot be top level graphic as it will mess with widths
+                        setGraphic(parent);
+                        ConfigListContextMenu ctx = new ConfigListContextMenu(config);
+                        wrapper.setContextMenu(ctx);
+                        wrapper.prefWidthProperty().bind(parent.widthProperty());
                     }
                 }
             };

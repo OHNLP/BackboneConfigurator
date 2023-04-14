@@ -23,6 +23,7 @@ import javafx.stage.StageStyle;
 import org.abego.treelayout.Configuration;
 import org.ohnlp.backbone.configurator.ConfigManager;
 import org.ohnlp.backbone.configurator.EditorRegistry;
+import org.ohnlp.backbone.configurator.Views;
 import org.ohnlp.backbone.configurator.gui.ConfiguratorGUI;
 import org.ohnlp.backbone.configurator.gui.components.TitleBar;
 import org.ohnlp.backbone.configurator.gui.components.graphs.LabelPositionAbegoTreeLayout;
@@ -124,32 +125,7 @@ public class PipelineEditorController {
             return;
         }
         try {
-            // Since component editor can lead to schema re-resolution, display here first
-            Dialog<Boolean> alert = new Dialog();
-            alert.initStyle(StageStyle.UNDECORATED);
-            alert.setTitle("Resolving Input/Output Schemas");
-            alert.setHeaderText("Attempting to Resolve Input/Output Schemas");
-            alert.setContentText("Please Wait...");
-            alert.getDialogPane().getStyleClass().add("window");
-            alert.getDialogPane().getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-            alert.show();
-            Platform.runLater(() -> {
-                FXMLLoader loader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/component-editor-view.fxml"));
-                Stage stage = new Stage();
-                stage.setTitle("Edit Pipeline Step");
-                Scene s = null;
-                try {
-                    s = new Scene(loader.load());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-                s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-                stage.setScene(s);
-                stage.initStyle(StageStyle.UNDECORATED);
-                stage.show();
-                alert.setResult(true);
-                alert.close();
-            });
+            Views.openView(Views.ViewType.COMPONENT_EDITOR);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -158,39 +134,20 @@ public class PipelineEditorController {
     @FXML
     public void onClose(ActionEvent e) throws IOException {
         if (EditorRegistry.getCurrentEditablePipeline().isNotNull().get() && EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty().getValue()) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.initStyle(StageStyle.UNDECORATED);
-            alert.setTitle("Unsaved Changes");
-            alert.setHeaderText("Unsaved Changes");
-            alert.setContentText("There are unsaved changes to this pipeline. Do you wish to save?");
-            ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-            ButtonType noSave = new ButtonType("Don't Save", ButtonBar.ButtonData.FINISH);
-            ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(ok, noSave, cancel);
-            alert.getDialogPane().getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-            Optional<ButtonType> output = alert.showAndWait();
-            if (output.isEmpty()) {
+            try {
+                Views.displayUncommitedSaveDialog("module configuration", () -> savePipeline(e), () -> {
+                    try {
+                        onReload(e);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                });
+            } catch (Views.DialogCancelledException t) {
                 return;
-            }
-            if (output.get().equals(cancel)) {
-                return;
-            }
-            if (output.get().equals(ok)) {
-                savePipeline(e);
-            } else if (output.get().equals(noSave)) {
-                onReload(e);
             }
         }
         try {
-            Stage stage = new Stage();
-            FXMLLoader fxmlLoader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/welcome-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load());
-            scene.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-            stage.setScene(scene);
-            stage.setTitle("OHNLP Toolkit Pipeline Configuration Editor");
-            stage.initStyle(StageStyle.UNDECORATED);
-            stage.show();
-            ((Node)e.getSource()).getScene().getWindow().hide();
+            Views.openView(Views.ViewType.CONFIG_LIST, ((Node)e.getSource()).getScene().getWindow(), true);
         } catch (IOException t) {
             throw new RuntimeException(t);
         }
@@ -214,15 +171,7 @@ public class PipelineEditorController {
     @FXML
     public void onAddComponent(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/component-browser-view.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Add Pipeline Component");
-            Scene s = new Scene(loader.load());
-            s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-            s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/component-browser-view.css").toExternalForm());
-            stage.setScene(s);
-            stage.initStyle(StageStyle.UNDECORATED);
-            stage.show();
+            Views.openView(Views.ViewType.COMPONENT_BROWSER);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

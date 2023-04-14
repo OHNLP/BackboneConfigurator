@@ -23,6 +23,7 @@ import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.components.HasOutputs;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
 import org.ohnlp.backbone.configurator.EditorRegistry;
+import org.ohnlp.backbone.configurator.Views;
 import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 import org.springframework.util.Assert;
@@ -198,27 +199,10 @@ public class ComponentEditorController {
             promptSave = promptSave || !stepIDProperty.getValue().equals(EditorRegistry.getCurrentEditedComponent().get().getComponentID());
         }
         if (promptSave) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.initStyle(StageStyle.UNDECORATED);
-            alert.setTitle("Unsaved Changes");
-            alert.setHeaderText("Unsaved Changes");
-            alert.setContentText("There are unsaved changes to this module configuration. Do you wish to save?");
-            ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
-            ButtonType noSave = new ButtonType("Don't Save", ButtonBar.ButtonData.FINISH);
-            ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(ok, noSave, cancel);
-            alert.getDialogPane().getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-            Optional<ButtonType> output = alert.showAndWait();
-            if (output.isEmpty()) {
+            try {
+                Views.displayUncommitedSaveDialog("module configuration", () -> onCommit(actionEvent), () -> onReset(actionEvent));
+            } catch (Views.DialogCancelledException e) {
                 return;
-            }
-            if (output.get().equals(cancel)) {
-                return;
-            }
-            if (output.get().equals(ok)) {
-                onCommit(actionEvent);
-            } else if (output.get().equals(noSave)) {
-                onReset(actionEvent);
             }
         }
         ((Node)actionEvent.getSource()).getScene().getWindow().hide();

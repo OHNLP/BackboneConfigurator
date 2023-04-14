@@ -29,6 +29,7 @@ import org.ohnlp.backbone.api.components.HasOutputs;
 import org.ohnlp.backbone.api.components.LoadComponent;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
+import org.ohnlp.backbone.configurator.Views;
 import org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
@@ -156,32 +157,7 @@ public class ComponentCell extends RectangleCell {
                 EditorRegistry.getCurrentEditedComponent().setValue(this.pipelineDec);
                 if (e.getClickCount() > 1) {
                     try {
-                        // Since component editor can lead to schema re-resolution, display here first
-                        Dialog<Boolean> alert = new Dialog();
-                        alert.initStyle(StageStyle.UNDECORATED);
-                        alert.setTitle("Resolving Input/Output Schemas");
-                        alert.setHeaderText("Attempting to Resolve Input/Output Schemas");
-                        alert.setContentText("Please Wait...");
-                        alert.getDialogPane().getStyleClass().add("window");
-                        alert.getDialogPane().getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-                        alert.show();
-                        Platform.runLater(() -> {
-                            FXMLLoader loader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/component-editor-view.fxml"));
-                            Stage stage = new Stage();
-                            stage.setTitle("Edit Pipeline Step");
-                            Scene s = null;
-                            try {
-                                s = new Scene(loader.load());
-                            } catch (IOException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                            s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-                            stage.setScene(s);
-                            stage.initStyle(StageStyle.UNDECORATED);
-                            stage.show();
-                            alert.setResult(true);
-                            alert.close();
-                        });
+                        Views.openView(Views.ViewType.COMPONENT_EDITOR);
                     } catch (Throwable t) {
                         throw new RuntimeException(t);
                     }

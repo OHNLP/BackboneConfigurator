@@ -15,6 +15,7 @@ import javafx.util.Callback;
 import javafx.util.Duration;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
+import org.ohnlp.backbone.configurator.Views;
 import org.ohnlp.backbone.configurator.gui.components.TitleBar;
 import org.ohnlp.backbone.configurator.structs.modules.ModuleConfigField;
 import org.ohnlp.backbone.configurator.structs.modules.ModulePackageDeclaration;
@@ -91,14 +92,7 @@ public class ComponentBrowserController {
         EditorRegistry.inCreateNewComponentState().set(true);
         ((Node) e.getSource()).getScene().getWindow().hide();
         try {
-            FXMLLoader loader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/component-editor-view.fxml"));
-            Stage stage = new Stage();
-            stage.setTitle("Edit Pipeline Step");
-            Scene s = new Scene(loader.load());
-            s.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-            stage.setScene(s);
-            stage.initStyle(StageStyle.UNDECORATED);
-            stage.show();
+            Views.openView(Views.ViewType.COMPONENT_EDITOR);
         } catch (IOException t) {
             throw new RuntimeException(t);
         }
