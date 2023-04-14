@@ -2,23 +2,34 @@ package org.ohnlp.backbone.configurator.gui.components;
 
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
 import org.ohnlp.backbone.configurator.ConfigManager;
+import org.ohnlp.backbone.configurator.EditorRegistry;
+import org.ohnlp.backbone.configurator.Views;
+
+import java.io.IOException;
 
 public class ConfigListContextMenu extends ContextMenu {
-    private final ConfigManager.ConfigMeta sourceConfig;
 
     public ConfigListContextMenu(ConfigManager.ConfigMeta sourceConfig) {
         super();
-        this.sourceConfig = sourceConfig;
         MenuItem open = new MenuItem("Open");
-        MenuItem edit = new MenuItem("Edit Metadata");
         MenuItem delete = new MenuItem("Delete");
         getItems().addAll(
                 open,
-                edit,
-                new SeparatorMenuItem(),
                 delete
         );
+        open.setOnAction((e) -> {
+            try {
+                EditorRegistry.setCurrentConfig(sourceConfig);
+                Views.openView(Views.ViewType.PIPELINE_EDITOR, getScene().getWindow(), true);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+        delete.setOnAction((e) -> {
+            try {
+                Views.displayConfirmationDialog("Delete Config?", "Are you sure you want to delete " + sourceConfig.getName() + "?", () -> ConfigManager.deleteConfig(sourceConfig), () -> {});
+            } catch (Views.DialogCancelledException ignored) {}
+        });
     }
 }

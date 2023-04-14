@@ -137,6 +137,28 @@ public class Views {
         });
     }
 
+
+    public static void displayConfirmationDialog(String title, String message, Runnable yesCallback, Runnable noCallback) throws DialogCancelledException {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.initStyle(StageStyle.UNDECORATED);
+        alert.setTitle(title);
+        alert.setHeaderText(title);
+        alert.setContentText(message);
+        ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
+        ButtonType no = new ButtonType("No", ButtonBar.ButtonData.NO);
+        alert.getButtonTypes().setAll(yes, no);
+        alert.getDialogPane().getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+        Optional<ButtonType> output = alert.showAndWait();
+        if (output.isEmpty()) {
+            throw new CancellationException();
+        }
+        if (output.get().equals(yes)) {
+            yesCallback.run();
+        } else if (output.get().equals(no)) {
+            noCallback.run();
+        }
+    }
+
     public static void displayUncommitedSaveDialog(String type, Runnable okCallback, Runnable resetCallback) throws DialogCancelledException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initStyle(StageStyle.UNDECORATED);
