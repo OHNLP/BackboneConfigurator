@@ -197,7 +197,7 @@ public class Views {
         Optional<ButtonType> output = alert.showAndWait();
         if (output.isEmpty() || output.get().equals(cancel)) {
             if (allowCancel) {
-                throw new CancellationException();
+                throw new DialogCancelledException();
             } else {
                 resetCallback.run();
             }
