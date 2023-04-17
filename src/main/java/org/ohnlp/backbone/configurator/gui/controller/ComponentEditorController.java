@@ -69,7 +69,7 @@ public class ComponentEditorController {
         // bind to the exit flag
         COMPONENT_EDITOR_EXIT_FLAG.addListener((o, e, n) -> {
             if (n) {
-                checkForSave(false);
+//                checkForSave(false);
                 container.getScene().getWindow().hide();
                 CURR_COMPONENT_EDITOR.set(null);
                 COMPONENT_EDITOR_EXIT_FLAG.set(false);
