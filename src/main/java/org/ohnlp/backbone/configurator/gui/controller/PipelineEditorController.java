@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
+import javafx.stage.Stage;
 import org.abego.treelayout.Configuration;
 import org.ohnlp.backbone.configurator.ConfigManager;
 import org.ohnlp.backbone.configurator.EditorRegistry;
@@ -42,6 +43,8 @@ public class PipelineEditorController {
     @FXML
     public VBox window;
     private BorderPane renderedGraph;
+
+    private static Stage currEditorPane;
 
     @FXML
     public void initialize() {

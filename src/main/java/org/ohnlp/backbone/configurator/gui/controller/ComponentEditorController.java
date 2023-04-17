@@ -2,7 +2,7 @@ package org.ohnlp.backbone.configurator.gui.controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
-import javafx.beans.property.SimpleMapProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
@@ -16,7 +16,6 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.StageStyle;
 import org.apache.beam.sdk.schemas.Schema;
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
@@ -28,10 +27,13 @@ import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 import org.springframework.util.Assert;
 
-import java.lang.reflect.Constructor;
 import java.util.*;
 
 public class ComponentEditorController {
+
+    public static final SimpleObjectProperty<ComponentEditorController> CURR_COMPONENT_EDITOR = new SimpleObjectProperty<>();
+    public static final SimpleBooleanProperty COMPONENT_EDITOR_EXIT_FLAG = new SimpleBooleanProperty(false);
+
     @FXML
     public VBox configList;
     @FXML
@@ -64,6 +66,16 @@ public class ComponentEditorController {
             p.setContent(f.getImpl().render(inputSchemas));
             configList.getChildren().add(p);
         });
+        // bind to the exit flag
+        COMPONENT_EDITOR_EXIT_FLAG.addListener((o, e, n) -> {
+            if (n) {
+                checkForSave(false);
+                container.getScene().getWindow().hide();
+                CURR_COMPONENT_EDITOR.set(null);
+                COMPONENT_EDITOR_EXIT_FLAG.set(false);
+            }
+        });
+        CURR_COMPONENT_EDITOR.set(this);
     }
 
     private void generateInputs(PipelineComponentDeclaration componentDec) {
@@ -180,6 +192,7 @@ public class ComponentEditorController {
         }
         // Now indicate that relns etc. might have changed and we might need to redraw the graph
         EditorRegistry.refreshGraphProperty().set(true);
+        CURR_COMPONENT_EDITOR.set(null);
         container.getScene().getWindow().hide();
     }
 
@@ -195,6 +208,14 @@ public class ComponentEditorController {
 
     @FXML
     public void onClose(ActionEvent actionEvent) {
+        if (!checkForSave(true)) {
+            return;
+        }
+        CURR_COMPONENT_EDITOR.set(null);
+        container.getScene().getWindow().hide();
+    }
+
+    private boolean checkForSave(boolean allowCancellable) {
         boolean promptSave = EditorRegistry.getCurrentEditedComponent().get().getConfig().stream().map(f -> f.getImpl().isDirty()).reduce((b1, b2) -> b1 || b2).orElse(false);
         promptSave = promptSave || !convertBoundInputsToUnbound().equals(EditorRegistry.getCurrentEditedComponent().get().getInputs());
         if (stepIDProperty.isNotNull().get()) {
@@ -202,12 +223,15 @@ public class ComponentEditorController {
         }
         if (promptSave) {
             try {
-                Views.displayUncommitedSaveDialog("module configuration", () -> onCommit(actionEvent), () -> onReset(actionEvent));
+                Views.displayUncommitedSaveDialog("module configuration", allowCancellable, () -> onCommit(null), () -> onReset(null));
+                return true;
             } catch (Views.DialogCancelledException e) {
-                return;
+                if (!allowCancellable) {
+                    onReset(null);
+                }
+                return false;
             }
         }
-        ((Node)actionEvent.getSource()).getScene().getWindow().hide();
-
+        return true;
     }
 }

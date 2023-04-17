@@ -2,6 +2,7 @@ package org.ohnlp.backbone.configurator;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -11,6 +12,8 @@ import javafx.scene.control.Dialog;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import org.ohnlp.backbone.configurator.gui.controller.ComponentBrowserController;
+import org.ohnlp.backbone.configurator.gui.controller.ComponentEditorController;
 import org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController;
 import org.ohnlp.backbone.configurator.gui.controller.WelcomeAndConfigSelectionController;
 
@@ -109,6 +112,18 @@ public class Views {
     }
 
     private static void newComponentEditorView() throws IOException {
+        // Check if existing window. If so, exit
+        if (ComponentEditorController.CURR_COMPONENT_EDITOR.isNotNull().get()) {
+            ComponentEditorController.COMPONENT_EDITOR_EXIT_FLAG.set(true);
+            Platform.runLater(() -> {
+                try {
+                    newComponentEditorView();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            return; // There is component editor window active. Exit first, then allow to be opened
+        }
         // Since component editor can lead to schema re-resolution, display notice to user here first, to be closed later
         Dialog<Boolean> alert = new Dialog();
         alert.initStyle(StageStyle.UNDECORATED);
@@ -160,6 +175,11 @@ public class Views {
     }
 
     public static void displayUncommitedSaveDialog(String type, Runnable okCallback, Runnable resetCallback) throws DialogCancelledException {
+        displayUncommitedSaveDialog(type, true, okCallback, resetCallback);
+    }
+
+
+    public static void displayUncommitedSaveDialog(String type, boolean allowCancel, Runnable okCallback, Runnable resetCallback) throws DialogCancelledException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.initStyle(StageStyle.UNDECORATED);
         alert.setTitle("Unsaved Changes");
@@ -168,11 +188,19 @@ public class Views {
         ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
         ButtonType noSave = new ButtonType("Don't Save", ButtonBar.ButtonData.FINISH);
         ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        alert.getButtonTypes().setAll(ok, noSave, cancel);
+        if (allowCancel) {
+            alert.getButtonTypes().setAll(ok, noSave, cancel);
+        } else {
+            alert.getButtonTypes().setAll(ok, noSave);
+        }
         alert.getDialogPane().getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
         Optional<ButtonType> output = alert.showAndWait();
         if (output.isEmpty() || output.get().equals(cancel)) {
-            throw new CancellationException();
+            if (allowCancel) {
+                throw new CancellationException();
+            } else {
+                resetCallback.run();
+            }
         }
         if (output.get().equals(ok)) {
             okCallback.run();
