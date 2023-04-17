@@ -21,6 +21,7 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
     public CollectionTypedConfigurationField() {
         setCurrValue(new ArrayList<TypedConfigurationField>());
     }
+
     private TypedConfigurationField contents;
 
     public TypedConfigurationField getContents() {
@@ -49,7 +50,7 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
     public JsonNode valueToJSON() {
         if (this.getCurrValue() != null) {
             final ArrayNode out = JsonNodeFactory.instance.arrayNode();
-            ((List<TypedConfigurationField>)this.getCurrValue()).forEach(f -> {
+            ((List<TypedConfigurationField>) this.getCurrValue()).forEach(f -> {
                 JsonNode child = f.valueToJSON();
                 if (child != null) {
                     out.add(child);
@@ -63,7 +64,13 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
 
     @Override
     public void cloneFields(TypedConfigurationField target) {
-        ((CollectionTypedConfigurationField)target).contents = contents.clone();
+        ((CollectionTypedConfigurationField) target).contents = contents.clone();
+    }
+
+    @Override
+    public boolean commit() {
+        boolean childrenChanged = ((List<TypedConfigurationField>) this.observableEditedValue.get()).stream().map(TypedConfigurationField::commit).reduce((b1, b2) -> b1 || b2).orElse(false);
+        return super.commit() | childrenChanged; // Prevent boolean object short circuiting because both statements must be evaluated
     }
 
     @Override

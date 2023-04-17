@@ -225,7 +225,7 @@ public class EditablePipeline {
         return ret;
     }
 
-    public ObservableValue<Boolean> dirtyProperty() {
+    public SimpleBooleanProperty dirtyProperty() {
         return this.dirty;
     }
 }

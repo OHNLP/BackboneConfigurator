@@ -11,6 +11,7 @@ import org.apache.beam.sdk.schemas.Schema;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class TypedConfigurationField implements Cloneable {
 
@@ -55,8 +56,10 @@ public abstract class TypedConfigurationField implements Cloneable {
         }
     }
 
-    public void commit() {
+    public boolean commit() {
+        Object oldVal = this.currValue;
         this.currValue = this.observableEditedValue.getValue();
+        return !Objects.deepEquals(oldVal, this.currValue);
     }
 
     public void reset() {

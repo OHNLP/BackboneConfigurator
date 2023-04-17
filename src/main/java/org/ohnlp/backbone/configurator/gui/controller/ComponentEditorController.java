@@ -161,9 +161,7 @@ public class ComponentEditorController {
     @FXML
     public void onCommit(ActionEvent e) {
         PipelineComponentDeclaration currComponent = EditorRegistry.getCurrentEditedComponent().get();
-        currComponent.getConfig().forEach(f -> {
-            f.getImpl().commit();
-        });
+        boolean changed = currComponent.getConfig().stream().map(f -> f.getImpl().commit()).reduce((b1, b2) -> b1 || b2).orElse(false);
         HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> inputs = convertBoundInputsToUnbound();
         currComponent.setInputs(inputs);
         // Renaming step ID is a bit more involved as we have to check for input declarations as well
@@ -177,8 +175,12 @@ public class ComponentEditorController {
             EditorRegistry.getCurrentEditablePipeline().get().addComponent(currComponent);
             EditorRegistry.inCreateNewComponentState().set(false);
         }
+        if (changed) {
+            EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty().set(true);
+        }
         // Now indicate that relns etc. might have changed and we might need to redraw the graph
         EditorRegistry.refreshGraphProperty().set(true);
+        container.getScene().getWindow().hide();
     }
 
     private HashMap<String, BackbonePipelineComponentConfiguration.InputDefinition> convertBoundInputsToUnbound() {
