@@ -57,6 +57,10 @@ public class ConfigManager {
         this.configs.sort((c1, c2) -> c2.getLastModified().compareTo(c1.getLastModified()));
     }
 
+    public static void reload() {
+        INSTANCE.reloadConfigs();
+    }
+
     public static ObservableList<ConfigMeta> getConfigs() {
         return INSTANCE.configs;
     }

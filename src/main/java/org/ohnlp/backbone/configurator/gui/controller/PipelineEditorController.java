@@ -121,6 +121,7 @@ public class PipelineEditorController {
     public void savePipeline(ActionEvent actionEvent) {
         try {
             EditorRegistry.getCurrentEditablePipeline().get().save(EditorRegistry.getConfigMetadata().get().getFile());
+            ConfigManager.reload();
         } catch (Throwable t) {
             throw new RuntimeException(t); // TODO do not fail silently here
         }
