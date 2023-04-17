@@ -64,6 +64,10 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
 
     @Override
     public void cloneFields(TypedConfigurationField target) {
+        ((InputColumnTypedConfigurationField)target).types.clear();
+        ((InputColumnTypedConfigurationField)target).types.addAll(types);
+        ((InputColumnTypedConfigurationField)target).colls.clear();
+        ((InputColumnTypedConfigurationField)target).colls.addAll(new HashSet<>(colls));
     }
 
     @Override
