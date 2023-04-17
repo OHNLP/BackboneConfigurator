@@ -16,6 +16,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import org.apache.beam.sdk.schemas.Schema;
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
@@ -33,6 +34,19 @@ public class ComponentEditorController {
 
     public static final SimpleObjectProperty<ComponentEditorController> CURR_COMPONENT_EDITOR = new SimpleObjectProperty<>();
     public static final SimpleBooleanProperty COMPONENT_EDITOR_EXIT_FLAG = new SimpleBooleanProperty(false);
+
+    static {
+        // bind window close to exit flag
+        COMPONENT_EDITOR_EXIT_FLAG.addListener((o, e, n) -> {
+            if (n) {
+                if (CURR_COMPONENT_EDITOR.isNotNull().get()) {
+                    CURR_COMPONENT_EDITOR.get().container.getScene().getWindow().hide();
+                    CURR_COMPONENT_EDITOR.set(null);
+                }
+                COMPONENT_EDITOR_EXIT_FLAG.set(false);
+            }
+        });
+    }
 
     @FXML
     public VBox configList;
@@ -65,15 +79,6 @@ public class ComponentEditorController {
             p.setText(title);
             p.setContent(f.getImpl().render(inputSchemas));
             configList.getChildren().add(p);
-        });
-        // bind to the exit flag
-        COMPONENT_EDITOR_EXIT_FLAG.addListener((o, e, n) -> {
-            if (n) {
-//                checkForSave(false);
-                container.getScene().getWindow().hide();
-                CURR_COMPONENT_EDITOR.set(null);
-                COMPONENT_EDITOR_EXIT_FLAG.set(false);
-            }
         });
         CURR_COMPONENT_EDITOR.set(this);
     }
