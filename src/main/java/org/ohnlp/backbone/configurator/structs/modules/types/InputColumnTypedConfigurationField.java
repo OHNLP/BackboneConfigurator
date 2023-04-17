@@ -1,7 +1,10 @@
 package org.ohnlp.backbone.configurator.structs.modules.types;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import javafx.collections.FXCollections;
 import javafx.collections.MapChangeListener;
 import javafx.collections.ObservableList;
@@ -15,21 +18,34 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.apache.beam.sdk.schemas.Schema;
+import org.ohnlp.backbone.api.annotations.InputColumnProperty;
+import org.ohnlp.backbone.api.config.InputColumn;
 
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class InputColumnTypedConfigurationField extends TypedConfigurationField {
+    private final Set<String> types;
+    private final Set<String> colls;
+    ;
     private Map<String, Schema> schema;
 
     public InputColumnTypedConfigurationField() {
+        this.types = new HashSet<>();
+        this.colls = new HashSet<>();
+    }
 
+    public InputColumnTypedConfigurationField(InputColumnProperty prop) {
+        this.types = new HashSet<>(Arrays.asList(prop.allowableTypes()));
+        this.colls = new HashSet<>(Arrays.asList(prop.sourceTags()));
     }
 
     @Override
     public void injectValueFromJSON(JsonNode json) {
-        if (json.isTextual()) {
-            this.setCurrValue(json.asText());
+        if (json.isTextual() || json.isObject()) {
+            try {
+                this.setCurrValue(new ObjectMapper().treeToValue(json, InputColumn.class));
+            } catch (JsonProcessingException ignore) { // Invalid value/discard TODO error/warn
+            }
         }
         // Otherwise invalid value/discard TODO error/warn
     }
@@ -37,7 +53,10 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
     @Override
     public JsonNode valueToJSON() {
         if (getCurrValue() != null) {
-            return JsonNodeFactory.instance.textNode(getCurrValue().toString());
+            ObjectNode ret = JsonNodeFactory.instance.objectNode();
+            ret.put("sourceColumnName", ((InputColumn)getCurrValue()).getSourceColumnName());
+            ret.put("sourceTag", ((InputColumn)getCurrValue()).getSourceTag());
+            return ret;
         } else {
             return null;
         }
@@ -63,6 +82,9 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
             items.addAll(change.getMap().keySet());
         });
         sourceComponent.setItems(items.sorted());
+        if (colls.size() > 0) {
+            sourceComponent.setItems(sourceComponent.getItems().filtered(colls::contains));
+        }
         // Fields for a given Source Schema
         ComboBox<String> sourceFieldName = new ComboBox<>();
         sourceFieldName.setEditable(true);
@@ -70,20 +92,24 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
         sourceFieldName.setItems(sourceFieldItems);
 
         // Actually populate the return HBox and set bound growth
-        ret.getChildren().addAll(new Text("Input Collection:"), sourceComponent, new Text("Input Field Name:"), sourceFieldName);
+        // - Only render source collection seelction if there is more than 1 element
+        boolean renderSource = sourceComponent.getItems().size() > 1;
+        if (renderSource) {
+            ret.getChildren().addAll(new Text("Input Collection:"), sourceComponent);
+        }
+        ret.getChildren().addAll(new Text("Input Field Name:"), sourceFieldName);
         sourceComponent.setMaxWidth(Double.MAX_VALUE);
         sourceFieldName.setMaxWidth(Double.MAX_VALUE);
 
         // Populate model if existing
         if (this.observableEditedValue.get() != null) {
-            String raw = this.observableEditedValue.get().toString();
-            int sepIdx = raw.indexOf(".");
-            String srcTag = "";
-            String fieldName = raw;
-            if (sepIdx != -1) {
-                srcTag = raw.substring(0, sepIdx);
-                fieldName = raw.substring(sepIdx + 1);
+            InputColumn raw = (InputColumn) this.observableEditedValue.get();
+            String srcTag = raw.getSourceTag();
+            // - Force update to correct tag if only one input
+            if (!renderSource) {
+                srcTag = schema.keySet().stream().findFirst().orElse("*");
             }
+            String fieldName = raw.getSourceColumnName();
             int srcTagIdx = sourceComponent.getItems().indexOf(srcTag);
             sourceComponent.getSelectionModel().select(srcTagIdx);
             sourceComponent.setValue(srcTag);
@@ -124,13 +150,17 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
 
         // Bind functionality
         // - Bind updating source field list to changes in sourceComponent selection
-        sourceComponent.valueProperty().addListener((o, ov, nv) -> {
-            sourceFieldName.getItems().clear();
-            Schema target = schema.get(nv);
-            if (target != null) {
-                sourceFieldName.getItems().addAll(target.getFieldNames());
-            }
-        });
+        if (renderSource) {
+            sourceComponent.valueProperty().addListener((o, ov, nv) -> {
+                sourceFieldName.getItems().clear();
+                Schema target = schema.get(nv);
+                if (target != null) {
+                    sourceFieldName.getItems().addAll(target.getFieldNames());
+                }
+            });
+        } else {
+            sourceComponent.valueProperty().set(schema.keySet().stream().findFirst().orElse("*"));
+        }
         schema.addListener((MapChangeListener<String, Schema>) change -> {
             if (sourceComponent.getValue() != null) {
                 if (sourceComponent.getValue().equals(change.getKey())) {
@@ -140,9 +170,11 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
             }
         });
         // - Bind changes to sourcecomponent or sourcefieldname values to updateValue
-        sourceComponent.valueProperty().addListener((e, o, n) -> {
-            generateAndUpdateValue(sourceComponent, sourceFieldName);
-        });
+        if (renderSource) {
+            sourceComponent.valueProperty().addListener((e, o, n) -> {
+                generateAndUpdateValue(sourceComponent, sourceFieldName);
+            });
+        }
         sourceFieldName.valueProperty().addListener((e, o, n) -> {
             generateAndUpdateValue(sourceComponent, sourceFieldName);
         });
@@ -154,14 +186,15 @@ public class InputColumnTypedConfigurationField extends TypedConfigurationField 
         String component = Optional.ofNullable(sourceComponent.getValue()).orElse("").trim();
         String fieldName = Optional.ofNullable(sourceFieldName.getValue()).orElse("").trim();
         if (fieldName.length() > 0) {
-            if (component.length() > 0) {
-                updateValue(component + "." + fieldName);
-            } else {
-                updateValue(fieldName);
+            if (component.length() == 0) {
+                component = "*";
             }
+            InputColumn ret = new InputColumn();
+            ret.setSourceTag(component);
+            ret.setSourceColumnName(fieldName);
+            updateValue(ret);
         } else {
             updateValue(null);
         }
-
     }
 }

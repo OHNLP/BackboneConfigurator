@@ -10,6 +10,8 @@ import org.apache.beam.sdk.schemas.Schema;
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.annotations.ComponentDescription;
 import org.ohnlp.backbone.api.annotations.ConfigurationProperty;
+import org.ohnlp.backbone.api.annotations.InputColumnProperty;
+import org.ohnlp.backbone.api.config.InputColumn;
 import org.ohnlp.backbone.configurator.structs.modules.ModuleConfigField;
 import org.ohnlp.backbone.configurator.structs.modules.ModulePackageDeclaration;
 import org.ohnlp.backbone.configurator.structs.modules.ModulePipelineComponentDeclaration;
@@ -163,24 +165,15 @@ public class ModuleRegistry {
         ret.setPath(config.path());
         ret.setDesc(config.desc());
         ret.setRequired(config.required());
+        InputColumnProperty columnProp = f.getDeclaredAnnotation(InputColumnProperty.class);
         JavaType javaType = this.objectMapper.constructType(f.getGenericType());
-        if (config.isInputColumn()) {
-            if (javaType.isArrayType() || javaType.isCollectionLikeType()) {
-                CollectionTypedConfigurationField t = new CollectionTypedConfigurationField();
-                t.setContents(new InputColumnTypedConfigurationField());
-                ret.setImpl(t);
-            } else {
-                ret.setImpl(new InputColumnTypedConfigurationField());
-            }
-        } else {
-            ret.setImpl(resolveTypedConfig(javaType));
-        }
+        ret.setImpl(resolveTypedConfig(javaType, columnProp));
         return ret;
     }
 
-    private TypedConfigurationField resolveTypedConfig(JavaType t) {
+    private TypedConfigurationField resolveTypedConfig(JavaType t, InputColumnProperty columnProp) {
         if (t.isArrayType() || t.isCollectionLikeType()) {
-            return resolveTypedConfigCollection(t);
+            return resolveTypedConfigCollection(t, columnProp);
         } else if (t.isPrimitive()) {
             return resolveTypedConfigPrimitive(t);
         } else if (t.isTypeOrSubTypeOf(String.class)) {
@@ -194,19 +187,21 @@ public class ModuleRegistry {
         } else if (t.isTypeOrSubTypeOf(JsonNode.class)) {
             return new JSONTypedConfigurationField(t.isTypeOrSubTypeOf(ObjectNode.class), t.isTypeOrSubTypeOf(ArrayNode.class));
         } else if (t.isMapLikeType()) {
-            return resolveTypedConfigMap(t);
+            return resolveTypedConfigMap(t, columnProp);
         } else if (t.isTypeOrSubTypeOf(Schema.class)) {
             return new SchemaTypedConfigurationField();
+        } else if (t.isTypeOrSubTypeOf(InputColumn.class)) {
+            return columnProp == null ? new InputColumnTypedConfigurationField() : new InputColumnTypedConfigurationField(columnProp);
         } else if (!t.isConcrete()) {
             throw new IllegalArgumentException("Abstract classes and interfaces cannot be used for configuration parameters");
         } else {
-            return resolveTypedConfigPOJO(t);
+            return resolveTypedConfigPOJO(t, columnProp);
         }
     }
 
-    private CollectionTypedConfigurationField resolveTypedConfigCollection(JavaType t) {
+    private CollectionTypedConfigurationField resolveTypedConfigCollection(JavaType t, InputColumnProperty columnProp) {
         CollectionTypedConfigurationField ret = new CollectionTypedConfigurationField();
-        ret.setContents(resolveTypedConfig(t.getContentType()));
+        ret.setContents(resolveTypedConfig(t.getContentType(), columnProp));
         return ret;
     }
 
@@ -247,17 +242,17 @@ public class ModuleRegistry {
         );
     }
 
-    private TypedConfigurationField resolveTypedConfigMap(JavaType t) {
-        TypedConfigurationField key = resolveTypedConfig(t.getKeyType());
-        TypedConfigurationField value = resolveTypedConfig(t.getContentType());
+    private TypedConfigurationField resolveTypedConfigMap(JavaType t, InputColumnProperty columnProperty) {
+        TypedConfigurationField key = resolveTypedConfig(t.getKeyType(), columnProperty);
+        TypedConfigurationField value = resolveTypedConfig(t.getContentType(), columnProperty);
         return new MapTypedConfigurationField(key, value);
     }
 
-    private TypedConfigurationField resolveTypedConfigPOJO(JavaType t) {
+    private TypedConfigurationField resolveTypedConfigPOJO(JavaType t, InputColumnProperty columnProperty) {
         Map<String, TypedConfigurationField> fields = new HashMap<>();
         ObjectMapper om = new ObjectMapper();
         for (Field f : t.getRawClass().getDeclaredFields()) {
-            fields.put(f.getName(), resolveTypedConfig(om.constructType(f.getGenericType())));
+            fields.put(f.getName(), resolveTypedConfig(om.constructType(f.getGenericType()), columnProperty));
         }
         return new ObjectTypedConfigurationField(fields);
     }

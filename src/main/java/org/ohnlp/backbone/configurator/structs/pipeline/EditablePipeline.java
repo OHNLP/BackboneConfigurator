@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
 import org.ohnlp.backbone.api.components.HasInputs;
+import org.ohnlp.backbone.api.components.ValidationError;
 import org.ohnlp.backbone.api.config.BackboneConfiguration;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
@@ -227,5 +228,16 @@ public class EditablePipeline {
 
     public SimpleBooleanProperty dirtyProperty() {
         return this.dirty;
+    }
+
+    public List<ValidationError> validatePipeline() {
+        List<ValidationError> errors = new ArrayList<>();
+        List<List<PipelineComponentDeclaration>> steps = getPipelineAsSteps();
+        steps.forEach(step -> {
+            step.forEach(component -> {
+                component.componentInstance(true);
+            });
+        });
+        return errors;
     }
 }
