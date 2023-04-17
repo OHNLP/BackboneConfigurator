@@ -192,6 +192,10 @@ public class EditablePipeline {
         components.forEach(c -> {
             if (c.getComponentID() == null || c.getComponentID().equals(oldID)) {
                 c.setComponentID(finalNewID);
+                if (oldID != null) {
+                    componentsByID.remove(oldID);
+                }
+                componentsByID.put(finalNewID, c);
             }
             if (c.getInputs() != null) {
                 c.getInputs().forEach((tag, def) -> {
