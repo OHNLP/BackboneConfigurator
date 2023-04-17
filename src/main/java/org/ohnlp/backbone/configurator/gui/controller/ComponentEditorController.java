@@ -80,7 +80,7 @@ public class ComponentEditorController {
                 HBox inputRow = new HBox();
                 inputRow.setAlignment(Pos.CENTER_LEFT);
                 inputRow.setSpacing(5);
-                Text label = new Text(tag + " From:");
+                Text label = tag.equals("*") ? new Text("Any Input From: ") : new Text(tag + " From:");
                 ComboBox<String> inputComponentID = new ComboBox<>();
                 inputComponentID.setItems(FXCollections.observableArrayList(possibleInputs).sorted());
                 ComboBox<String> inputComponentTag = new ComboBox<>();
