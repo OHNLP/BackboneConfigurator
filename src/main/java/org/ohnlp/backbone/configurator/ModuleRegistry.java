@@ -50,7 +50,7 @@ public class ModuleRegistry {
 
     private ModuleRegistry() {
         this.files = new HashSet<>();
-        this.classloader = new ModuleClassLoader(new URL[0], ClassLoader.getPlatformClassLoader());
+        this.classloader = new ModuleClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
         this.objectMapper = new ObjectMapper().setTypeFactory(TypeFactory.defaultInstance().withClassLoader(this.classloader));
     }
 
