@@ -16,6 +16,11 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 13
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml -s settings.xml
+        env:
+          SECRET_ACTOR: ${{ secrets.OHNLP_REPO_READ_ACTOR }}
+          SECRET_TOKEN: ${{ secrets.OHNLP_REPO_READ_TOKEN }}
       - name: Build with Ant
         run: ant dist -noinput -buildfile build.xml
       - name: Create a Release
