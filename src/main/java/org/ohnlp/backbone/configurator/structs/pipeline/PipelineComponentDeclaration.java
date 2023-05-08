@@ -16,6 +16,7 @@ import org.ohnlp.backbone.configurator.structs.modules.ModulePipelineComponentDe
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class PipelineComponentDeclaration {
     private EditablePipeline parent;
     private String componentID;
     private ModulePipelineComponentDeclaration componentDef;
-    private List<ModuleConfigField> config;
+    private List<ModuleConfigField> config = Collections.emptyList();
 
     private Map<String, Schema> stepOutput;
     private final SimpleBooleanProperty updateOutputSchemas = new SimpleBooleanProperty(false);

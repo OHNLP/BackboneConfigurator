@@ -177,7 +177,7 @@ public class EditablePipeline {
             }
             dirty = true;
         }
-        List<PipelineComponentDeclaration> components = pipelineComponents.stream().map(c -> PipelineConfigUtils.fromJSONConfig(null, c)).collect(Collectors.toList());
+        List<PipelineComponentDeclaration> components = pipelineComponents.stream().map(c -> PipelineConfigUtils.fromJSONConfig(null, c)).filter(Objects::nonNull).collect(Collectors.toList());
 
         // And now construct pipeline with pre-constructed elements
         return EditablePipeline.create(config.getId()).withDescription(config.getDescription()).withComponents(components).setDirty(dirty);
