@@ -34,13 +34,17 @@ public class NumericTypedConfigurationField extends TypedConfigurationField {
 
     @Override
     public JsonNode valueToJSON() {
-        if (getCurrValue() != null) {
-            if (this.floating) {
-                return JsonNodeFactory.instance.numberNode((double) getCurrValue());
+        try {
+            if (getCurrValue() != null) {
+                if (this.floating) {
+                    return JsonNodeFactory.instance.numberNode(Double.parseDouble(getCurrValue().toString()));
+                } else {
+                    return JsonNodeFactory.instance.numberNode(Long.parseLong(getCurrValue().toString()));
+                }
             } else {
-                return JsonNodeFactory.instance.numberNode((long) getCurrValue());
+                return null;
             }
-        } else {
+        } catch (Throwable t) {
             return null;
         }
     }
