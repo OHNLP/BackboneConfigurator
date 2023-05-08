@@ -138,85 +138,85 @@
                         </children>
                     </HBox>
                 </VBox>
-                <VBox styleClass="toolbar_block">
-                    <children>
-                        <HBox>
-                            <children>
-                                <Button>
-                                    <graphic>
-                                        <VBox>
-                                            <HBox>
-                                                <children>
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                    <FontIcon iconColor="darkgreen" iconLiteral="fas-check-double" iconSize="32" textAlignment="CENTER" />
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                </children>
-                                            </HBox>
-                                            <HBox>
-                                                <children>
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text text="Validate&#13;Pipeline" textAlignment="CENTER" />
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                </children>
-                                            </HBox>
-                                        </VBox>
-                                    </graphic>
-                                </Button>
-                                <Button>
-                                    <graphic>
-                                        <VBox>
-                                            <HBox>
-                                                <children>
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                    <FontIcon iconColor="saddlebrown" iconLiteral="fas-hammer" iconSize="32" textAlignment="CENTER" />
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                </children>
-                                            </HBox>
-                                            <HBox>
-                                                <children>
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text text="Build&#13;Executable" textAlignment="CENTER" />
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                </children>
-                                            </HBox>
-                                        </VBox>
-                                    </graphic>
-                                </Button>
-                                <Button>
-                                    <graphic>
-                                        <VBox>
-                                            <HBox>
-                                                <children>
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                    <FontIcon iconColor="darkgreen" iconLiteral="fas-forward" iconSize="32" textAlignment="CENTER" />
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                </children>
-                                            </HBox>
-                                            <HBox>
-                                                <children>
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                    <Text text="Local&#13;Run" textAlignment="CENTER" />
-                                                    <Pane HBox.hgrow="ALWAYS" />
-                                                </children>
-                                            </HBox>
-                                        </VBox>
-                                    </graphic>
-                                </Button>
-                            </children>
-                        </HBox>
-                        <HBox>
-                            <children>
-                                <Pane HBox.hgrow="ALWAYS" />
+<!--                <VBox styleClass="toolbar_block">-->
+<!--                    <children>-->
+<!--                        <HBox>-->
+<!--                            <children>-->
+<!--                                <Button>-->
+<!--                                    <graphic>-->
+<!--                                        <VBox>-->
+<!--                                            <HBox>-->
+<!--                                                <children>-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                    <FontIcon iconColor="darkgreen" iconLiteral="fas-check-double" iconSize="32" textAlignment="CENTER" />-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                </children>-->
+<!--                                            </HBox>-->
+<!--                                            <HBox>-->
+<!--                                                <children>-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                    <Text text="Validate&#13;Pipeline" textAlignment="CENTER" />-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                </children>-->
+<!--                                            </HBox>-->
+<!--                                        </VBox>-->
+<!--                                    </graphic>-->
+<!--                                </Button>-->
+<!--                                <Button>-->
+<!--                                    <graphic>-->
+<!--                                        <VBox>-->
+<!--                                            <HBox>-->
+<!--                                                <children>-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                    <FontIcon iconColor="saddlebrown" iconLiteral="fas-hammer" iconSize="32" textAlignment="CENTER" />-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                </children>-->
+<!--                                            </HBox>-->
+<!--                                            <HBox>-->
+<!--                                                <children>-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                    <Text text="Build&#13;Executable" textAlignment="CENTER" />-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                </children>-->
+<!--                                            </HBox>-->
+<!--                                        </VBox>-->
+<!--                                    </graphic>-->
+<!--                                </Button>-->
+<!--                                <Button>-->
+<!--                                    <graphic>-->
+<!--                                        <VBox>-->
+<!--                                            <HBox>-->
+<!--                                                <children>-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                    <FontIcon iconColor="darkgreen" iconLiteral="fas-forward" iconSize="32" textAlignment="CENTER" />-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                </children>-->
+<!--                                            </HBox>-->
+<!--                                            <HBox>-->
+<!--                                                <children>-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                    <Text text="Local&#13;Run" textAlignment="CENTER" />-->
+<!--                                                    <Pane HBox.hgrow="ALWAYS" />-->
+<!--                                                </children>-->
+<!--                                            </HBox>-->
+<!--                                        </VBox>-->
+<!--                                    </graphic>-->
+<!--                                </Button>-->
+<!--                            </children>-->
+<!--                        </HBox>-->
+<!--                        <HBox>-->
+<!--                            <children>-->
+<!--                                <Pane HBox.hgrow="ALWAYS" />-->
 
-                                <Text textAlignment="CENTER">
-                                    Pipeline Deployment
-                                </Text>
-                                <Pane HBox.hgrow="ALWAYS" />
+<!--                                <Text textAlignment="CENTER">-->
+<!--                                    Pipeline Deployment-->
+<!--                                </Text>-->
+<!--                                <Pane HBox.hgrow="ALWAYS" />-->
 
-                            </children>
-                        </HBox>
-                    </children>
-                </VBox>
+<!--                            </children>-->
+<!--                        </HBox>-->
+<!--                    </children>-->
+<!--                </VBox>-->
                 <Pane HBox.hgrow="ALWAYS" />
                 <VBox styleClass="toolbar_block_right">
                     <children>

@@ -1,0 +1,21 @@
+<project name="BackboneConfigurator Build" default="dist" basedir=".">
+    <description>
+        Apache ANT Buildfile for creating MedTagger releases, to be run after maven
+    </description>
+    <property name="dist" location="dist"/>
+
+    <target name="init">
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${dist}"/>
+        <mkdir dir="${dist}/bin"/>
+    </target>
+
+
+    <target name="dist"
+            description="generate the distribution" depends="init">
+        <copydir src="scripts" dest="${dist}"/>
+        <copy file="target/configurator.jar" tofile="${dist}/bin/Configurator.jar"/>
+        <zip basedir="${dist}" destfile="BackboneConfigurator.zip"/>
+        <delete dir="${dist}"/>
+    </target>
+</project>
