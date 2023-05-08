@@ -21,10 +21,14 @@ public class NumericTypedConfigurationField extends TypedConfigurationField {
 
     @Override
     public void injectValueFromJSON(JsonNode json) {
-        if (this.floating && json.isFloatingPointNumber()) {
-            this.setCurrValue(json.asDouble());
+        if (json.isNull()) {
+            this.setCurrValue(this.floating ? 0. : 0);
         } else {
-            this.setCurrValue(json.asLong());
+            if (this.floating && json.isFloatingPointNumber()) {
+                this.setCurrValue(json.asDouble());
+            } else {
+                this.setCurrValue(json.asLong());
+            }
         }
     }
 
@@ -50,9 +54,14 @@ public class NumericTypedConfigurationField extends TypedConfigurationField {
 
     @Override
     public Node render(ObservableMap<String, Schema> schema) {
+
         TextField ret = new TextField(observableEditedValue.asString().get());
         ret.textProperty().addListener((obs, ov, nv) -> {
-            this.updateValue(nv);
+            try {
+                this.updateValue(this.floating ? Double.parseDouble(nv) : Long.parseLong(nv));
+            } catch (Throwable ignored) {
+                this.updateValue(this.floating ? 0. : 0);
+            }
         });
         return ret;
     }
