@@ -6,7 +6,7 @@
 
     <groupId>org.ohnlp.backbone</groupId>
     <artifactId>configurator</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>BackboneConfigurator</name>
 
     <repositories>

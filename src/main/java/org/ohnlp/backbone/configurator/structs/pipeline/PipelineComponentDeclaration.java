@@ -166,7 +166,9 @@ public class PipelineComponentDeclaration {
             if (loadConfig) {
                 Method m = PipelineBuilder.class.getDeclaredMethod("injectInstanceWithConfigurationProperties", Class.class, BackbonePipelineComponent.class, JsonNode.class);
                 m.setAccessible(true);
-                m.invoke(null, ret.getClass(), ret, this.toBackboneConfigFormat().getConfig());
+                try {
+                    m.invoke(null, ret.getClass(), ret, this.toBackboneConfigFormat().getConfig());
+                } catch (IllegalArgumentException ignored) {}
                 try {
                     ExecutorService executor = Executors.newSingleThreadExecutor();
                     Future<ComponentInitializationException> future = executor.submit(() -> {
