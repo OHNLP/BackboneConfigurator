@@ -6,7 +6,7 @@
 
     <groupId>org.ohnlp.backbone</groupId>
     <artifactId>configurator</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>BackboneConfigurator</name>
 
     <repositories>
@@ -19,7 +19,7 @@
 
     <properties>
         <spring.version>5.3.25</spring.version>
-        <backbone.version>3.0.3</backbone.version>
+        <backbone.version>3.0.6</backbone.version>
         <beam.version>2.41.0</beam.version>
         <javafx.version>17.0.2</javafx.version>
     </properties>

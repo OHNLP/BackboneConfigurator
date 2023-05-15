@@ -5,6 +5,7 @@ import com.fxgraph.graph.PannableCanvas;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
+import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -45,6 +46,7 @@ public class PipelineEditorController {
     private BorderPane renderedGraph;
 
     private static Stage currEditorPane;
+    private ChangeListener<Boolean> refreshGraphListener;
 
     @FXML
     public void initialize() {
@@ -73,16 +75,17 @@ public class PipelineEditorController {
         // Bind save to whether or not pipeline is currently dirty
         savePipelineButton.disableProperty().bind(Bindings.createBooleanBinding(() -> !EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty().getValue(), EditorRegistry.getCurrentEditablePipeline(), EditorRegistry.getCurrentEditablePipeline().get().dirtyProperty()));
         // Add listener to refresh property to know when to refresh graph
-        EditorRegistry.refreshGraphProperty().addListener((e, o, n) -> {
+        this.refreshGraphListener = (e, o, n) -> {
             if (n) {
                 Graph newGraph = DAGUtils.generateGraphForPipeline(EditorRegistry.getCurrentEditablePipeline().getValue());
                 newGraph.layout(new LabelPositionAbegoTreeLayout(150, 500, Configuration.Location.Top));
-                this.renderedGraph.setCenter(newGraph.getCanvas());
+                ((BorderPane)this.pipelineDisplay.getChildren().get(0)).setCenter(newGraph.getCanvas());
                 PannableCanvas ncanvas = newGraph.getCanvas();
                 ncanvas.prefWidthProperty().bind(container.widthProperty());
                 EditorRegistry.refreshGraphProperty().set(false);
             }
-        });
+        };
+        EditorRegistry.refreshGraphProperty().addListener(this.refreshGraphListener);
     }
 
     @FXML
@@ -113,6 +116,9 @@ public class PipelineEditorController {
                 return;
             }
         }
+        try {
+            EditorRegistry.refreshGraphProperty().removeListener(this.refreshGraphListener);
+        } catch (Throwable ignored) {}
         try {
             Views.openView(Views.ViewType.CONFIG_LIST, ((Node)e.getSource()).getScene().getWindow(), true);
         } catch (IOException t) {

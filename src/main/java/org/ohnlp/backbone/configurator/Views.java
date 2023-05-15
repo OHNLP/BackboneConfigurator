@@ -103,8 +103,8 @@ public class Views {
             }
         }, EditorRegistry.getConfigMetadata()));
         Scene s = new Scene(loader.load());
-        s.getStylesheets().add(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-        s.getStylesheets().add(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.css").toExternalForm());
+        s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+        s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.css").toExternalForm());
         stage.setScene(s);
         stage.setMaximized(true);
         stage.initStyle(StageStyle.UNDECORATED);

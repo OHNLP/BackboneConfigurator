@@ -15,6 +15,7 @@ import org.ohnlp.backbone.configurator.structs.modules.ModuleConfigField;
 import org.ohnlp.backbone.configurator.structs.modules.ModulePipelineComponentDeclaration;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
@@ -168,7 +169,7 @@ public class PipelineComponentDeclaration {
                 m.setAccessible(true);
                 try {
                     m.invoke(null, ret.getClass(), ret, this.toBackboneConfigFormat().getConfig());
-                } catch (IllegalArgumentException ignored) {}
+                } catch (InvocationTargetException ignored) {}
                 try {
                     ExecutorService executor = Executors.newSingleThreadExecutor();
                     Future<ComponentInitializationException> future = executor.submit(() -> {
