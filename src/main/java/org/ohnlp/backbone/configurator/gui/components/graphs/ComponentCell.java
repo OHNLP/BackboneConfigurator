@@ -18,6 +18,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -91,6 +92,7 @@ public class ComponentCell extends RectangleCell {
         }
         // Calculate main components first so we know what to use for width
         Text componentLabel = new Text(this.id + "\r\n" + this.name);
+        componentLabel.setFont(new Font(10));
         componentLabel.setTextAlignment(TextAlignment.CENTER);
 //        double mainTextWidth = componentLabel.getLayoutBounds().getWidth() + 50;
         double mainTextWidth = 350; // TODO dynamically calculate based on max of children text nodes/label sums
@@ -108,6 +110,7 @@ public class ComponentCell extends RectangleCell {
                 bckgnd.setFill(Color.LIGHTYELLOW);
                 bckgnd.setStroke(Color.BLACK);
                 Text labelText = new Text(label);
+                labelText.setFont(new Font(10));
                 labelText.setTextAlignment(TextAlignment.CENTER);
                 StackPane labelPane = new StackPane(bckgnd, labelText);
                 inputPane.getChildren().add(labelPane);
@@ -117,6 +120,7 @@ public class ComponentCell extends RectangleCell {
             bckgnd.setFill(Color.DARKGRAY);
             bckgnd.setStroke(Color.BLACK);
             Text labelText = new Text("No Inputs");
+            labelText.setFont(new Font(10));
             labelText.setTextAlignment(TextAlignment.CENTER);
             StackPane labelPane = new StackPane(bckgnd, labelText);
             inputPane.getChildren().add(labelPane);
@@ -130,6 +134,7 @@ public class ComponentCell extends RectangleCell {
                 bckgnd.setFill(Color.LIGHTYELLOW);
                 bckgnd.setStroke(Color.BLACK);
                 Text labelText = new Text(label);
+                labelText.setFont(new Font(10));
                 labelText.setTextAlignment(TextAlignment.CENTER);
                 StackPane labelPane = new StackPane(bckgnd, labelText);
                 outputPane.getChildren().add(labelPane);
@@ -139,6 +144,7 @@ public class ComponentCell extends RectangleCell {
             bckgnd.setFill(Color.DARKGRAY);
             bckgnd.setStroke(Color.BLACK);
             Text labelText = new Text("No Outputs");
+            labelText.setFont(new Font(10));
             labelText.setTextAlignment(TextAlignment.CENTER);
             StackPane labelPane = new StackPane(bckgnd, labelText);
             outputPane.getChildren().add(labelPane);
