@@ -10,13 +10,11 @@ import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import org.apache.beam.sdk.schemas.Schema;
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
@@ -86,7 +84,7 @@ public class ComponentEditorController {
     private void generateInputs(PipelineComponentDeclaration componentDec) {
         EditablePipeline pipeline = EditorRegistry.getCurrentEditablePipeline().get();
         Set<String> possibleInputs = pipeline.getAvailableInputs(componentDec);
-        BackbonePipelineComponent<?,?> cmp = componentDec.componentInstance(false);
+        BackbonePipelineComponent<?,?> cmp = componentDec.getComponentDef().getInstance(componentDec, false);
         if (cmp instanceof HasInputs) {
             boundInputs.clear();
             TitledPane inputPrompt = new TitledPane();
@@ -105,7 +103,7 @@ public class ComponentEditorController {
                     if (inputComponentID.valueProperty().isNotNull().get()) {
                         PipelineComponentDeclaration v = pipeline.getComponentByID(inputComponentID.valueProperty().get());
                         if (v != null) {
-                            BackbonePipelineComponent<?,?> srcComponent = v.componentInstance(false);
+                            BackbonePipelineComponent<?,?> srcComponent = v.getComponentDef().getInstance(v, false);
                             if (srcComponent instanceof HasOutputs) {
                                 return FXCollections.observableArrayList(((HasOutputs) srcComponent).getOutputTags());
                             }

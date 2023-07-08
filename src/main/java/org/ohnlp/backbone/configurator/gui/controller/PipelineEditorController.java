@@ -168,4 +168,9 @@ public class PipelineEditorController {
             }
         }
     }
+
+    @FXML
+    public void onPackage(ActionEvent e) {
+
+    }
 }

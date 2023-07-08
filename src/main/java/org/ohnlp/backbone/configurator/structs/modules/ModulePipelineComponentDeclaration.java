@@ -1,20 +1,16 @@
 package org.ohnlp.backbone.configurator.structs.modules;
 
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
+import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModulePipelineComponentDeclaration {
+public abstract class ModulePipelineComponentDeclaration {
     private String name = "";
     private String desc = "";
     private String[] requires = {};
-    private Class<? extends BackbonePipelineComponent<?,?>> clazz;
     private final List<ModuleConfigField> configFields= new ArrayList<>();
-
-    public ModulePipelineComponentDeclaration(Class<? extends BackbonePipelineComponent<?,?>> clazz) {
-        this.clazz = clazz;
-    }
 
     public String getName() {
         return name;
@@ -40,15 +36,9 @@ public class ModulePipelineComponentDeclaration {
         this.requires = requires;
     }
 
-    public Class<? extends BackbonePipelineComponent<?,?>> getClazz() {
-        return clazz;
-    }
-
-    public void setClazz(Class<? extends BackbonePipelineComponent<?,?>> clazz) {
-        this.clazz = clazz;
-    }
-
     public List<ModuleConfigField> getConfigFields() {
         return configFields;
     }
+
+    public abstract BackbonePipelineComponent<?, ?> getInstance(PipelineComponentDeclaration callingComponentDec, boolean loadConfig);
 }

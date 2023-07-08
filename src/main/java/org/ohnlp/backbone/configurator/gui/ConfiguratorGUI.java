@@ -18,7 +18,8 @@ public class ConfiguratorGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        ModuleRegistry.registerFiles(new File("modules").listFiles());
+        ModuleRegistry.registerJavaModules(new File("modules").listFiles());
+        ModuleRegistry.registerJavaModules(new File("python_modules").listFiles()); // TODO
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/ohnlp/backbone/configurator/welcome-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         scene.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());

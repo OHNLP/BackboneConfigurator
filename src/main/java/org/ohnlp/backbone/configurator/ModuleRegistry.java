@@ -1,63 +1,44 @@
 package org.ohnlp.backbone.configurator;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import org.apache.beam.sdk.schemas.Schema;
-import org.ohnlp.backbone.api.BackbonePipelineComponent;
-import org.ohnlp.backbone.api.annotations.ComponentDescription;
-import org.ohnlp.backbone.api.annotations.ConfigurationProperty;
-import org.ohnlp.backbone.api.annotations.InputColumnProperty;
-import org.ohnlp.backbone.api.config.InputColumn;
-import org.ohnlp.backbone.configurator.structs.modules.ModuleConfigField;
-import org.ohnlp.backbone.configurator.structs.modules.ModulePackageDeclaration;
-import org.ohnlp.backbone.configurator.structs.modules.ModulePipelineComponentDeclaration;
-import org.ohnlp.backbone.configurator.structs.modules.types.*;
+import org.ohnlp.backbone.configurator.structs.modules.*;
 import org.ohnlp.backbone.configurator.util.ModuleClassLoader;
-import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.type.filter.AssignableTypeFilter;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class ModuleRegistry {
 
     private static final ModuleRegistry INSTANCE = new ModuleRegistry();
     private static final Logger LOGGER = Logger.getGlobal();
 
-    private final Set<File> files;
+    private final Set<File> javaModuleFiles;
+    private final Set<File> pythonModuleFiles;
 
     private ModuleClassLoader classloader;
     private final ObjectMapper objectMapper;
-    private Map<ModulePackageDeclaration, List<ModulePipelineComponentDeclaration>> componentDecsByPackage;
+    private List<ModulePackageDeclaration> modules;
     private Map<String, ModulePipelineComponentDeclaration> componentDecsByClass;
     private Map<String, List<ModulePackageDeclaration>> packageDecsByClass;
 
     private ModuleRegistry() {
-        this.files = new HashSet<>();
+        this.javaModuleFiles = new HashSet<>();
+        this.pythonModuleFiles = new HashSet<>();
         this.classloader = new ModuleClassLoader(new URL[0], ClassLoader.getSystemClassLoader());
         this.objectMapper = new ObjectMapper().setTypeFactory(TypeFactory.defaultInstance().withClassLoader(this.classloader));
     }
 
-    public static void registerFiles(File... toAdd) {
+    public static void registerJavaModules(File... toAdd) {
         try {
             for (File f : toAdd) {
-                if (INSTANCE.files.add(f)) {
+                if (INSTANCE.javaModuleFiles.add(f)) {
                     INSTANCE.classloader.addURL(f.toURI().toURL());
                 }
             }
@@ -66,13 +47,19 @@ public class ModuleRegistry {
         }
         INSTANCE.refreshRegistry();
     }
+    public static void registerPythonModules(File... toAdd) {
+        if (toAdd.length > 0) {
+            INSTANCE.pythonModuleFiles.addAll(Arrays.asList(toAdd));
+            INSTANCE.refreshRegistry();
+        }
+    }
 
-    public static ClassLoader getComponentClassLoader() {
+    public static ModuleClassLoader getComponentClassLoader() {
         return INSTANCE.classloader;
     }
 
-    public static Map<ModulePackageDeclaration, List<ModulePipelineComponentDeclaration>> getAllRegisteredComponents() {
-        return INSTANCE.componentDecsByPackage;
+    public static List<ModulePackageDeclaration> getAllRegisteredComponents() {
+        return INSTANCE.modules;
     }
 
     public static ModulePipelineComponentDeclaration getComponentByClass(String clazz) {
@@ -88,45 +75,43 @@ public class ModuleRegistry {
     }
 
     private void scanForModules() throws IOException {
-        this.componentDecsByPackage = new HashMap<>();
+        this.modules = new ArrayList<>();
         this.componentDecsByClass = new HashMap<>();
         this.packageDecsByClass = new HashMap<>();
-        for (File f : this.files) {
+        // Scan for Java Modules
+        for (File f : this.javaModuleFiles) {
             JarFile jar = new JarFile(f);
             ZipEntry entry = jar.getEntry("backbone_module.json");
             if (entry == null) {
                 continue;
             }
             ModulePackageDeclaration packageDec = this.objectMapper.readValue(jar.getInputStream(entry), ModulePackageDeclaration.class);
-            this.componentDecsByPackage.put(packageDec, new ArrayList<>());
+            this.modules.add(packageDec);
             jar.close();
-            ClassPathScanningCandidateComponentProvider provider
-                    = new ClassPathScanningCandidateComponentProvider(true);
-            provider.setResourceLoader(new DefaultResourceLoader(new URLClassLoader(this.classloader.getURLs())));
-            provider.addIncludeFilter(new AssignableTypeFilter(BackbonePipelineComponent.class));
-            // Scan packages for annotated entities
-            if (packageDec.getPackages() != null) {
-                new HashSet<>(packageDec.getPackages()).forEach(
-                        basePackage -> {
-                            Set<BeanDefinition> components = provider.findCandidateComponents(basePackage);
-                            components.forEach(component -> {
-                                try {
-                                    Class<? extends BackbonePipelineComponent<?, ?>> clazz
-                                            = (Class<? extends BackbonePipelineComponent<?, ?>>) Class.forName(component.getBeanClassName(), true, this.classloader);
-                                    if (!Modifier.isAbstract(clazz.getModifiers())) {
-                                        ModulePipelineComponentDeclaration componentDec = loadComponentDeclaration(clazz);
-                                        this.componentDecsByPackage.get(packageDec).add(componentDec);
-                                        this.packageDecsByClass.computeIfAbsent(clazz.getName(), k -> new ArrayList<>()).add(packageDec);
-                                        this.componentDecsByClass.put(clazz.getName(), componentDec);
-                                    }
-                                } catch (ClassNotFoundException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            });
-                        }
-                );
-            }
         }
+        // Scan for python modules
+        for (File f : pythonModuleFiles) {
+            ZipFile zip = new ZipFile(f);
+            ZipEntry entry = zip.getEntry("backbone_module.json");
+            if (entry == null) {
+                continue;
+            }
+            ModulePackageDeclaration dec = this.objectMapper.readValue(zip.getInputStream(entry), ModulePackageDeclaration.class);
+            this.modules.add(dec);
+        }
+        // Scan for duplicates
+        this.modules.forEach(module -> {
+            module.getComponents().forEach(component -> {
+                if (component instanceof JavaModulePipelineComponentDeclaration) {
+                    this.packageDecsByClass.computeIfAbsent(((JavaModulePipelineComponentDeclaration) component).getClazz().getName(), k -> new ArrayList<>()).add(module);
+                    this.componentDecsByClass.put(((JavaModulePipelineComponentDeclaration) component).getClazz().getName(), component);
+                } else if (component instanceof PythonModulePipelineComponentDeclaration) {
+                    String key = ((PythonModulePipelineComponentDeclaration) component).getBundle_identifier() + ":" + ((PythonModulePipelineComponentDeclaration) component).getEntry_point() + ":" + ((PythonModulePipelineComponentDeclaration) component).getClass_name();
+                    this.packageDecsByClass.computeIfAbsent(key, k -> new ArrayList<>()).add(module);
+                    this.componentDecsByClass.put(key, component);
+                }
+            });
+        });
         // Scan for duplicate component declarations
         this.packageDecsByClass.forEach((clazz, decs) -> {
             if (decs.size() > 1) {
@@ -137,123 +122,5 @@ public class ModuleRegistry {
                 });
             }
         });
-    }
-
-    /**
-     * Scan the provided module's annotations and populate relevant fields in the module
-     *
-     * @param clazz The module class file
-     */
-    private ModulePipelineComponentDeclaration loadComponentDeclaration(Class<? extends BackbonePipelineComponent<?, ?>> clazz) {
-        ModulePipelineComponentDeclaration module = new ModulePipelineComponentDeclaration(clazz);
-        ComponentDescription desc = clazz.getDeclaredAnnotation(ComponentDescription.class);
-        module.setName(desc.name());
-        module.setDesc(desc.desc());
-        module.setRequires(desc.requires());
-        Arrays.stream(clazz.getDeclaredFields()).forEachOrdered(f -> {
-            if (f.isAnnotationPresent(ConfigurationProperty.class)) {
-                ModuleConfigField field = loadModuleConfigField(f);
-                module.getConfigFields().add(field);
-            }
-        });
-        return module;
-    }
-
-    private ModuleConfigField loadModuleConfigField(Field f) {
-        ModuleConfigField ret = new ModuleConfigField();
-        ConfigurationProperty config = f.getDeclaredAnnotation(ConfigurationProperty.class);
-        ret.setPath(config.path());
-        ret.setDesc(config.desc());
-        ret.setRequired(config.required());
-        InputColumnProperty columnProp = f.getDeclaredAnnotation(InputColumnProperty.class);
-        JavaType javaType = this.objectMapper.constructType(f.getGenericType());
-        ret.setImpl(resolveTypedConfig(javaType, columnProp));
-        return ret;
-    }
-
-    private TypedConfigurationField resolveTypedConfig(JavaType t, InputColumnProperty columnProp) {
-        if (t.isArrayType() || t.isCollectionLikeType()) {
-            return resolveTypedConfigCollection(t, columnProp);
-        } else if (t.isPrimitive()) {
-            return resolveTypedConfigPrimitive(t);
-        } else if (t.isTypeOrSubTypeOf(String.class)) {
-            return new StringTypedConfigurationField();
-        } else if (t.isTypeOrSubTypeOf(Boolean.class)) {
-            return new BooleanTypedConfigurationField();
-        } else if (t.isTypeOrSubTypeOf(Number.class)) {
-            return resolveTypedConfigNumber(t);
-        } else if (t.isEnumImplType()) {
-            return resolveTypedConfigEnum(t);
-        } else if (t.isTypeOrSubTypeOf(JsonNode.class)) {
-            return new JSONTypedConfigurationField(t.isTypeOrSubTypeOf(ObjectNode.class), t.isTypeOrSubTypeOf(ArrayNode.class));
-        } else if (t.isMapLikeType()) {
-            return resolveTypedConfigMap(t, columnProp);
-        } else if (t.isTypeOrSubTypeOf(Schema.class)) {
-            return new SchemaTypedConfigurationField();
-        } else if (t.isTypeOrSubTypeOf(InputColumn.class)) {
-            return columnProp == null ? new InputColumnTypedConfigurationField() : new InputColumnTypedConfigurationField(columnProp);
-        } else if (!t.isConcrete()) {
-            throw new IllegalArgumentException("Abstract classes and interfaces cannot be used for configuration parameters");
-        } else {
-            return resolveTypedConfigPOJO(t, columnProp);
-        }
-    }
-
-    private CollectionTypedConfigurationField resolveTypedConfigCollection(JavaType t, InputColumnProperty columnProp) {
-        CollectionTypedConfigurationField ret = new CollectionTypedConfigurationField();
-        ret.setContents(resolveTypedConfig(t.getContentType(), columnProp));
-        return ret;
-    }
-
-    private static TypedConfigurationField resolveTypedConfigPrimitive(JavaType t) {
-        Class<?> clz = t.getRawClass();
-        if (clz.equals(boolean.class)) {
-            return new BooleanTypedConfigurationField();
-        } else if (clz.equals(char.class)) {
-            return new CharacterTypedConfigurationField();
-        } else if (clz.equals(byte.class)) {
-            return new NumericTypedConfigurationField(false, Byte.MIN_VALUE, Byte.MAX_VALUE);
-        } else if (clz.equals(short.class)) {
-            return new NumericTypedConfigurationField(false, Short.MIN_VALUE, Short.MAX_VALUE);
-        } else if (clz.equals(int.class)) {
-            return new NumericTypedConfigurationField(false, Integer.MIN_VALUE, Integer.MAX_VALUE);
-        } else if (clz.equals(long.class)) {
-            return new NumericTypedConfigurationField(false, Long.MIN_VALUE, Long.MAX_VALUE);
-        } else if (clz.equals(float.class)) {
-            return new NumericTypedConfigurationField(true, Float.MIN_VALUE, Float.MAX_VALUE);
-        } else if (clz.equals(double.class)) {
-            return new NumericTypedConfigurationField(true, Double.MIN_VALUE, Double.MAX_VALUE);
-        } else {
-            throw new IllegalArgumentException("Primitive is of type void");
-        }
-    }
-
-    private TypedConfigurationField resolveTypedConfigNumber(JavaType t) {
-        // TODO We cannot exactly process all possible implementations of Number, so default to floating/double and just
-        // error out at runtime if incorrect
-        return new NumericTypedConfigurationField(true, Double.MIN_VALUE, Double.MAX_VALUE);
-    }
-
-    private TypedConfigurationField resolveTypedConfigEnum(JavaType t) {
-        return new EnumerationTypedConfigurationField(
-                Arrays.stream(((Class<? extends Enum>) t.getRawClass()).getEnumConstants())
-                        .map(f -> f.name())
-                        .collect(Collectors.toList())
-        );
-    }
-
-    private TypedConfigurationField resolveTypedConfigMap(JavaType t, InputColumnProperty columnProperty) {
-        TypedConfigurationField key = resolveTypedConfig(t.getKeyType(), columnProperty);
-        TypedConfigurationField value = resolveTypedConfig(t.getContentType(), columnProperty);
-        return new MapTypedConfigurationField(key, value);
-    }
-
-    private TypedConfigurationField resolveTypedConfigPOJO(JavaType t, InputColumnProperty columnProperty) {
-        Map<String, TypedConfigurationField> fields = new HashMap<>();
-        ObjectMapper om = new ObjectMapper();
-        for (Field f : t.getRawClass().getDeclaredFields()) {
-            fields.put(f.getName(), resolveTypedConfig(om.constructType(f.getGenericType()), columnProperty));
-        }
-        return new ObjectTypedConfigurationField(fields);
     }
 }

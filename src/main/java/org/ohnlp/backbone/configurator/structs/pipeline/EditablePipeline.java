@@ -3,11 +3,12 @@ package org.ohnlp.backbone.configurator.structs.pipeline;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.components.ValidationError;
 import org.ohnlp.backbone.api.config.BackboneConfiguration;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
+import org.ohnlp.backbone.api.config.xlang.JavaBackbonePipelineComponentConfiguration;
+import org.ohnlp.backbone.api.config.xlang.PythonBackbonePipelineComponentConfiguration;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
 
 import java.io.File;
@@ -149,8 +150,17 @@ public class EditablePipeline {
             UUID lastUID = null;
             for (int i = 0; i < pipelineComponents.size(); i++) {
                 BackbonePipelineComponentConfiguration component = pipelineComponents.get(i);
-                if (i > 0 && (component.getInputs() == null || component.getInputs().isEmpty()) && HasInputs.class.isAssignableFrom(component.getClazz())) {
-                    legacyConfigs.add("Pipeline Definition Index " + i + ": " + component.getClazz().getName());
+                String className = null;
+                if (component instanceof JavaBackbonePipelineComponentConfiguration) {
+                    className = ((JavaBackbonePipelineComponentConfiguration)component).getClazz().getName();
+                } else if (component instanceof PythonBackbonePipelineComponentConfiguration) {
+                    PythonBackbonePipelineComponentConfiguration pyComponent = (PythonBackbonePipelineComponentConfiguration) component;
+                    className = pyComponent.getEntryPoint() + "::" + pyComponent.getEntryClass();
+                } else {
+                    className = "xlang component with unknown language: " + component.getClass().getName();
+                }
+                if (i > 0 && (component.getInputs() == null || component.getInputs().isEmpty()) && (!(component instanceof JavaBackbonePipelineComponentConfiguration) || HasInputs.class.isAssignableFrom(((JavaBackbonePipelineComponentConfiguration)component).getClazz()))) {
+                    legacyConfigs.add("Pipeline Definition Index " + i + ": " + className);
                     BackbonePipelineComponentConfiguration.InputDefinition generatedDef
                             = new BackbonePipelineComponentConfiguration.InputDefinition();
                     if (lastUID != null) {
@@ -160,7 +170,7 @@ public class EditablePipeline {
                     component.setInputs(Map.of("*", generatedDef));
                 }
                 if (component.getComponentID() == null || component.getComponentID().trim().length() == 0) {
-                    legacyConfigs.add("Pipeline Definition Index " + i + ": " + component.getClazz().getName());
+                    legacyConfigs.add("Pipeline Definition Index " + i + ": " + className);
                     UUID newUID = UUID.randomUUID();
                     component.setComponentID(newUID.toString().toLowerCase(Locale.ROOT));
                     lastUID = newUID;
@@ -239,7 +249,7 @@ public class EditablePipeline {
         List<List<PipelineComponentDeclaration>> steps = getPipelineAsSteps();
         steps.forEach(step -> {
             step.forEach(component -> {
-                component.componentInstance(true);
+                component.getComponentDef().getInstance(component, true);
             });
         });
         return errors;

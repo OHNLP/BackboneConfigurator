@@ -17,9 +17,7 @@ import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
 import org.ohnlp.backbone.configurator.Views;
 import org.ohnlp.backbone.configurator.gui.components.TitleBar;
-import org.ohnlp.backbone.configurator.structs.modules.ModuleConfigField;
-import org.ohnlp.backbone.configurator.structs.modules.ModulePackageDeclaration;
-import org.ohnlp.backbone.configurator.structs.modules.ModulePipelineComponentDeclaration;
+import org.ohnlp.backbone.configurator.structs.modules.*;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
 import java.io.IOException;
@@ -55,13 +53,13 @@ public class ComponentBrowserController {
     public void initialize() {
         // Populate Module List
         moduleList.getItems().clear();
-        moduleList.getItems().addAll(FXCollections.observableArrayList(ModuleRegistry.getAllRegisteredComponents().keySet()).sorted(Comparator.comparing(ModulePackageDeclaration::getName)));
+        moduleList.getItems().addAll(FXCollections.observableArrayList(ModuleRegistry.getAllRegisteredComponents()).sorted(Comparator.comparing(ModulePackageDeclaration::getName)));
         moduleList.setCellFactory(new ModulePackageCellFactory());
         // Bind to populate component list
         moduleList.getSelectionModel().selectedItemProperty().addListener((e, o, n) -> {
             componentList.getItems().clear();
             componentList.getSelectionModel().clearSelection();
-            componentList.getItems().addAll(FXCollections.observableArrayList(ModuleRegistry.getAllRegisteredComponents().getOrDefault(n, Collections.emptyList())).sorted(Comparator.comparing(ModulePipelineComponentDeclaration::getName)));
+            componentList.getItems().addAll(FXCollections.observableArrayList(n.getComponents()).sorted(Comparator.comparing(ModulePipelineComponentDeclaration::getName)));
         });
         componentList.setCellFactory(new ComponentCellFactory());
         // Bind ok button to require selection
@@ -155,7 +153,13 @@ public class ComponentBrowserController {
                     } else {
                         VBox cell = new VBox();
                         cell.getChildren().add(new Text(config.getName()));
-                        cell.getChildren().add(new Text(config.getClazz().getName()));
+                        if (config instanceof JavaModulePipelineComponentDeclaration) {
+                            cell.getChildren().add(new Text(((JavaModulePipelineComponentDeclaration) config).getClazz().getName()));
+                        } else if (config instanceof PythonModulePipelineComponentDeclaration) {
+                            cell.getChildren().add(new Text(((PythonModulePipelineComponentDeclaration) config).getEntry_point() + ": " + ((PythonModulePipelineComponentDeclaration) config).getClass_name()));
+                        } else {
+                            throw new IllegalArgumentException("Invalid component class type " + config.getClass().getName());
+                        }
                         cell.getChildren().forEach(t -> t.getStyleClass().add("text-display"));
                         cell.getStyleClass().add("component-entry");
                         setGraphic(cell);
