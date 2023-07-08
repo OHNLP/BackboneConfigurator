@@ -44,7 +44,7 @@ public class PythonModulePipelineComponentDeclaration extends ModulePipelineComp
 
     @Override
     public PythonProxyTransformComponent getInstance(PipelineComponentDeclaration callingComponentDec, boolean loadConfig) {
-        if (callingComponentDec.getInstance() != null) {
+        if (callingComponentDec.getInstance() == null) {
             if (loadConfig) { // Reinit config
                 ((PythonProxyTransformComponent)callingComponentDec.getInstance()).injectConfig(callingComponentDec.toBackboneConfigFormat().getConfig());
                 try {
