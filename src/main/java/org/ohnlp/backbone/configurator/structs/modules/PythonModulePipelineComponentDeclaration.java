@@ -1,15 +1,16 @@
 package org.ohnlp.backbone.configurator.structs.modules;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.ohnlp.backbone.api.components.xlang.python.PythonBackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.xlang.python.PythonProxyTransformComponent;
 import org.ohnlp.backbone.api.exceptions.ComponentInitializationException;
 import org.ohnlp.backbone.configurator.structs.modules.serde.PythonModulePipelineComponentDeclarationDeserializer;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.lang.reflect.Field;
 
 @JsonDeserialize(using = PythonModulePipelineComponentDeclarationDeserializer.class)
 public class PythonModulePipelineComponentDeclaration extends ModulePipelineComponentDeclaration {
@@ -44,12 +45,17 @@ public class PythonModulePipelineComponentDeclaration extends ModulePipelineComp
 
     @Override
     public PythonProxyTransformComponent getInstance(PipelineComponentDeclaration callingComponentDec, boolean loadConfig) {
-        if (callingComponentDec.getInstance() == null) {
+        if (callingComponentDec.getInstance() != null) {
             if (loadConfig) { // Reinit config
-                ((PythonProxyTransformComponent)callingComponentDec.getInstance()).injectConfig(callingComponentDec.toBackboneConfigFormat().getConfig());
+                PythonProxyTransformComponent pyComponent = ((PythonProxyTransformComponent) callingComponentDec.getInstance());
+                JsonNode conf = callingComponentDec.toBackboneConfigFormat().getConfig();
+                pyComponent.injectConfig(conf);
                 try {
-                    callingComponentDec.getInstance().init();
-                } catch (ComponentInitializationException e) {
+                    Field f = PythonProxyTransformComponent.class.getDeclaredField("proxiedComponent");
+                    f.setAccessible(true);
+                    PythonBackbonePipelineComponent cmp = (PythonBackbonePipelineComponent) f.get(pyComponent);
+                    cmp.init(new ObjectMapper().writeValueAsString(conf));
+                } catch (NoSuchFieldException | IllegalAccessException | JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
             }
@@ -61,6 +67,7 @@ public class PythonModulePipelineComponentDeclaration extends ModulePipelineComp
             ret.injectConfig(callingComponentDec.toBackboneConfigFormat().getConfig());
         }
         try {
+            Runtime.getRuntime().addShutdownHook(new Thread(ret::teardown)); // Make sure bridge gets shut down on JVM close
             ret.init();
         } catch (ComponentInitializationException e) {
             throw new RuntimeException(e);
