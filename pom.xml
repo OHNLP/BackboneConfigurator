@@ -6,7 +6,7 @@
 
     <groupId>org.ohnlp.backbone</groupId>
     <artifactId>configurator</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <name>BackboneConfigurator</name>
 
     <repositories>
@@ -21,7 +21,7 @@
         <spring.version>5.3.25</spring.version>
         <backbone.version>3.0.6</backbone.version>
         <beam.version>2.41.0</beam.version>
-        <javafx.version>17.0.2</javafx.version>
+        <javafx.version>19.0.2.1</javafx.version>
     </properties>
 
     <dependencies>
@@ -64,12 +64,6 @@
             <artifactId>javafx-graphics </artifactId>
             <version>${javafx.version}</version>
             <classifier>linux</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-graphics </artifactId>
-            <version>${javafx.version}</version>
-            <classifier>mac</classifier>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
