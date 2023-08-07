@@ -107,9 +107,9 @@ public class Views {
         s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
         s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.css").toExternalForm());
         stage.setScene(s);
-        stage.setMaximized(true);
-        stage.setFullScreen(true);
-        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+//        stage.setMaximized(true);
+//        stage.setFullScreen(true);
+//        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
