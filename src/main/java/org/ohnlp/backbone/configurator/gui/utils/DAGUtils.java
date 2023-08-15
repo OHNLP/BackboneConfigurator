@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class DAGUtils {
     public static Graph generateGraphForPipeline(EditablePipeline pipeline) {
@@ -26,7 +27,12 @@ public class DAGUtils {
         // Draw
         pipelineComponents.forEach(step -> {
             step.forEach(component -> {
-                BackbonePipelineComponent componentInstance = component.getComponentDef().getInstance(component, false);
+                BackbonePipelineComponent componentInstance = null;
+                try {
+                    componentInstance = component.getComponentDef().getInstance(component, false).get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
                 ComponentCell cell = new ComponentCell(
                         component.getComponentID(),
                         component.getComponentDef().getName(),
