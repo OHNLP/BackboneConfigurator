@@ -7,18 +7,18 @@ import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
 import org.ohnlp.backbone.api.exceptions.ComponentInitializationException;
 import org.ohnlp.backbone.api.pipeline.PipelineBuilder;
+import org.ohnlp.backbone.configurator.WorkerService;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class JavaModulePipelineComponentDeclaration extends ModulePipelineComponentDeclaration {
     private Class<? extends BackbonePipelineComponent<?,?>> clazz;
+    private AtomicReference<CompletableFuture<BackbonePipelineComponent<?, ?>>> initFuture = new AtomicReference<>();
 
     public JavaModulePipelineComponentDeclaration(Class<? extends BackbonePipelineComponent<?,?>> clazz) {
         this.clazz = clazz;
@@ -34,7 +34,7 @@ public class JavaModulePipelineComponentDeclaration extends ModulePipelineCompon
     }
 
     @Override
-    public BackbonePipelineComponent<?, ?> getInstance(PipelineComponentDeclaration callingComponentDec, boolean loadConfig) {
+    public CompletableFuture<BackbonePipelineComponent<?, ?>> getInstance(PipelineComponentDeclaration callingComponentDec, boolean loadConfig) {
         try {
             Constructor<? extends BackbonePipelineComponent<?, ?>> ctor =
                     getClazz().getDeclaredConstructor();
@@ -46,28 +46,23 @@ public class JavaModulePipelineComponentDeclaration extends ModulePipelineCompon
                     m.invoke(null, ret.getClass(), ret, callingComponentDec.toBackboneConfigFormat().getConfig());
                 } catch (InvocationTargetException ignored) {
                 }
-                try {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    Future<ComponentInitializationException> future = executor.submit(() -> {
-                        try {
-                            ret.init();
-                            return null;
-                        } catch (ComponentInitializationException e) {
-                            return e;
-                        }
-                    });
-                    ComponentInitializationException initException;
-                    try {
-                        initException = future.get(5000, TimeUnit.MILLISECONDS);
-                    } catch (Throwable ignored) {
-                        // TODO
+                String taskName = "Initializing Component@"  + hashCode() + ": " + getName();
+                synchronized (initFuture) {
+                    if (initFuture.get() == null) {
+                        initFuture.set(WorkerService.schedule(taskName, () -> {
+                            try {
+                                ret.init();
+                                return ret;
+                            } catch (ComponentInitializationException e) {
+                                throw new RuntimeException("Failed to create new component instance for " + getClazz().getName(), e);
+                            }
+                        }, false));
                     }
-                    executor.shutdownNow();
-                } catch (Throwable t) {
-                    t.printStackTrace();
+                    return initFuture.get();
                 }
+            } else {
+                return CompletableFuture.completedFuture(ret);
             }
-            return ret;
         } catch (Throwable t) {
             throw new RuntimeException("Failed to create new component instance for " + getClazz().getName(), t);
         }

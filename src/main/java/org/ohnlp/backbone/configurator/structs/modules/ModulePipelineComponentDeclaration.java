@@ -5,6 +5,8 @@ import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclara
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 public abstract class ModulePipelineComponentDeclaration {
     private String name = "";
@@ -40,5 +42,5 @@ public abstract class ModulePipelineComponentDeclaration {
         return configFields;
     }
 
-    public abstract BackbonePipelineComponent<?, ?> getInstance(PipelineComponentDeclaration callingComponentDec, boolean loadConfig);
+    public abstract CompletableFuture<? extends BackbonePipelineComponent<?, ?>> getInstance(PipelineComponentDeclaration callingComponentDec, boolean loadConfig);
 }

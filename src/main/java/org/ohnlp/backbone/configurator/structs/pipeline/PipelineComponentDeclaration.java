@@ -127,7 +127,12 @@ public class PipelineComponentDeclaration {
             return null;
         }
         updateOutputSchemas.set(false);
-        BackbonePipelineComponent<?,?> instance = componentDef.getInstance(this, true);
+        BackbonePipelineComponent<?,?> instance;
+        try {
+            instance = componentDef.getInstance(this, true).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
         if (instance instanceof HasOutputs) {
             Map<String, Schema> inputSchemas = new HashMap<>();
             if (instance instanceof HasInputs) {
