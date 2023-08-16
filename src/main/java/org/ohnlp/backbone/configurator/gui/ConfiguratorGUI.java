@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.ohnlp.backbone.api.components.xlang.python.PythonBridge;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class ConfiguratorGUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        PythonBridge.CLEANUP_ENVS_ON_SHUTDOWN = false; // Use cached configurator mode
         ModuleRegistry.registerJavaModules(new File("modules").listFiles());
         ModuleRegistry.registerJavaModules(new File("python_modules").listFiles()); // TODO
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/org/ohnlp/backbone/configurator/welcome-view.fxml"));

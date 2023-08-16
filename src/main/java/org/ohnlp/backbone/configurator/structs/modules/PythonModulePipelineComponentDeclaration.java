@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.xlang.python.PythonBackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.xlang.python.PythonProxyTransformComponent;
 import org.ohnlp.backbone.api.exceptions.ComponentInitializationException;
@@ -12,9 +11,9 @@ import org.ohnlp.backbone.configurator.WorkerService;
 import org.ohnlp.backbone.configurator.structs.modules.serde.PythonModulePipelineComponentDeclarationDeserializer;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 @JsonDeserialize(using = PythonModulePipelineComponentDeclarationDeserializer.class)
@@ -70,7 +69,7 @@ public class PythonModulePipelineComponentDeclaration extends ModulePipelineComp
             return CompletableFuture.completedFuture((PythonProxyTransformComponent) callingComponentDec.getInstance());
         } else {
             // Initialize an instance
-            PythonProxyTransformComponent ret = new PythonProxyTransformComponent(getBundle_identifier(), getEntry_point(), getClass_name());
+            PythonProxyTransformComponent ret = new PythonProxyTransformComponent(new File("configurator_python_envs"), getBundle_identifier(), getEntry_point(), getClass_name());
 
             if (loadConfig) {
                 ret.injectConfig(callingComponentDec.toBackboneConfigFormat().getConfig());
