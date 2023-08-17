@@ -1,5 +1,7 @@
 package org.ohnlp.backbone.configurator.gui.controller;
 
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -77,23 +79,29 @@ public class ComponentBrowserController {
     @FXML
     public void onOK(MouseEvent e) {
         ModulePipelineComponentDeclaration selected = componentList.getSelectionModel().getSelectedItem();
-        PipelineComponentDeclaration pcd = new PipelineComponentDeclaration(EditorRegistry.getCurrentEditablePipeline().get());
-        pcd.setComponentDef(selected);
-        pcd.setInputs(new HashMap<>());
-        pcd.setConfig(new ArrayList<>());
-        selected.getConfigFields().forEach(f -> {
-            ModuleConfigField cln = f.clone();
-            cln.getImpl().reset(); // Because the source we are cloning from may have observable set already due to different window
-            pcd.getConfig().add(cln);
-        });
-        EditorRegistry.getCurrentEditedComponent().set(pcd);
-        EditorRegistry.inCreateNewComponentState().set(true);
         ((Node) e.getSource()).getScene().getWindow().hide();
-        try {
-            Views.openView(Views.ViewType.COMPONENT_EDITOR);
-        } catch (IOException t) {
-            throw new RuntimeException(t);
-        }
+        PipelineComponentDeclaration pcd = new PipelineComponentDeclaration(EditorRegistry.getCurrentEditablePipeline().get());
+        Dialog<Boolean> instanceInitDialog = Views.createSyncDialog(new SimpleStringProperty("Loading Component"), new SimpleStringProperty("Loading Component and Environment"), new SimpleStringProperty("Please Wait..."));
+        instanceInitDialog.show();
+        Platform.runLater(() -> {
+            pcd.setComponentDef(selected);
+            pcd.setInputs(new HashMap<>());
+            pcd.setConfig(new ArrayList<>());
+            selected.getConfigFields().forEach(f -> {
+                ModuleConfigField cln = f.clone();
+                cln.getImpl().reset(); // Because the source we are cloning from may have observable set already due to different window
+                pcd.getConfig().add(cln);
+            });
+            EditorRegistry.getCurrentEditedComponent().set(pcd);
+            EditorRegistry.inCreateNewComponentState().set(true);
+            try {
+                instanceInitDialog.setResult(true);
+                instanceInitDialog.close();
+                Views.openView(Views.ViewType.COMPONENT_EDITOR);
+            } catch (IOException t) {
+                throw new RuntimeException(t);
+            }
+        });
     }
 
     @FXML

@@ -1,9 +1,11 @@
 package org.ohnlp.backbone.configurator.gui.controller;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
@@ -83,12 +85,21 @@ public class ComponentEditorController {
     }
 
     private void generateInputs(PipelineComponentDeclaration componentDec) {
+        Dialog<Boolean> instanceInitDialog = Views.createSyncDialog(new SimpleStringProperty("Loading Component"), new SimpleStringProperty("Loading Component and Environment"), new SimpleStringProperty("Please Wait..."));
+        instanceInitDialog.show();
         EditablePipeline pipeline = EditorRegistry.getCurrentEditablePipeline().get();
         Set<String> possibleInputs = pipeline.getAvailableInputs(componentDec);
         CompletableFuture<? extends BackbonePipelineComponent<?, ?>> future = componentDec.getComponentDef().getInstance(componentDec, false);
         future.whenComplete((cmp, err) -> {
+            instanceInitDialog.setResult(true);
+            instanceInitDialog.close();
             if (err != null) {
                 err.printStackTrace();
+                try {
+                    Views.displayConfirmationDialog("Failed to load Component", "Component Loading Failed, Please check console for error log", () -> {}, null);
+                } catch (Views.DialogCancelledException e) {
+                    return;
+                }
                 return;
             }
             if (cmp instanceof HasInputs) {
