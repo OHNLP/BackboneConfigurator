@@ -106,6 +106,7 @@ public class TitleBar extends HBox {
         });
 
         close.setOnMouseClicked(e -> {
+            // TODO check save status
             if (e.getButton().equals(MouseButton.PRIMARY)) {
                 ((Node)e.getSource()).getScene().getWindow().hide();
             }

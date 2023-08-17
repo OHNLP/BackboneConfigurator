@@ -3,6 +3,8 @@ package org.ohnlp.backbone.configurator;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableStringValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -94,24 +96,35 @@ public class Views {
     }
 
     private static void newPipelineEditorView() throws IOException {
-        FXMLLoader loader = new FXMLLoader(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.fxml"));
-        Stage stage = new Stage();
-        stage.titleProperty().bind(Bindings.createStringBinding(() -> {
-            if (EditorRegistry.getConfigMetadata().isNotNull().get()) {
-                return "OHNLP Toolkit Pipeline Configuration Editor: " + EditorRegistry.getConfigMetadata().get().getFile().getName();
-            } else {
-                return "OHNLP Toolkit Pipeline Configuration Editor";
+        Dialog<Boolean> instanceInitDialog = Views.createSyncDialog(new SimpleStringProperty("Loading Pipeline Components"), new SimpleStringProperty("Loading Pipeline Component and Execution Environments"), new SimpleStringProperty("Please Wait..."));
+        instanceInitDialog.show();
+        Platform.runLater(() -> {
+            FXMLLoader loader = new FXMLLoader(WelcomeAndConfigSelectionController.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.fxml"));
+            Stage stage = new Stage();
+            stage.titleProperty().bind(Bindings.createStringBinding(() -> {
+                if (EditorRegistry.getConfigMetadata().isNotNull().get()) {
+                    return "OHNLP Toolkit Pipeline Configuration Editor: " + EditorRegistry.getConfigMetadata().get().getFile().getName();
+                } else {
+                    return "OHNLP Toolkit Pipeline Configuration Editor";
+                }
+            }, EditorRegistry.getConfigMetadata()));
+            Scene s = null;
+            try {
+                s = new Scene(loader.load());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        }, EditorRegistry.getConfigMetadata()));
-        Scene s = new Scene(loader.load());
-        s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
-        s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.css").toExternalForm());
-        stage.setScene(s);
-        stage.setMaximized(true);
-        stage.setFullScreen(true);
-        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-        stage.initStyle(StageStyle.UNDECORATED);
-        stage.show();
+            s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+            s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/pipeline-editor-view.css").toExternalForm());
+            stage.setScene(s);
+//        stage.setMaximized(true);
+//        stage.setFullScreen(true);
+//        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.show();
+            instanceInitDialog.setResult(true);
+            instanceInitDialog.close();
+        });
     }
 
     private static void newComponentEditorView() throws IOException {
@@ -128,13 +141,7 @@ public class Views {
             return; // There is component editor window active. Exit first, then allow to be opened
         }
         // Since component editor can lead to schema re-resolution, display notice to user here first, to be closed later
-        Dialog<Boolean> alert = new Dialog();
-        alert.initStyle(StageStyle.UNDECORATED);
-        alert.setTitle("Resolving Input/Output Schemas");
-        alert.setHeaderText("Attempting to Resolve Input/Output Schemas");
-        alert.setContentText("Please Wait...");
-        alert.getDialogPane().getStyleClass().add("window");
-        alert.getDialogPane().getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+        Dialog<Boolean> alert = createSyncDialog(new SimpleStringProperty("Loading Component"), new SimpleStringProperty("Attempting to Load Component Metadata"), new SimpleStringProperty("Please Wait..."));
         alert.show();
         Platform.runLater(() -> {
             FXMLLoader loader = new FXMLLoader(PipelineEditorController.class.getResource("/org/ohnlp/backbone/configurator/component-editor-view.fxml"));
@@ -155,6 +162,17 @@ public class Views {
         });
     }
 
+    public static Dialog<Boolean> createSyncDialog(ObservableStringValue title, ObservableStringValue header, ObservableStringValue content) {
+        Dialog<Boolean> ret = new Dialog();
+        ret.initStyle(StageStyle.UNDECORATED);
+        ret.titleProperty().bind(title);
+        ret.headerTextProperty().bind(header);
+        ret.contentTextProperty().bind(content);
+        ret.getDialogPane().getStyleClass().add("window");
+        ret.getDialogPane().getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
+        return ret;
+    }
+
 
     public static void displayConfirmationDialog(String title, String message, Runnable yesCallback, Runnable noCallback) throws DialogCancelledException {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -164,7 +182,12 @@ public class Views {
         alert.setContentText(message);
         ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
         ButtonType no = new ButtonType("No", ButtonBar.ButtonData.NO);
-        alert.getButtonTypes().setAll(yes, no);
+        if (yesCallback != null) {
+            alert.getButtonTypes().add(yes);
+        }
+        if (noCallback != null) {
+            alert.getButtonTypes().add(no);
+        }
         alert.getDialogPane().getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
         Optional<ButtonType> output = alert.showAndWait();
         if (output.isEmpty()) {

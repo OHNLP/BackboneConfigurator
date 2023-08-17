@@ -9,14 +9,13 @@ import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
 import org.ohnlp.backbone.api.components.HasOutputs;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
-import org.ohnlp.backbone.api.exceptions.ComponentInitializationException;
-import org.ohnlp.backbone.api.pipeline.PipelineBuilder;
+import org.ohnlp.backbone.api.config.xlang.JavaBackbonePipelineComponentConfiguration;
+import org.ohnlp.backbone.api.config.xlang.PythonBackbonePipelineComponentConfiguration;
+import org.ohnlp.backbone.configurator.structs.modules.JavaModulePipelineComponentDeclaration;
 import org.ohnlp.backbone.configurator.structs.modules.ModuleConfigField;
 import org.ohnlp.backbone.configurator.structs.modules.ModulePipelineComponentDeclaration;
+import org.ohnlp.backbone.configurator.structs.modules.PythonModulePipelineComponentDeclaration;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +26,8 @@ public class PipelineComponentDeclaration {
     private EditablePipeline parent;
     private String componentID;
     private ModulePipelineComponentDeclaration componentDef;
+
+    private BackbonePipelineComponent instance;
     private List<ModuleConfigField> config = Collections.emptyList();
 
     private Map<String, Schema> stepOutput;
@@ -80,10 +81,20 @@ public class PipelineComponentDeclaration {
     }
 
     public BackbonePipelineComponentConfiguration toBackboneConfigFormat() {
-        BackbonePipelineComponentConfiguration ret = new BackbonePipelineComponentConfiguration();
+        BackbonePipelineComponentConfiguration ret = null;
+        if (componentDef instanceof JavaModulePipelineComponentDeclaration) {
+            ret = new JavaBackbonePipelineComponentConfiguration();
+            ((JavaBackbonePipelineComponentConfiguration)ret).setClazz(((JavaModulePipelineComponentDeclaration)this.componentDef).getClazz());
+        } else if (componentDef instanceof PythonModulePipelineComponentDeclaration) {
+            PythonBackbonePipelineComponentConfiguration pythonComponentConf = new PythonBackbonePipelineComponentConfiguration();
+            PythonModulePipelineComponentDeclaration pyCompDef = (PythonModulePipelineComponentDeclaration) componentDef;
+            pythonComponentConf.setBundleName(pyCompDef.getBundle_identifier());
+            pythonComponentConf.setEntryPoint(pyCompDef.getEntry_point());
+            pythonComponentConf.setEntryClass(pyCompDef.getClass_name());
+            ret = pythonComponentConf;
+        }
         ret.setComponentID(this.componentID);
         ret.setInputs(this.inputs);
-        ret.setClazz(this.componentDef.getClazz());
         ObjectNode configJson = JsonNodeFactory.instance.objectNode();
         this.config.forEach(f -> {
             ObjectNode curr = configJson;
@@ -116,10 +127,15 @@ public class PipelineComponentDeclaration {
             return null;
         }
         updateOutputSchemas.set(false);
-        BackbonePipelineComponent<?,?> instance = componentInstance(true);
+        BackbonePipelineComponent<?,?> instance;
+        try {
+            instance = componentDef.getInstance(this, true).get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
         if (instance instanceof HasOutputs) {
             Map<String, Schema> inputSchemas = new HashMap<>();
-            if (HasInputs.class.isAssignableFrom(getComponentDef().getClazz())) {
+            if (instance instanceof HasInputs) {
                 this.getInputs().forEach((thisComponentTag, definition) -> {
                     String otherComponentID = definition.getComponentID();
                     String otherComponentTag = definition.getInputTag();
@@ -135,7 +151,6 @@ public class PipelineComponentDeclaration {
             }
             try {
                 ExecutorService executor = Executors.newSingleThreadExecutor();
-
                 Future<Map<String, Schema>> schema = executor.submit(() -> ((HasOutputs) instance).calculateOutputSchema(inputSchemas));
                 Map<String, Schema> ret = schema.get(5000, TimeUnit.MILLISECONDS);
                 executor.shutdownNow();
@@ -159,42 +174,12 @@ public class PipelineComponentDeclaration {
         this.updateOutputSchemas.set(updateOutputSchemas);
     }
 
-    public BackbonePipelineComponent<?,?> componentInstance(boolean loadConfig) {
-        try {
-            Constructor<? extends BackbonePipelineComponent<?,? >> ctor =
-                    this.getComponentDef().getClazz().getDeclaredConstructor();
-            BackbonePipelineComponent<?,?> ret = ctor.newInstance();
-            if (loadConfig) {
-                Method m = PipelineBuilder.class.getDeclaredMethod("injectInstanceWithConfigurationProperties", Class.class, BackbonePipelineComponent.class, JsonNode.class);
-                m.setAccessible(true);
-                try {
-                    m.invoke(null, ret.getClass(), ret, this.toBackboneConfigFormat().getConfig());
-                } catch (InvocationTargetException ignored) {}
-                try {
-                    ExecutorService executor = Executors.newSingleThreadExecutor();
-                    Future<ComponentInitializationException> future = executor.submit(() -> {
-                        try {
-                            ret.init();
-                            return null;
-                        } catch (ComponentInitializationException e) {
-                            return e;
-                        }
-                    });
-                    ComponentInitializationException initException;
-                    try {
-                         initException = future.get(5000, TimeUnit.MILLISECONDS);
-                    } catch (Throwable ignored) {
-                        // TODO
-                    }
-                    executor.shutdownNow();
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
-            return ret;
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
+    public BackbonePipelineComponent getInstance() {
+        return instance;
+    }
+
+    public void setInstance(BackbonePipelineComponent instance) {
+        this.instance = instance;
     }
 }
 

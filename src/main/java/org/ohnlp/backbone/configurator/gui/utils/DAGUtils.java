@@ -10,11 +10,11 @@ import org.ohnlp.backbone.configurator.gui.components.graphs.DirectedEdgeFromToL
 import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 
-import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class DAGUtils {
     public static Graph generateGraphForPipeline(EditablePipeline pipeline) {
@@ -27,7 +27,12 @@ public class DAGUtils {
         // Draw
         pipelineComponents.forEach(step -> {
             step.forEach(component -> {
-                BackbonePipelineComponent componentInstance = initComponent(component);
+                BackbonePipelineComponent componentInstance = null;
+                try {
+                    componentInstance = component.getComponentDef().getInstance(component, false).get();
+                } catch (InterruptedException | ExecutionException e) {
+                    throw new RuntimeException(e);
+                }
                 ComponentCell cell = new ComponentCell(
                         component.getComponentID(),
                         component.getComponentDef().getName(),
@@ -56,15 +61,5 @@ public class DAGUtils {
         });
         outputGraph.endUpdate();
         return outputGraph;
-    }
-
-    private static BackbonePipelineComponent initComponent(PipelineComponentDeclaration component) {
-        try {
-            Constructor<? extends BackbonePipelineComponent> ctor =
-                    component.getComponentDef().getClazz().getDeclaredConstructor();
-            return ctor.newInstance();
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
-        }
     }
 }
