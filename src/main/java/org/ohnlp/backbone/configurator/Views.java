@@ -180,6 +180,7 @@ public class Views {
         alert.setTitle(title);
         alert.setHeaderText(title);
         alert.setContentText(message);
+        alert.getButtonTypes().clear();
         ButtonType yes = new ButtonType("Yes", ButtonBar.ButtonData.YES);
         ButtonType no = new ButtonType("No", ButtonBar.ButtonData.NO);
         if (yesCallback != null) {

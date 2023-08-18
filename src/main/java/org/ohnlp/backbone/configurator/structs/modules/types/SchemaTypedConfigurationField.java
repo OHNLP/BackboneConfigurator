@@ -64,7 +64,7 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
             if (n) {
                 ObjectNode updated = JsonNodeFactory.instance.objectNode();
                 ret.toJSON(updated);
-                updateValue(ret);
+                injectValueFromJSON(updated);
                 invalidationFlag.set(false);
             }
         });
