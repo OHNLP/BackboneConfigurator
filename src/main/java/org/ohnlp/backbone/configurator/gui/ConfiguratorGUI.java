@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.ohnlp.backbone.api.components.xlang.python.PythonBridge;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
+import org.ohnlp.backbone.configurator.UpdateManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +15,9 @@ import java.io.IOException;
 public class ConfiguratorGUI extends Application {
 
     public static void main(String[] args) {
+        try {
+            UpdateManager.checkForUpdates();
+        } catch (IOException ignored) {}
         launch(args);
     }
 

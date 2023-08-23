@@ -14,6 +14,7 @@ open module org.ohnlp.backbone.configurator {
     requires org.abego.treelayout.core;
     requires java.desktop;
     requires org.kordamp.ikonli.javafx;
+    requires spring.web;
 
 
     exports org.ohnlp.backbone.configurator;
