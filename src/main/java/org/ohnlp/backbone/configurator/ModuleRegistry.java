@@ -36,6 +36,9 @@ public class ModuleRegistry {
     }
 
     public static void registerJavaModules(File... toAdd) {
+        if (toAdd == null) {
+            return;
+        }
         try {
             for (File f : toAdd) {
                 if (INSTANCE.javaModuleFiles.add(f)) {
@@ -48,7 +51,7 @@ public class ModuleRegistry {
         INSTANCE.refreshRegistry();
     }
     public static void registerPythonModules(File... toAdd) {
-        if (toAdd.length > 0) {
+        if (toAdd != null && toAdd.length > 0) {
             INSTANCE.pythonModuleFiles.addAll(Arrays.asList(toAdd));
             INSTANCE.refreshRegistry();
         }
