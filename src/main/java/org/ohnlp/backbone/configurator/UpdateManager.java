@@ -41,7 +41,7 @@ public class UpdateManager {
     }
 
     public static Map<String, String> getAssetList() throws IOException {
-        String url = "https://github.com/OHNLP/BackboneConfigurator/blob/master/asset_manifest.json";
+        String url = "https://raw.githubusercontent.com/OHNLP/BackboneConfigurator/master/asset_manifest.json";
         File tmp = new RestTemplate().execute(url, HttpMethod.GET, null, clientHttpResponse -> {
             File ret = File.createTempFile("components", "tmp");
             StreamUtils.copy(clientHttpResponse.getBody(), new FileOutputStream(ret));
@@ -136,6 +136,7 @@ public class UpdateManager {
                 }
                 String pathRelative = entry.getName();
                 File pathInTmp = new File(targetDir, pathRelative);
+                pathInTmp.getParentFile().mkdirs();
                 byte[] contents = zis.readAllBytes();
                 try (FileOutputStream fos = new FileOutputStream(pathInTmp)) {
                     fos.write(contents);

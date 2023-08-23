@@ -177,7 +177,22 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/configurator-version.txt</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/configurator-version.txt</exclude>
+                </excludes>
+            </resource>
+        </resources>
     </build>
 </project>
