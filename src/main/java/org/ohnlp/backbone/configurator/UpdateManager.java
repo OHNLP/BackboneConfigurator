@@ -20,6 +20,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class UpdateManager {
+
+    public static boolean RESTART_REQUIRED = false;
+
     public static void checkForUpdates() throws IOException {
         Scanner scanner = new Scanner(System.in);
         checkForUpdates(
@@ -113,6 +116,9 @@ public class UpdateManager {
             String tag = getLatestRelease(repo);
             String currTag = finalCurrInstalledVersions.getOrDefault(repo, "NONE");
             if (promptUpdatable.apply(new UpdatableAsset(repo, currTag, tag))) {
+                if (repo.equals("OHNLP/BackboneConfigurator")) {
+                    RESTART_REQUIRED = true;
+                }
                 try {
                     File tmp = getReleaseFile(repo, tag, asset);
                     unzipToDir(tmp, new File("."));

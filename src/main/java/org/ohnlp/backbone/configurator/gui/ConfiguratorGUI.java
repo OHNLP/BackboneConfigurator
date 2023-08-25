@@ -18,6 +18,16 @@ public class ConfiguratorGUI extends Application {
         try {
             UpdateManager.checkForUpdates();
         } catch (IOException ignored) {}
+        if (UpdateManager.RESTART_REQUIRED) {
+            System.out.println("Configurator was Updated, Please Re-Launch the Application");
+            System.out.println("Press [ENTER] to exit");
+            try {
+                System.in.read();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.exit(0);
+        }
         launch(args);
     }
 
