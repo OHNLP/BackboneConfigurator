@@ -84,6 +84,8 @@ public class ComponentBrowserController {
         Dialog<Boolean> instanceInitDialog = Views.createSyncDialog(new SimpleStringProperty("Loading Component"), new SimpleStringProperty("Loading Component and Environment"), new SimpleStringProperty("Please Wait..."));
         instanceInitDialog.show();
         Platform.runLater(() -> {
+            EditorRegistry.getCurrentEditedComponent().set(pcd);
+            EditorRegistry.inCreateNewComponentState().set(true);
             pcd.setComponentDef(selected);
             pcd.setInputs(new HashMap<>());
             pcd.setConfig(new ArrayList<>());
@@ -92,8 +94,6 @@ public class ComponentBrowserController {
                 cln.getImpl().reset(); // Because the source we are cloning from may have observable set already due to different window
                 pcd.getConfig().add(cln);
             });
-            EditorRegistry.getCurrentEditedComponent().set(pcd);
-            EditorRegistry.inCreateNewComponentState().set(true);
             try {
                 instanceInitDialog.setResult(true);
                 instanceInitDialog.close();

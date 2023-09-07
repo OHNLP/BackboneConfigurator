@@ -11,6 +11,7 @@ import org.ohnlp.backbone.api.components.HasOutputs;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
 import org.ohnlp.backbone.api.config.xlang.JavaBackbonePipelineComponentConfiguration;
 import org.ohnlp.backbone.api.config.xlang.PythonBackbonePipelineComponentConfiguration;
+import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.structs.modules.JavaModulePipelineComponentDeclaration;
 import org.ohnlp.backbone.configurator.structs.modules.ModuleConfigField;
 import org.ohnlp.backbone.configurator.structs.modules.ModulePipelineComponentDeclaration;
@@ -77,7 +78,9 @@ public class PipelineComponentDeclaration {
 
     public void setInputs(Map<String, BackbonePipelineComponentConfiguration.InputDefinition> inputs) {
         this.inputs = inputs;
-        updateOutputSchemas.set(true);
+        if (!EditorRegistry.inCreateNewComponentState().get()) {
+            updateOutputSchemas.set(true);
+        }
     }
 
     public BackbonePipelineComponentConfiguration toBackboneConfigFormat() {

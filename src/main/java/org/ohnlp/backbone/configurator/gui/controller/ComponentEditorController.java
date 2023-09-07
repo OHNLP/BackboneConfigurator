@@ -64,7 +64,9 @@ public class ComponentEditorController {
     public void initialize() {
         contents.prefHeightProperty().bind(container.heightProperty());
         Assert.notNull(EditorRegistry.getCurrentEditedComponent(), "Component Editor Dialog Initialized with Null Component");
-        EditorRegistry.getCurrentEditedComponent().get().setUpdateOutputSchemas(true);
+        if (!EditorRegistry.inCreateNewComponentState().get()) {
+            EditorRegistry.getCurrentEditedComponent().get().setUpdateOutputSchemas(true);
+        }
         SimpleObjectProperty<PipelineComponentDeclaration> edited = EditorRegistry.getCurrentEditedComponent();
         configList.prefWidthProperty().bind(container.widthProperty());
         TextField stepIDPrompt = new TextField(edited.get().getComponentID());
