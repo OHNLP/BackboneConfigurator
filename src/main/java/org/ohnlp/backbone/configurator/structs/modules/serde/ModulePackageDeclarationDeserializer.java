@@ -128,14 +128,29 @@ public class ModulePackageDeclarationDeserializer extends StdDeserializer<Module
      */
     private ModulePipelineComponentDeclaration loadJavaComponentDeclaration(Class<? extends BackbonePipelineComponent<?, ?>> clazz) {
         ModulePipelineComponentDeclaration module = new JavaModulePipelineComponentDeclaration(clazz);
+        BackbonePipelineComponent<?, ?> instance = null;
+        try {
+            instance = clazz.getDeclaredConstructor().newInstance();
+        } catch (Throwable ignored) {}
         ComponentDescription desc = clazz.getDeclaredAnnotation(ComponentDescription.class);
         module.setName(desc.name());
         module.setDesc(desc.desc());
         module.setRequires(desc.requires());
+        BackbonePipelineComponent<?, ?> finalInstance = instance;
         Arrays.stream(clazz.getDeclaredFields()).forEachOrdered(f -> {
             if (f.isAnnotationPresent(ConfigurationProperty.class)) {
                 ModuleConfigField field = loadModuleConfigField(f);
                 module.getConfigFields().add(field);
+                if (!field.isRequired()) {
+                    try {
+                        f.trySetAccessible();
+                        Object val = f.get(finalInstance);
+                        if (val != null) {
+                            field.getImpl().loadFromDefault(val);
+                        }
+                    } catch (Throwable ignored) {
+                    }
+                }
             }
         });
         return module;

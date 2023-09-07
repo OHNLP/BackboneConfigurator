@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import org.apache.beam.sdk.schemas.Schema;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class CollectionTypedConfigurationField extends TypedConfigurationField {
@@ -60,6 +61,20 @@ public class CollectionTypedConfigurationField extends TypedConfigurationField {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void loadFromDefault(Object object) {
+        Collection<?> coll = (Collection<?>) object;
+        List<TypedConfigurationField> children = new ArrayList<>();
+        for (Object child : coll) {
+            TypedConfigurationField childField = this.contents.clone();
+            if (child != null) {
+                childField.loadFromDefault(child);
+            }
+            children.add(childField);
+        }
+        this.setCurrValue(children);
     }
 
     @Override

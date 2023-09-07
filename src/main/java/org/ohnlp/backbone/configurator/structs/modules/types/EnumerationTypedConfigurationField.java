@@ -10,6 +10,7 @@ import javafx.scene.control.ComboBox;
 import org.apache.beam.sdk.schemas.Schema;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -35,6 +36,11 @@ public class EnumerationTypedConfigurationField extends TypedConfigurationField 
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void loadFromDefault(Object object) {
+        this.setCurrValue(((Enum<?>)object).name());
     }
 
     @Override

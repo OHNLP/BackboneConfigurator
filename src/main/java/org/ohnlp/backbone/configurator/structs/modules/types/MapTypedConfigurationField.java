@@ -8,8 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import org.apache.beam.sdk.schemas.Schema;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MapTypedConfigurationField extends TypedConfigurationField {
     private TypedConfigurationField key;
@@ -57,6 +56,25 @@ public class MapTypedConfigurationField extends TypedConfigurationField {
             return null;
         }
     }
+
+    @Override
+    public void loadFromDefault(Object object) {
+        Map<?, ?> map = (Map<?, ?>) object;
+        Map<TypedConfigurationField, TypedConfigurationField> ret = new HashMap<>();
+        map.forEach((k, v) -> {
+            TypedConfigurationField keyCln = this.key.clone();
+            TypedConfigurationField valCln = this.value.clone();
+            if (k != null) {
+                keyCln.loadFromDefault(k);
+            }
+            if (v != null) {
+                valCln.loadFromDefault(v);
+            }
+            ret.put(keyCln, valCln);
+        });
+        setCurrValue(ret);
+    }
+
 
     @Override
     public void cloneFields(TypedConfigurationField target) {

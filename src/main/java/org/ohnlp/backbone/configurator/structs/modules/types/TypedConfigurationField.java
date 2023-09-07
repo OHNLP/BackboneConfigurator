@@ -36,6 +36,9 @@ public abstract class TypedConfigurationField implements Cloneable {
 
     public abstract JsonNode valueToJSON();
 
+    public void loadFromDefault(Object object) {
+        this.setCurrValue(object);
+    }
     @Override
     public TypedConfigurationField clone() {
         ObjectMapper om = new ObjectMapper();

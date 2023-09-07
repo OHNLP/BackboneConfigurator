@@ -8,6 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import org.apache.beam.sdk.schemas.Schema;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +49,25 @@ public class ObjectTypedConfigurationField extends TypedConfigurationField {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public void loadFromDefault(Object object) {
+
+        Map<String, TypedConfigurationField> ret = new HashMap<>();
+        fields.forEach((k, v) -> ret.put(k, v.clone()));
+        fields.keySet().forEach(field -> {
+            try {
+                Field f = object.getClass().getDeclaredField(field);
+                f.trySetAccessible();
+                Object o = f.get(object);
+                if (o != null) {
+                    ret.get(field).loadFromDefault(o);
+                }
+            } catch (Throwable ignored) {
+            }
+        });
+        setCurrValue(ret);
     }
 
     @Override
