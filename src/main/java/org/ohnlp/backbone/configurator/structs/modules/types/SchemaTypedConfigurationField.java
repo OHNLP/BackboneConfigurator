@@ -34,8 +34,7 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
     public void injectValueFromJSON(JsonNode json) {
         if (json.isObject()) {
             try {
-                Schema s = SchemaConfigUtils.jsonToSchema(json);
-                this.setCurrValue(s);
+                this.setCurrValue(json);
             } catch (Throwable ignored) {
             }
         }
@@ -45,7 +44,7 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
     @Override
     public JsonNode valueToJSON() {
         if (this.getCurrValue() != null) {
-            return SchemaConfigUtils.schemaToJSON((Schema) this.getCurrValue());
+            return (JsonNode) this.getCurrValue();
         }
         return null; // TODO
     }
@@ -64,13 +63,13 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
             if (n) {
                 ObjectNode updated = JsonNodeFactory.instance.objectNode();
                 ret.toJSON(updated);
-                injectValueFromJSON(updated);
+                this.observableEditedValue.set(updated);
                 invalidationFlag.set(false);
             }
         });
         // Now load values if existing
         if (this.observableEditedValue.isNotNull().get()) {
-            ret.loadFromJSON(SchemaConfigUtils.schemaToJSON((Schema) this.observableEditedValue.get()));
+            ret.loadFromJSON((ObjectNode) this.observableEditedValue.get());
         }
         return ret.render();
     }
@@ -274,6 +273,13 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
                 toAdd.loadFromJSON(JsonNodeFactory.instance.objectNode().set(e.getKey(), e.getValue()));
                 this.children.add(toAdd);
             });
+        }
+
+        public void toJSON(JsonNode parent) { // Object nodes do not have their own fields/should just pass-through to children
+            if (!parent.isObject()) {
+                throw new IllegalArgumentException("Attempting to populate fields in a non-object type");
+            }
+            this.children.forEach(child -> child.toJSON(parent));
         }
     }
 }
