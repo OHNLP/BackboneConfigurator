@@ -70,7 +70,7 @@ public class SchemaTypedConfigurationField extends TypedConfigurationField {
         });
         // Now load values if existing
         if (this.observableEditedValue.isNotNull().get()) {
-            ret.loadFromJSON((ObjectNode) this.observableEditedValue.get());
+            ret.loadFromJSON(SchemaConfigUtils.schemaToJSON((Schema) this.observableEditedValue.get()));
         }
         return ret.render();
     }
