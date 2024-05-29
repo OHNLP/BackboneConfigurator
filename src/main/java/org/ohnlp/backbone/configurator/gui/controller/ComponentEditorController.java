@@ -93,93 +93,97 @@ public class ComponentEditorController {
         Set<String> possibleInputs = pipeline.getAvailableInputs(componentDec);
         CompletableFuture<? extends BackbonePipelineComponent<?, ?>> future = componentDec.getComponentDef().getInstance(componentDec, false);
         future.whenComplete((cmp, err) -> {
-            instanceInitDialog.setResult(true);
-            instanceInitDialog.close();
-            if (err != null) {
-                err.printStackTrace();
-                try {
-                    Views.displayConfirmationDialog("Failed to load Component", "Component Loading Failed, Please check console for error log", () -> {}, null);
-                } catch (Views.DialogCancelledException e) {
-                    return;
-                }
-                return;
-            }
-            if (cmp instanceof HasInputs) {
-                boundInputs.clear();
-                TitledPane inputPrompt = new TitledPane();
-                inputPrompt.setText("Input Steps");
-                VBox out = new VBox();
-                ((HasInputs) cmp).getInputTags().forEach(tag -> {
-                    // Render input row and generate available output collections for this tag
-                    HBox inputRow = new HBox();
-                    inputRow.setAlignment(Pos.CENTER_LEFT);
-                    inputRow.setSpacing(5);
-                    Text label = tag.equals("*") ? new Text("Any Input From: ") : new Text(tag + " From:");
-                    ComboBox<String> inputComponentID = new ComboBox<>();
-                    inputComponentID.setItems(FXCollections.observableArrayList(possibleInputs).sorted());
-                    ComboBox<String> inputComponentTag = new ComboBox<>();
-                    inputComponentTag.itemsProperty().bind(Bindings.createObjectBinding(() -> {
-                        if (inputComponentID.valueProperty().isNotNull().get()) {
-                            PipelineComponentDeclaration v = pipeline.getComponentByID(inputComponentID.valueProperty().get());
-                            if (v != null) {
-                                BackbonePipelineComponent<?,?> srcComponent = v.getComponentDef().getInstance(v, false).get();
-                                if (srcComponent instanceof HasOutputs) {
-                                    return FXCollections.observableArrayList(((HasOutputs) srcComponent).getOutputTags());
-                                }
+            Platform.runLater(
+                    () -> {
+                        instanceInitDialog.setResult(true);
+                        instanceInitDialog.close();
+                        if (err != null) {
+                            err.printStackTrace();
+                            try {
+                                Views.displayConfirmationDialog("Failed to load Component", "Component Loading Failed, Please check console for error log", () -> {}, null);
+                            } catch (Views.DialogCancelledException e) {
+                                return;
                             }
+                            return;
                         }
-                        return FXCollections.emptyObservableList();
+                        if (cmp instanceof HasInputs) {
+                            boundInputs.clear();
+                            TitledPane inputPrompt = new TitledPane();
+                            inputPrompt.setText("Input Steps");
+                            VBox out = new VBox();
+                            ((HasInputs) cmp).getInputTags().forEach(tag -> {
+                                // Render input row and generate available output collections for this tag
+                                HBox inputRow = new HBox();
+                                inputRow.setAlignment(Pos.CENTER_LEFT);
+                                inputRow.setSpacing(5);
+                                Text label = tag.equals("*") ? new Text("Any Input From: ") : new Text(tag + " From:");
+                                ComboBox<String> inputComponentID = new ComboBox<>();
+                                inputComponentID.setItems(FXCollections.observableArrayList(possibleInputs).sorted());
+                                ComboBox<String> inputComponentTag = new ComboBox<>();
+                                inputComponentTag.itemsProperty().bind(Bindings.createObjectBinding(() -> {
+                                    if (inputComponentID.valueProperty().isNotNull().get()) {
+                                        PipelineComponentDeclaration v = pipeline.getComponentByID(inputComponentID.valueProperty().get());
+                                        if (v != null) {
+                                            BackbonePipelineComponent<?,?> srcComponent = v.getComponentDef().getInstance(v, false).get();
+                                            if (srcComponent instanceof HasOutputs) {
+                                                return FXCollections.observableArrayList(((HasOutputs) srcComponent).getOutputTags());
+                                            }
+                                        }
+                                    }
+                                    return FXCollections.emptyObservableList();
 
-                    }, inputComponentID.valueProperty()));
-                    inputRow.getChildren().addAll(label, inputComponentID, inputComponentTag);
-                    // Add bound property to keep track of values
-                    ObjectBinding<BackbonePipelineComponentConfiguration.InputDefinition> def = Bindings.createObjectBinding(
-                            () -> {
-                                if (inputComponentID.valueProperty().isNotNull().and(inputComponentTag.valueProperty().isNotNull()).get()) {
-                                    BackbonePipelineComponentConfiguration.InputDefinition d = new BackbonePipelineComponentConfiguration.InputDefinition();
-                                    d.setComponentID(inputComponentID.getValue());
-                                    d.setInputTag(inputComponentTag.getValue());
-                                    return d;
-                                } else {
-                                    return null;
+                                }, inputComponentID.valueProperty()));
+                                inputRow.getChildren().addAll(label, inputComponentID, inputComponentTag);
+                                // Add bound property to keep track of values
+                                ObjectBinding<BackbonePipelineComponentConfiguration.InputDefinition> def = Bindings.createObjectBinding(
+                                        () -> {
+                                            if (inputComponentID.valueProperty().isNotNull().and(inputComponentTag.valueProperty().isNotNull()).get()) {
+                                                BackbonePipelineComponentConfiguration.InputDefinition d = new BackbonePipelineComponentConfiguration.InputDefinition();
+                                                d.setComponentID(inputComponentID.getValue());
+                                                d.setInputTag(inputComponentTag.getValue());
+                                                return d;
+                                            } else {
+                                                return null;
+                                            }
+                                        }, inputComponentID.valueProperty(), inputComponentTag.valueProperty()
+                                );
+                                boundInputs.put(tag, def);
+                                // Update the available input map on change
+                                def.addListener((e, o, n) -> {
+                                    if (n == null || pipeline.getComponentByID(n.getComponentID()) == null) {
+                                        inputSchemas.put(tag, Schema.of());
+                                    } else {
+                                        PipelineComponentDeclaration srcComponent = pipeline.getComponentByID(n.getComponentID());
+                                        inputSchemas.put(tag, srcComponent.getStepOutput().getOrDefault(n.getInputTag(), Schema.of()));
+                                    }
+                                });
+
+                                // Load Pre-existing values
+                                String outputID = null;
+                                String outputTag = null;
+                                if (componentDec.getInputs().containsKey(tag)) {
+                                    outputID = componentDec.getInputs().get(tag).getComponentID();
+                                    outputTag = componentDec.getInputs().get(tag).getInputTag();
+                                } else if (((HasInputs) cmp).getInputTags().size() == 1 && componentDec.getInputs().size() == 1) {
+                                    BackbonePipelineComponentConfiguration.InputDefinition inputDef = componentDec.getInputs().values().stream().findFirst().get();
+                                    outputID = inputDef.getComponentID();
+                                    outputTag = inputDef.getInputTag();
                                 }
-                            }, inputComponentID.valueProperty(), inputComponentTag.valueProperty()
-                    );
-                    boundInputs.put(tag, def);
-                    // Update the available input map on change
-                    def.addListener((e, o, n) -> {
-                        if (n == null || pipeline.getComponentByID(n.getComponentID()) == null) {
-                            inputSchemas.put(tag, Schema.of());
-                        } else {
-                            PipelineComponentDeclaration srcComponent = pipeline.getComponentByID(n.getComponentID());
-                            inputSchemas.put(tag, srcComponent.getStepOutput().getOrDefault(n.getInputTag(), Schema.of()));
-                        }
-                    });
+                                if (outputID != null) {
+                                    inputComponentID.getSelectionModel().select(inputComponentID.getItems().indexOf(outputID));
+                                    if (outputTag.equals("*")) {
+                                        outputTag = inputComponentTag.getItems().size() > 0 ? inputComponentTag.getItems().get(0) : null;
+                                    }
+                                    inputComponentTag.getSelectionModel().select(inputComponentTag.getItems().indexOf(outputTag));
+                                }
+                                out.getChildren().add(inputRow);
 
-                    // Load Pre-existing values
-                    String outputID = null;
-                    String outputTag = null;
-                    if (componentDec.getInputs().containsKey(tag)) {
-                        outputID = componentDec.getInputs().get(tag).getComponentID();
-                        outputTag = componentDec.getInputs().get(tag).getInputTag();
-                    } else if (((HasInputs) cmp).getInputTags().size() == 1 && componentDec.getInputs().size() == 1) {
-                        BackbonePipelineComponentConfiguration.InputDefinition inputDef = componentDec.getInputs().values().stream().findFirst().get();
-                        outputID = inputDef.getComponentID();
-                        outputTag = inputDef.getInputTag();
-                    }
-                    if (outputID != null) {
-                        inputComponentID.getSelectionModel().select(inputComponentID.getItems().indexOf(outputID));
-                        if (outputTag.equals("*")) {
-                            outputTag = inputComponentTag.getItems().size() > 0 ? inputComponentTag.getItems().get(0) : null;
+                            });
+                            inputPrompt.setContent(out);
+                            configList.getChildren().add(inputPrompt);
                         }
-                        inputComponentTag.getSelectionModel().select(inputComponentTag.getItems().indexOf(outputTag));
                     }
-                    out.getChildren().add(inputRow);
-
-                });
-                inputPrompt.setContent(out);
-                configList.getChildren().add(inputPrompt);
-            }
+            );
         });
     }
 
