@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import org.apache.beam.repackaged.core.org.apache.commons.lang3.SystemUtils;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
 import org.ohnlp.backbone.configurator.Views;
@@ -53,6 +54,10 @@ public class ComponentBrowserController {
 
     @FXML
     public void initialize() {
+        // Determine whether title bar should be visible (disabled for Mac)
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            titlebar.setVisible(false);
+        }
         // Populate Module List
         moduleList.getItems().clear();
         moduleList.getItems().addAll(FXCollections.observableArrayList(ModuleRegistry.getAllRegisteredComponents()).sorted(Comparator.comparing(ModulePackageDeclaration::getName)));

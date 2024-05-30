@@ -9,7 +9,7 @@
     <children>
         <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" styleClass="window">
             <children>
-                <TitleBar/>
+                <TitleBar fx:id="titlebar"/>
                 <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" spacing="10.0" styleClass="control">
                     <children>
                         <Label style="-fx-text-fill: lightgray">🔍</Label>

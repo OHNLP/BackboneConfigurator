@@ -9,7 +9,7 @@
             fx:controller="org.ohnlp.backbone.configurator.gui.controller.ComponentEditorController" styleClass="content">
     <children>
         <VBox fx:id="contents" styleClass="window">
-            <TitleBar/>
+            <TitleBar fx:id="titlebar"/>
             <HBox VBox.vgrow="ALWAYS">
                 <children>
                     <VBox HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">

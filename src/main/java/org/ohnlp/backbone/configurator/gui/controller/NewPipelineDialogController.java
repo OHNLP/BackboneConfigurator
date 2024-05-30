@@ -5,8 +5,10 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import org.apache.beam.repackaged.core.org.apache.commons.lang3.SystemUtils;
 import org.ohnlp.backbone.api.config.BackboneConfiguration;
 import org.ohnlp.backbone.configurator.ConfigManager;
+import org.ohnlp.backbone.configurator.gui.components.TitleBar;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +22,16 @@ public class NewPipelineDialogController {
     public TextField desc;
     @FXML
     public TextField file;
+    @FXML
+    public TitleBar titlebar;
+
+    @FXML
+    public void initialize() {
+        // Determine whether title bar should be visible (disabled for Mac)
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            titlebar.setVisible(false);
+        }
+    }
 
     @FXML
     public void createPipeline(ActionEvent event) {

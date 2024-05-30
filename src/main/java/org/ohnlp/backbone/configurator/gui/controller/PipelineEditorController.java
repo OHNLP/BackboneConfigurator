@@ -14,6 +14,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.abego.treelayout.Configuration;
+import org.apache.beam.repackaged.core.org.apache.commons.lang3.SystemUtils;
 import org.ohnlp.backbone.configurator.ConfigManager;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.Views;
@@ -56,6 +57,10 @@ public class PipelineEditorController {
         });
 
         this.titlebar.prefWidthProperty().bind(container.widthProperty());
+        // Determine whether title bar should be visible (disabled for Mac)
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            titlebar.setVisible(false);
+        }
         // Generate pipeline graph
         Graph g = DAGUtils.generateGraphForPipeline(EditorRegistry.getCurrentEditablePipeline().getValue());
         g.layout(new LabelPositionAbegoTreeLayout(150, 500, Configuration.Location.Top));

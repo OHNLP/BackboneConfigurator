@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import org.apache.beam.repackaged.core.org.apache.commons.lang3.SystemUtils;
 import org.ohnlp.backbone.configurator.gui.controller.ComponentBrowserController;
 import org.ohnlp.backbone.configurator.gui.controller.ComponentEditorController;
 import org.ohnlp.backbone.configurator.gui.controller.PipelineEditorController;
@@ -69,7 +70,9 @@ public class Views {
         s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
         s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/component-browser-view.css").toExternalForm());
         stage.setScene(s);
-        stage.initStyle(StageStyle.UNDECORATED);
+        if (!SystemUtils.IS_OS_MAC_OSX) {
+            stage.initStyle(StageStyle.UNDECORATED);
+        }
         stage.show();
     }
 
@@ -80,7 +83,9 @@ public class Views {
         scene.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("OHNLP Toolkit Pipeline Configuration Editor");
-        stage.initStyle(StageStyle.UNDECORATED);
+        if (!SystemUtils.IS_OS_MAC_OSX) {
+            stage.initStyle(StageStyle.UNDECORATED);
+        }
         stage.show();
     }
 
@@ -91,7 +96,9 @@ public class Views {
         Scene scene = new Scene(loader.load());
         scene.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
         stage.setScene(scene);
-        stage.initStyle(StageStyle.UNDECORATED);
+        if (!SystemUtils.IS_OS_MAC_OSX) {
+            stage.initStyle(StageStyle.UNDECORATED);
+        }
         stage.show();
     }
 
@@ -120,7 +127,9 @@ public class Views {
 //        stage.setMaximized(true);
 //        stage.setFullScreen(true);
 //        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
-            stage.initStyle(StageStyle.UNDECORATED);
+            if (!SystemUtils.IS_OS_MAC_OSX) {
+                stage.initStyle(StageStyle.UNDECORATED);
+            }
             stage.show();
             instanceInitDialog.setResult(true);
             instanceInitDialog.close();
@@ -155,7 +164,9 @@ public class Views {
             }
             s.getStylesheets().add(Views.class.getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
             stage.setScene(s);
-            stage.initStyle(StageStyle.UNDECORATED);
+            if (!SystemUtils.IS_OS_MAC_OSX) {
+                stage.initStyle(StageStyle.UNDECORATED);
+            }
             stage.show();
             alert.setResult(true);
             alert.close();

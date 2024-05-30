@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.apache.beam.repackaged.core.org.apache.commons.lang3.SystemUtils;
 import org.ohnlp.backbone.api.components.xlang.python.PythonBridge;
 import org.ohnlp.backbone.configurator.ModuleRegistry;
 import org.ohnlp.backbone.configurator.UpdateManager;
@@ -50,7 +51,9 @@ public class ConfiguratorGUI extends Application {
         Scene scene = new Scene(fxmlLoader.load());
         scene.getStylesheets().add(getClass().getResource("/org/ohnlp/backbone/configurator/global.css").toExternalForm());
         primaryStage.setScene(scene);
-        primaryStage.initStyle(StageStyle.UNDECORATED);
+        if (!SystemUtils.IS_OS_MAC_OSX) {
+            primaryStage.initStyle(StageStyle.UNDECORATED);
+        }
         primaryStage.setTitle("OHNLP Toolkit Pipeline Configuration Editor");
         primaryStage.show();
     }

@@ -17,6 +17,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.apache.beam.repackaged.core.org.apache.commons.lang3.SystemUtils;
 import org.apache.beam.sdk.schemas.Schema;
 import org.ohnlp.backbone.api.BackbonePipelineComponent;
 import org.ohnlp.backbone.api.components.HasInputs;
@@ -24,6 +25,7 @@ import org.ohnlp.backbone.api.components.HasOutputs;
 import org.ohnlp.backbone.api.config.BackbonePipelineComponentConfiguration;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.Views;
+import org.ohnlp.backbone.configurator.gui.components.TitleBar;
 import org.ohnlp.backbone.configurator.structs.pipeline.EditablePipeline;
 import org.ohnlp.backbone.configurator.structs.pipeline.PipelineComponentDeclaration;
 import org.springframework.util.Assert;
@@ -55,6 +57,9 @@ public class ComponentEditorController {
     public AnchorPane container;
     @FXML
     public VBox contents;
+    @FXML
+    public TitleBar titlebar;
+
 
     private Map<String, ObjectBinding<BackbonePipelineComponentConfiguration.InputDefinition>> boundInputs = new HashMap<>();
     private StringProperty stepIDProperty;
@@ -62,6 +67,10 @@ public class ComponentEditorController {
 
     @FXML
     public void initialize() {
+        // Determine whether title bar should be visible (disabled for Mac)
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            titlebar.setVisible(false);
+        }
         contents.prefHeightProperty().bind(container.heightProperty());
         Assert.notNull(EditorRegistry.getCurrentEditedComponent(), "Component Editor Dialog Initialized with Null Component");
         if (!EditorRegistry.inCreateNewComponentState().get()) {

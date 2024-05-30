@@ -9,7 +9,7 @@
    <children>
       <VBox minWidth="600.0" spacing="10.0" styleClass="window">
          <children>
-            <TitleBar maximizable="false"/>
+            <TitleBar maximizable="false" fx:id="titlebar"/>
             <HBox alignment="CENTER_LEFT">
                <children>
                   <Label>Pipeline Name: </Label>

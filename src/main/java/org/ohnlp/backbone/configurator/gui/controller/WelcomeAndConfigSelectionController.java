@@ -19,10 +19,12 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Callback;
+import org.apache.beam.repackaged.core.org.apache.commons.lang3.SystemUtils;
 import org.ohnlp.backbone.configurator.ConfigManager;
 import org.ohnlp.backbone.configurator.EditorRegistry;
 import org.ohnlp.backbone.configurator.Views;
 import org.ohnlp.backbone.configurator.gui.components.ConfigListContextMenu;
+import org.ohnlp.backbone.configurator.gui.components.TitleBar;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -37,10 +39,17 @@ public class WelcomeAndConfigSelectionController {
     @FXML
     public TextField searchFilter;
 
+    @FXML
+    public TitleBar titlebar;
+
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     @FXML
     public void initialize() {
+        // Determine whether title bar should be visible (disabled for Mac)
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            titlebar.setVisible(false);
+        }
         // Bind config list to search filter
         FilteredList<ConfigManager.ConfigMeta> filteredConfigs = ConfigManager.getConfigs().filtered(null);
         filteredConfigs.predicateProperty().bind(Bindings.createObjectBinding(() -> {
